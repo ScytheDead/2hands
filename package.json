@@ -12,5 +12,8 @@
   },
   "author": "Nguyễn Huy",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/ScytheDead/2hands#readme"
+  "homepage": "https://bitbucket.org/ScytheDead/2hands#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
