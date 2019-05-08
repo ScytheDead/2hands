@@ -8,11 +8,11 @@ const messageSchema = mongoose.Schema({
     postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
     contentChatUserBuy: [{
         content: { type: String },
-        timestamps: { createdAt: 'created_at' }
+        time: { type : Date, default: Date.now }
     }],
     contentChatUserSell: [{
         content: { type: String },
-        timestamps: { createdAt: 'created_at' }
+        time: { type : Date, default: Date.now }
     }]
 });
 
