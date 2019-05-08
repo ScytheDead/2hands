@@ -98,7 +98,6 @@ exports.user_delete = (req, res, next) => {
         })
         .exec()
         .then(result => {
-            console.log(result.deletedCount);
             if(result.deletedCount == 0) {
                 return res.status(500).json({
                     error: "Not found user"
