@@ -12,8 +12,8 @@ const usersRoutes = require('./api/routes/users');
 // const classifiesRoutes = require('./api/routes/classifies');
 // const categoriesRoutes = require('./api/routes/categories');
 
-// Connect MongoDB 
-mongoose.connect('mongodb+srv://2hands-huy:' + process.env.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/test?retryWrites=true',{ useNewUrlParser: true });
+// Connect MongoDB
+mongoose.connect('mongodb+srv://2hands-huy:' + process.env.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));

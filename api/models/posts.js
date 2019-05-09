@@ -13,6 +13,7 @@ const postSchema = mongoose.Schema({
     images: [{ type: String }],
     seller: { type: Boolean, required: true},
     priority: { type: Boolean, default: false },
+    status: { type: Boolean, default: 0 },  //0: pending, 1: show
     notes: { type: String },
 },{ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
