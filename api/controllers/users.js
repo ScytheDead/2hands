@@ -100,7 +100,7 @@ exports.user_login = (req, res, next) => {
         });
 }
 
-exports.user_update = (req, res, next) => {
+exports.user_update = async (req, res, next) => {
     const id = req.params.userId;
     const updateOps = {};
     for (const ops of req.body) {
@@ -109,81 +109,108 @@ exports.user_update = (req, res, next) => {
 
     //check permission if update permission
     if (updateOps.permission !== undefined) {
-        const token = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_KEY);
-
-        User.findById({
-                _id: decoded.userId
-            }).exec()
-            .then(user => {
-                if (user.permission != 2) {
-                    return res.status(401).json({
-                        messages: 'You don\'t have permission'
-                    });
-                } else {
-                    User.updateOne({
-                            _id: id
-                        }, {
-                            $set: updateOps
-                        })
-                        .exec()
-                        .then(result => {
-                            if (result.n <= 0) {
-                                return res.status(500).json({
-                                    error: "Not found user"
-                                });
-                            }
-                            res.status(200).json({
-                                message: 'User updated',
-                            });
-                        })
-                }
-            })
-            .catch(err => {
-                res.status(500).json({
-                    error: err
-                });
-            });
-    } else {
-        User.updateOne({
-                _id: id
-            }, {
-                $set: updateOps
-            })
-            .exec()
-            .then(result => {
-                if (result.n <= 0) {
-                    return res.status(500).json({
-                        error: "Not found user"
-                    });
-                }
-                res.status(200).json({
-                    message: 'User updated',
-
-                })
-            })
-            .catch(err => {
-                res.status(500).json({
-                    error: err
-                });
-            });
+        const permission = await checkPermission();
+        if (!permission)
+            return;
     }
-}
 
-exports.user_delete = (req, res, next) => {
-    User.deleteOne({
-            _id: req.params.userId
+    if (updateOps.password !== undefined) {
+        await hash()
+    }
+
+    User.updateOne({
+            _id: id
+        }, {
+            $set: updateOps
         })
         .exec()
         .then(result => {
-            if (result.deletedCount <= 0) {
+            if (result.n <= 0) {
                 return res.status(500).json({
                     error: "Not found user"
                 });
             }
             res.status(200).json({
-                message: 'User deleted'
+                message: 'User updated',
+
+            })
+        })
+        .catch(err => {
+            console.log(1);
+            res.status(500).json({
+                error: err
             });
+        });
+
+    function checkPermission() {
+        return new Promise(resolve => {
+            const token = req.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_KEY);
+            User.findById({
+                    _id: decoded.userId
+                }).exec()
+                .then(user => {
+                    if (user.permission != 2) {
+                        resolve(0);
+                        return res.status(401).json({
+                            message: 'You don\'t have permission'
+                        });
+                    } else {
+                        resolve(1);
+                    }
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        })
+    }
+
+    function hash() {
+        return new Promise(resolve => {
+            bcrypt.hash(updateOps.password, 10, (err, hash) => {
+                if (err) {
+                    return res.status(500).json({
+                        error: err
+                    });
+                } else {
+                    resolve(updateOps.password = hash);
+                }
+
+            })
+        })
+    }
+}
+
+
+exports.user_delete = (req, res, next) => {
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+
+    User.findById({
+            _id: decoded.userId
+        }).exec()
+        .then(user => {
+            if (user.permission != 2) {
+                return res.status(401).json({
+                    messages: 'You don\'t have permission'
+                });
+            } else {
+                User.deleteOne({
+                        _id: req.params.userId
+                    })
+                    .exec()
+                    .then(result => {
+                        if (result.deletedCount <= 0) {
+                            return res.status(500).json({
+                                error: "Not found user"
+                            });
+                        }
+                        res.status(200).json({
+                            message: 'User deleted'
+                        });
+                    });
+            }
         })
         .catch(err => {
             res.status(500).json({
