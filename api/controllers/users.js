@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+const fs = require('fs');
 const User = require('../models/users');
 
 exports.user_signup = (req, res, next) => {
@@ -80,7 +80,7 @@ exports.user_login = (req, res, next) => {
 
                         },
                         process.env.JWT_KEY, {
-                            expiresIn: '1h'
+                            expiresIn: '2h'
                         }
                     );
                     return res.status(200).json({
@@ -114,8 +114,14 @@ exports.user_update = async (req, res, next) => {
             return;
     }
 
+    //if update password
     if (updateOps.password !== undefined) {
-        await hash()
+        await hash();
+    }
+
+    //if update avatar
+    if (updateOps.avatar !== undefined) {
+        await removeAvatar();
     }
 
     User.updateOne({
@@ -180,8 +186,11 @@ exports.user_update = async (req, res, next) => {
             })
         })
     }
-}
 
+    function removeAvatar(){
+        delete updateOps.avatar;
+    }
+}
 
 exports.user_delete = (req, res, next) => {
     const token = req.headers.authorization.split(" ")[1];
@@ -217,4 +226,35 @@ exports.user_delete = (req, res, next) => {
                 error: err
             });
         });
+}
+
+exports.user_update_avatar = (req, res) => {
+    const id = req.params.userId;
+    User.findById(id)
+    .select('avatar')
+    .exec()
+    .then(async result => {
+        if(result.avatar !== undefined && result.avatar !== null){
+            fs.unlink(result.avatar, (err) => {
+                if(err) {
+                    res.status(500).json({
+                        message: 'You don\'t have avatar'
+                    });
+                }
+            });
+        }
+        User.updateOne({_id: id}, {$set: {"avatar": req.file !== undefined ? req.file.path : undefined}})
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'Users image updated',
+            });
+        })
+    })
+    .catch(err => {
+        console.log(11111)
+        res.status(500).json({
+            error: err
+        })
+    })
 }
