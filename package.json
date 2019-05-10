@@ -7,10 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://ScytheDead@bitbucket.org/ScytheDead/2hands.git"
-  },
+  "repository": "git+https://ScytheDead@bitbucket.org/ScytheDead/2hands.git",
   "author": "Nguyễn Huy",
   "license": "ISC",
   "homepage": "https://bitbucket.org/ScytheDead/2hands#readme",
