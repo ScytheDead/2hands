@@ -111,7 +111,9 @@ exports.user_update = async (req, res, next) => {
     if (updateOps.permission !== undefined) {
         const permission = await checkPermission();
         if (!permission)
-            return;
+            return res.status(401).json({
+                message: 'You don\'t have permission'
+            });
     }
 
     //if update password
@@ -142,7 +144,6 @@ exports.user_update = async (req, res, next) => {
             })
         })
         .catch(err => {
-            console.log(1);
             res.status(500).json({
                 error: err
             });
@@ -158,9 +159,6 @@ exports.user_update = async (req, res, next) => {
                 .then(user => {
                     if (user.permission != 2) {
                         resolve(0);
-                        return res.status(401).json({
-                            message: 'You don\'t have permission'
-                        });
                     } else {
                         resolve(1);
                     }
@@ -247,12 +245,11 @@ exports.user_update_avatar = (req, res) => {
         .exec()
         .then(result => {
             res.status(200).json({
-                message: 'Users image updated',
+                message: 'Users avatar updated',
             });
         })
     })
     .catch(err => {
-        console.log(11111)
         res.status(500).json({
             error: err
         })
