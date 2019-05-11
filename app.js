@@ -7,10 +7,10 @@ const mongoose = require('mongoose');
 // Import api
 const usersRoutes = require('./api/routes/users');
 // const producersRoutes = require('./api/routes/producers');
-const postsRoutes = require('./api/routes/posts');
+// const postsRoutes = require('./api/routes/posts');
 // const messagesRoutes = require('./api/routes/messages');
 // const classifiesRoutes = require('./api/routes/classifies');
-// const categoriesRoutes = require('./api/routes/categories');
+const categoriesRoutes = require('./api/routes/categories');
 
 // Connect MongoDB
 mongoose.connect('mongodb+srv://2hands-huy:' + process.env.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
@@ -37,10 +37,10 @@ app.use((req, res, next) => {
 // Routes which should handle requests
 app.use('/users', usersRoutes);
 // app.use('/producers', producersRoutes);
-app.use('/posts', postsRoutes);
+// app.use('/posts', postsRoutes);
 // app.use('/messages', messagesRoutes);
 // app.use('/classifies', classifiesRoutes);
-// app.use('/categories', categoriesRoutes);
+app.use('/categories', categoriesRoutes);
 
 //Custom message error khi lỗi 404
 app.use((req, res, next) => {   
