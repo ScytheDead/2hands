@@ -1,5 +1,7 @@
 const Category = require('../models/categories');
+const User = require('../models/users');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const host = require('../../config');
 
@@ -10,7 +12,7 @@ exports.categories_get_all = (req, res) => {
     .then(categories => {
         const response = {
             count: categories.length,
-            category: categories.map(doc => {
+            categories: categories.map(doc => {
                 return {
                     id: doc._id,
                     title: doc.title,
@@ -32,7 +34,13 @@ exports.categories_get_all = (req, res) => {
     });
 }
 
-exports.categories_create_category = (req, res) => {
+exports.categories_create_category = async (req, res) => {
+    if(! await checkPermission()){
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
     console.log(req.file)
     const category = new Category({
         _id: new mongoose.Types.ObjectId(),
@@ -61,10 +69,37 @@ exports.categories_create_category = (req, res) => {
         res.status(500).json({
             error: err
         })
-    }); 
+    });
+
+    function checkPermission() {
+        return new Promise(resolve => {
+            const token = req.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_KEY);
+            User.findById({
+                    _id: decoded.userId
+                }).exec()
+                .then(user => {
+                    if (user.permission == 0) {
+                        resolve(0);
+                    } else {
+                        resolve(1);
+                    }
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        })
+    }
 }
 
-exports.categories_get_category = (req, res) => {
+exports.categories_get_category = async (req, res) => {
+    if(! await checkPermission()){
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
     const id = req.params.categoryId;
     Category.findById(id)
     .select('_id title image note created_at updated_at')
@@ -90,9 +125,36 @@ exports.categories_get_category = (req, res) => {
             error: err
         })
     });
+
+    function checkPermission() {
+        return new Promise(resolve => {
+            const token = req.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_KEY);
+            User.findById({
+                    _id: decoded.userId
+                }).exec()
+                .then(user => {
+                    if (user.permission == 0) {
+                        resolve(0);
+                    } else {
+                        resolve(1);
+                    }
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        })
+    }
 }
 
-exports.categories_delete_category = (req, res) => {
+exports.categories_delete_category = async (req, res) => {
+    if(! await checkPermission()){
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
     const id = req.params.categoryId;
     Category.findById(id)
     .select('image')
@@ -114,9 +176,35 @@ exports.categories_delete_category = (req, res) => {
                 error: 'No valid entry found for provided ID'
             })
     });
+
+    function checkPermission() {
+        return new Promise(resolve => {
+            const token = req.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_KEY);
+            User.findById({
+                    _id: decoded.userId
+                }).exec()
+                .then(user => {
+                    if (user.permission == 0) {
+                        resolve(0);
+                    } else {
+                        resolve(1);
+                    }
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        })
+    }
 }
 
 exports.categories_update_category = async (req, res) => {
+    if(! await checkPermission()){
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
     const id = req.params.categoryId;
     const updateOps = {};
     for (const ops of req.body) {
@@ -149,9 +237,36 @@ exports.categories_update_category = async (req, res) => {
     function removeImage(){
         delete updateOps.image;
     }
+
+    function checkPermission() {
+        return new Promise(resolve => {
+            const token = req.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_KEY);
+            User.findById({
+                    _id: decoded.userId
+                }).exec()
+                .then(user => {
+                    if (user.permission == 0) {
+                        resolve(0);
+                    } else {
+                        resolve(1);
+                    }
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        })
+    }
 }
 
-exports.categories_update_image = (req, res) => {
+exports.categories_update_image = async (req, res) => {
+    if(! await checkPermission()){
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
     const id = req.params.categoryId;
     Category.findById(id)
     .select('image')
@@ -174,4 +289,25 @@ exports.categories_update_image = (req, res) => {
             error: 'No valid entry found for provided ID'
         })
     });
+
+    function checkPermission() {
+        return new Promise(resolve => {
+            const token = req.headers.authorization.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.JWT_KEY);
+            User.findById({
+                    _id: decoded.userId
+                }).exec()
+                .then(user => {
+                    if (user.permission == 0) {
+                        resolve(0);
+                    } else {
+                        resolve(1);
+                    }
+                }).catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        })
+    }
 }
