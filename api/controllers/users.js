@@ -100,7 +100,79 @@ exports.user_login = (req, res, next) => {
         });
 }
 
-exports.user_update = async (req, res, next) => {
+exports.users_get_all = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    User.find()
+        .select('_id phoneNumber permission messages subscribes created_at updated_at name address avatar facebook email gender')
+        .exec()
+        .then(users => {
+            const response = {
+                count: users.length,
+                users: users.map(user => {
+                    return {
+                        id: user._id,
+                        phoneNumber: user.phoneNumber,
+                        permission: user.permission,
+                        messages: user.messages,
+                        subscribes: user.subscribes,
+                        createdAt: user.created_at,
+                        updatedAt: user.updated_at,
+                        name: user.name,
+                        address: user.address,
+                        avatar: user.avatar,
+                        facebook: user.facebook,
+                        email: user.email,
+                        gender: user.gender,
+                        request: {
+                            type: 'GET',
+                            url: `${process.env.API_ADDRESS}/users/${user._id}`
+                        }
+                    }
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
+}
+
+exports.users_get_user = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    const id = req.params.userId;
+    User.findById(id)
+        .select('_id phoneNumber permission messages subscribes created_at updated_at name address avatar facebook email gender')
+        .exec()
+        .then(user => {
+            res.status(200).json({
+                user: user,
+                request: {
+                    type: 'GET',
+                    url: `${process.env.API_ADDRESS}/users/`
+                }
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.user_update = async (req, res) => {
     const id = req.params.userId;
     const updateOps = {};
     for (const ops of req.body) {
@@ -109,7 +181,7 @@ exports.user_update = async (req, res, next) => {
 
     //check permission if update permission
     if (updateOps.permission !== undefined) {
-        const permission = await checkPermission();
+        const permission = await checkPermission(req.headers.authorization.split(" ")[1]);
         if (!permission)
             return res.status(401).json({
                 message: 'You don\'t have permission'
@@ -118,12 +190,12 @@ exports.user_update = async (req, res, next) => {
 
     //if update password
     if (updateOps.password !== undefined) {
-        await hash();
+        updateOps.password = await hash(updateOps.password);
     }
 
     //if update avatar
     if (updateOps.avatar !== undefined) {
-        await removeAvatar();
+        delete updateOps.avatar;
     }
 
     User.updateOne({
@@ -148,76 +220,28 @@ exports.user_update = async (req, res, next) => {
                 error: err
             });
         });
-
-    function checkPermission() {
-        return new Promise(resolve => {
-            const token = req.headers.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, process.env.JWT_KEY);
-            User.findById({
-                    _id: decoded.userId
-                }).exec()
-                .then(user => {
-                    if (user.permission != 2) {
-                        resolve(0);
-                    } else {
-                        resolve(1);
-                    }
-                }).catch(err => {
-                    res.status(500).json({
-                        error: err
-                    });
-                });
-        })
-    }
-
-    function hash() {
-        return new Promise(resolve => {
-            bcrypt.hash(updateOps.password, 10, (err, hash) => {
-                if (err) {
-                    return res.status(500).json({
-                        error: err
-                    });
-                } else {
-                    resolve(updateOps.password = hash);
-                }
-
-            })
-        })
-    }
-
-    function removeAvatar(){
-        delete updateOps.avatar;
-    }
 }
 
-exports.user_delete = (req, res, next) => {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
+exports.user_delete = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            messages: 'You don\'t have permission'
+        });
+    }
 
-    User.findById({
-            _id: decoded.userId
-        }).exec()
-        .then(user => {
-            if (user.permission != 2) {
-                return res.status(401).json({
-                    messages: 'You don\'t have permission'
+    User.deleteOne({
+            _id: req.params.userId
+        })
+        .exec()
+        .then(result => {
+            if (result.deletedCount <= 0) {
+                return res.status(500).json({
+                    error: "Not found user"
                 });
-            } else {
-                User.deleteOne({
-                        _id: req.params.userId
-                    })
-                    .exec()
-                    .then(result => {
-                        if (result.deletedCount <= 0) {
-                            return res.status(500).json({
-                                error: "Not found user"
-                            });
-                        }
-                        res.status(200).json({
-                            message: 'User deleted'
-                        });
-                    });
             }
+            res.status(200).json({
+                message: 'User deleted'
+            });
         })
         .catch(err => {
             res.status(500).json({
@@ -229,29 +253,61 @@ exports.user_delete = (req, res, next) => {
 exports.user_update_avatar = (req, res) => {
     const id = req.params.userId;
     User.findById(id)
-    .select('avatar')
-    .exec()
-    .then(async result => {
-        if(result.avatar !== undefined && result.avatar !== null){
-            fs.unlink(result.avatar, (err) => {
-                if(err) {
-                    res.status(500).json({
-                        message: 'You don\'t have avatar'
-                    });
-                }
-            });
-        }
-        User.updateOne({_id: id}, {$set: {"avatar": req.file !== undefined ? req.file.path : undefined}})
+        .select('avatar')
         .exec()
-        .then(result => {
-            res.status(200).json({
-                message: 'Users avatar updated',
-            });
+        .then(async result => {
+            if (result.avatar !== undefined && result.avatar !== null) {
+                fs.unlink(result.avatar, (err) => {
+                    if (err) {
+                        res.status(500).json({
+                            message: 'You don\'t have avatar'
+                        });
+                    }
+                });
+            }
+            User.updateOne({
+                    _id: id
+                }, {
+                    $set: {
+                        "avatar": req.file !== undefined ? req.file.path : undefined
+                    }
+                })
+                .exec()
+                .then(result => {
+                    res.status(200).json({
+                        message: 'Users avatar updated',
+                    });
+                })
         })
-    })
-    .catch(err => {
-        res.status(500).json({
-            error: err
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            })
+        })
+}
+
+function checkPermission(tokenEncoded) {
+    return new Promise(resolve => {
+        const decoded = jwt.verify(tokenEncoded, process.env.JWT_KEY);
+        if (decoded.permission != 2) {
+            resolve(0);
+        } else {
+            resolve(1);
+        }
+    });
+}
+
+function hash(password) {
+    return new Promise(resolve => {
+        bcrypt.hash(password, 10, (err, hash) => {
+            if (err) {
+                return res.status(500).json({
+                    error: err
+                });
+            } else {
+                resolve(hash);
+            }
+
         })
     })
 }

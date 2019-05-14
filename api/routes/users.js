@@ -27,6 +27,10 @@ const upload = multer({storage: storage,
     fileFilter: fileFilter
 });
 
+router.get('/', checkAuth, UserController.users_get_all);
+
+router.get('/:userId', checkAuth, UserController.users_get_user);
+
 router.post('/signup', UserController.user_signup);
 
 router.post('/login', UserController.user_login);

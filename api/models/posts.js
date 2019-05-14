@@ -14,7 +14,7 @@ const postSchema = mongoose.Schema({
     seller: { type: Boolean, required: true},
     priority: { type: Boolean, default: false },
     status: { type: Boolean, default: 0 },  //0: pending, 1: show
-    notes: { type: String },
+    note: { type: String },
 },{ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 module.exports = mongoose.model('Post', postSchema);
