@@ -15,7 +15,7 @@ const userSchema = mongoose.Schema({
     status: { type: Boolean, default: 1},  //1: active, 0: non active
     subscribes: [{ type: String }],
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message', required: true }],
-    notes: {type: String }
+    note: {type: String }
 },{ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 module.exports = mongoose.model('User', userSchema);

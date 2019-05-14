@@ -35,12 +35,12 @@ app.use((req, res, next) => {
 });
 
 // Routes which should handle requests
-app.use('/users', usersRoutes);
-// app.use('/producers', producersRoutes);
-// app.use('/posts', postsRoutes);
-// app.use('/messages', messagesRoutes);
-// app.use('/classifies', classifiesRoutes);
-app.use('/categories', categoriesRoutes);
+app.use('/api/users', usersRoutes);
+// app.use('/api/producers', producersRoutes);
+// app.use('/api/posts', postsRoutes);
+// app.use('/api/messages', messagesRoutes);
+// app.use('/api/classifies', classifiesRoutes);
+app.use('/api/categories', categoriesRoutes);
 
 //Custom message error khi lỗi 404
 app.use((req, res, next) => {   

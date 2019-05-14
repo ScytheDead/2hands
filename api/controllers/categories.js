@@ -3,7 +3,6 @@ const User = require('../models/users');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const host = require('../../config');
 
 exports.categories_get_all = (req, res) => {
     Category.find()
@@ -20,7 +19,8 @@ exports.categories_get_all = (req, res) => {
                     updatedAt: doc.updated_at,
                     request: {
                         type: 'GET',
-                        url: `${host}/categories/` + doc._id
+                        // url: `${host}/categories/` + doc._id
+                        url: `${process.env.API_ADDRESS}/categories/${doc._id}`
                     }
                 }
             }) 
@@ -35,17 +35,17 @@ exports.categories_get_all = (req, res) => {
 }
 
 exports.categories_create_category = async (req, res) => {
-    if(! await checkPermission()){
+    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
     }
 
-    console.log(req.file)
+    const CheckImage = req.file === undefined ? null : req.file.path;
     const category = new Category({
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
-        image: req.file.path,
+        image: CheckImage,
         note: req.body.note
     });
     category.save()
@@ -60,41 +60,25 @@ exports.categories_create_category = async (req, res) => {
                 createdAt: result.created_at,
                 request: {
                     type: 'GET',
-                    url: `${host}/categories/` + result._id
+                    url: `${process.env.API_ADDRESS}/categories/` + result._id
                 }
             }
         })
     })
     .catch(err => {
+        if(req.file !== undefined) {
+            fs.unlink(req.file.path, (err) => {
+                if(err)  throw err;
+            });
+        }
         res.status(500).json({
             error: err
         })
     });
-
-    function checkPermission() {
-        return new Promise(resolve => {
-            const token = req.headers.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, process.env.JWT_KEY);
-            User.findById({
-                    _id: decoded.userId
-                }).exec()
-                .then(user => {
-                    if (user.permission == 0) {
-                        resolve(0);
-                    } else {
-                        resolve(1);
-                    }
-                }).catch(err => {
-                    res.status(500).json({
-                        error: err
-                    });
-                });
-        })
-    }
 }
 
 exports.categories_get_category = async (req, res) => {
-    if(! await checkPermission()){
+    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -110,7 +94,7 @@ exports.categories_get_category = async (req, res) => {
                 category: doc,
                 request: {
                     type: 'GET',
-                    url: `${host}/categories/`
+                    url: `${process.env.API_ADDRESS}/categories/`
                 }
             });
         } else {
@@ -123,33 +107,12 @@ exports.categories_get_category = async (req, res) => {
         res.status(500).json({
             message: 'No valid entry found for provided ID',
             error: err
-        })
+        });
     });
-
-    function checkPermission() {
-        return new Promise(resolve => {
-            const token = req.headers.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, process.env.JWT_KEY);
-            User.findById({
-                    _id: decoded.userId
-                }).exec()
-                .then(user => {
-                    if (user.permission == 0) {
-                        resolve(0);
-                    } else {
-                        resolve(1);
-                    }
-                }).catch(err => {
-                    res.status(500).json({
-                        error: err
-                    });
-                });
-        })
-    }
 }
 
 exports.categories_delete_category = async (req, res) => {
-    if(! await checkPermission()){
+    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -176,31 +139,10 @@ exports.categories_delete_category = async (req, res) => {
                 error: 'No valid entry found for provided ID'
             })
     });
-
-    function checkPermission() {
-        return new Promise(resolve => {
-            const token = req.headers.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, process.env.JWT_KEY);
-            User.findById({
-                    _id: decoded.userId
-                }).exec()
-                .then(user => {
-                    if (user.permission == 0) {
-                        resolve(0);
-                    } else {
-                        resolve(1);
-                    }
-                }).catch(err => {
-                    res.status(500).json({
-                        error: err
-                    });
-                });
-        })
-    }
 }
 
 exports.categories_update_category = async (req, res) => {
-    if(! await checkPermission()){
+    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -212,7 +154,7 @@ exports.categories_update_category = async (req, res) => {
     }
 
     if(updateOps.image !== undefined) {
-        await removeImage();
+        await delete updateOps.image;
     }
 
     Category.updateOne({_id: id}, {$set: updateOps})
@@ -225,7 +167,7 @@ exports.categories_update_category = async (req, res) => {
         }
         res.status(200).json({
             message: 'Category updated',
-            Category: `${host}/categories/` + id
+            Category: `${process.env.API_ADDRESS}/categories/` + id
         });
     })
     .catch(err => {
@@ -233,35 +175,10 @@ exports.categories_update_category = async (req, res) => {
             error: err
         });
     });
-
-    function removeImage(){
-        delete updateOps.image;
-    }
-
-    function checkPermission() {
-        return new Promise(resolve => {
-            const token = req.headers.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, process.env.JWT_KEY);
-            User.findById({
-                    _id: decoded.userId
-                }).exec()
-                .then(user => {
-                    if (user.permission == 0) {
-                        resolve(0);
-                    } else {
-                        resolve(1);
-                    }
-                }).catch(err => {
-                    res.status(500).json({
-                        error: err
-                    });
-                });
-        })
-    }
 }
 
 exports.categories_update_image = async (req, res) => {
-    if(! await checkPermission()){
+    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -279,7 +196,7 @@ exports.categories_update_image = async (req, res) => {
             .then(result => {
                 res.status(200).json({
                     message: 'Category image updated',
-                    Category: `${host}/categories/` + id
+                    Category: `${process.env.API_ADDRESS}/categories/` + id
                 })
             })
         });
@@ -289,25 +206,24 @@ exports.categories_update_image = async (req, res) => {
             error: 'No valid entry found for provided ID'
         })
     });
+}
 
-    function checkPermission() {
-        return new Promise(resolve => {
-            const token = req.headers.authorization.split(" ")[1];
-            const decoded = jwt.verify(token, process.env.JWT_KEY);
-            User.findById({
-                    _id: decoded.userId
-                }).exec()
-                .then(user => {
-                    if (user.permission == 0) {
-                        resolve(0);
-                    } else {
-                        resolve(1);
-                    }
-                }).catch(err => {
-                    res.status(500).json({
-                        error: err
-                    });
+function checkPermission(tokenEncoded) {
+    return new Promise(resolve => {
+        const decoded = jwt.verify(tokenEncoded, process.env.JWT_KEY);
+        User.findById({
+                _id: decoded.userId
+            }).exec()
+            .then(user => {
+                if (user.permission == 0) {
+                    resolve(0);
+                } else {
+                    resolve(1);
+                }
+            }).catch(err => {
+                res.status(500).json({
+                    error: err
                 });
-        })
-    }
+            });
+    })
 }
