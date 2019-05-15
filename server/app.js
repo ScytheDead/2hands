@@ -3,6 +3,8 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const config = require('../config');
+
 
 // Import api
 const usersRoutes = require('./api/routes/users');
@@ -13,7 +15,8 @@ const usersRoutes = require('./api/routes/users');
 const categoriesRoutes = require('./api/routes/categories');
 
 // Connect MongoDB
-mongoose.connect('mongodb+srv://2hands-huy:' + process.env.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
+// mongoose.connect('mongodb+srv://2hands-huy:' + process.env.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
+mongoose.connect('mongodb+srv://2hands-huy:' + config.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));

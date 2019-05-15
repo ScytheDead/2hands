@@ -3,6 +3,7 @@ const User = require('../models/users');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const config = require('../../../config');
 
 exports.categories_get_all = (req, res) => {
     Category.find()
@@ -20,7 +21,7 @@ exports.categories_get_all = (req, res) => {
                     request: {
                         type: 'GET',
                         // url: `${host}/categories/` + doc._id
-                        url: `${process.env.API_ADDRESS}/categories/${doc._id}`
+                        url: `${config.API_ADDRESS}/categories/${doc._id}`
                     }
                 }
             }) 
@@ -60,7 +61,7 @@ exports.categories_create_category = async (req, res) => {
                 createdAt: result.created_at,
                 request: {
                     type: 'GET',
-                    url: `${process.env.API_ADDRESS}/categories/` + result._id
+                    url: `${config.API_ADDRESS}/categories/` + result._id
                 }
             }
         })
@@ -94,7 +95,7 @@ exports.categories_get_category = async (req, res) => {
                 category: doc,
                 request: {
                     type: 'GET',
-                    url: `${process.env.API_ADDRESS}/categories/`
+                    url: `${config.API_ADDRESS}/categories/`
                 }
             });
         } else {
@@ -167,7 +168,7 @@ exports.categories_update_category = async (req, res) => {
         }
         res.status(200).json({
             message: 'Category updated',
-            Category: `${process.env.API_ADDRESS}/categories/` + id
+            Category: `${config.API_ADDRESS}/categories/` + id
         });
     })
     .catch(err => {
@@ -196,7 +197,7 @@ exports.categories_update_image = async (req, res) => {
             .then(result => {
                 res.status(200).json({
                     message: 'Category image updated',
-                    Category: `${process.env.API_ADDRESS}/categories/` + id
+                    Category: `${config.API_ADDRESS}/categories/` + id
                 })
             })
         });
@@ -210,7 +211,7 @@ exports.categories_update_image = async (req, res) => {
 
 function checkPermission(tokenEncoded) {
     return new Promise(resolve => {
-        const decoded = jwt.verify(tokenEncoded, process.env.JWT_KEY);
+        const decoded = jwt.verify(tokenEncoded, config.JWT_KEY);
         User.findById({
                 _id: decoded.userId
             }).exec()

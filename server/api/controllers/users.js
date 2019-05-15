@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const User = require('../models/users');
+const config = require('../../../config');
 
 exports.user_signup = (req, res, next) => {
     User.find({
@@ -79,7 +80,8 @@ exports.user_login = (req, res, next) => {
                             gender: user.gender,
 
                         },
-                        process.env.JWT_KEY, {
+                        // config.JWT_KEY, {
+                        config.JWT_KEY, {
                             expiresIn: '2h'
                         }
                     );
@@ -130,7 +132,7 @@ exports.users_get_all = async (req, res) => {
                         gender: user.gender,
                         request: {
                             type: 'GET',
-                            url: `${process.env.API_ADDRESS}/users/${user._id}`
+                            url: `${config.API_ADDRESS}/users/${user._id}`
                         }
                     }
                 })
@@ -160,7 +162,7 @@ exports.users_get_user = async (req, res) => {
                 user: user,
                 request: {
                     type: 'GET',
-                    url: `${process.env.API_ADDRESS}/users/`
+                    url: `${config.API_ADDRESS}/users/`
                 }
             });
         })
@@ -288,7 +290,7 @@ exports.user_update_avatar = (req, res) => {
 
 function checkPermission(tokenEncoded) {
     return new Promise(resolve => {
-        const decoded = jwt.verify(tokenEncoded, process.env.JWT_KEY);
+        const decoded = jwt.verify(tokenEncoded, config.JWT_KEY);
         if (decoded.permission != 2) {
             resolve(0);
         } else {
