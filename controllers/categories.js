@@ -8,7 +8,7 @@ app.set('views', './views');
 
 exports.categories_get_all = (req, res) => {
     // Make the HTTP request
-    request('http://localhost:3000/api/categories', function (error, response, body) {
+    request('https://secondhandsapp.herokuapp.com/api/categories', function (error, response, body) {
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log('body:', body); // Print the HTML for the Google homepage.
