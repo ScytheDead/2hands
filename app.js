@@ -18,6 +18,19 @@ const categoriesRoutes = require('./api/routes/categories');
 // mongoose.connect('mongodb+srv://2hands-huy:' + process.env.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
 mongoose.connect('mongodb+srv://2hands-huy:' + config.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
 
+// View engine setup
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
+// ImportView
+const categories = require('./routes/categories');
+app.use('/categories', categories);
+// app.get('/categories', (req, res) => {
+//     res.render('test');
+// });
+
+
+
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({extended: false}));
