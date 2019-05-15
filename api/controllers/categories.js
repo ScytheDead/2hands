@@ -3,7 +3,7 @@ const User = require('../models/users');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const config = require('../../../config');
+const config = require('../../config');
 
 exports.categories_get_all = (req, res) => {
     Category.find()

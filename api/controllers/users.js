@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const User = require('../models/users');
-const config = require('../../../config');
+const config = require('../../config');
 
 exports.user_signup = (req, res, next) => {
     User.find({
