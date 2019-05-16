@@ -23,8 +23,13 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 // ImportView
-const categories = require('./routes/categories');
-app.use('/categories', categories);
+app.use('/', (req, res) => {
+    res.render('index');
+});
+
+// const categories = require('./routes/categories');
+// app.use('/categories', categories);
+
 // app.get('/categories', (req, res) => {
 //     res.render('test');
 // });
