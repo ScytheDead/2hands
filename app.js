@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const config = require('./config');
+const hbs = require('express-handlebars');
 
 
 // Import api
@@ -19,20 +20,18 @@ const categoriesRoutes = require('./api/routes/categories');
 mongoose.connect('mongodb+srv://2hands-huy:' + config.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
 
 // View engine setup
-app.set('view engine', 'ejs');
-app.set('views', './views');
+app.set('view engine', 'hbs');
+app.engine('hbs', hbs({
+    extname: 'hbs',
+    defaultView: 'default',
+    layoutsDir: __dirname + '/views/layouts/',
+    partialsDir: __dirname + '/views/partials/'
+}));
+app.use(express.static(__dirname + '/public'));
 
 // ImportView
-app.use('/', (req, res) => {
-    res.render('index');
-});
-
-// const categories = require('./routes/categories');
-// app.use('/categories', categories);
-
-// app.get('/categories', (req, res) => {
-//     res.render('test');
-// });
+const routesClientIndex = require('./routes/index');
+app.use('/', routesClientIndex);
 
 
 
