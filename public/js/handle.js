@@ -1,4 +1,4 @@
-var Dia_chi_Dich_vu = 'https://secondhandsapp.herokuapp.com';
+
 
 console.log(sessionStorage)
 if (sessionStorage.getItem('token') != null) {
@@ -55,15 +55,25 @@ submitLogin.onclick = async () => {
             TH_errorMessage.innerHTML = `Số điện thoại hoặc mật khẩu không đúng, vui lòng đăng nhập lại.`
         }
 
-    } else {
-        alert('ddang ky')
+    } else if(document.getElementById("modalTitle").textContent == 'Đăng ký'){
+        var result = await signup(info);
+        if (result.message == 'User created') {
+            TH_errorMessage.className = `successMessage`;
+            TH_errorMessage.innerHTML = `Đăng ký thành công.`
+        } else if (result.message == 'Phone number exists'){
+            TH_errorMessage.className = `errorMessage`;
+            TH_errorMessage.innerHTML = `Số điện thoại này đã tồn tại.`
+        }
+        else {
+            TH_errorMessage.className = `errorMessage`;
+            TH_errorMessage.innerHTML = `Số điện thoại này không hợp lệ.`
+        }
     }
 }
 
 function XL_Login(result) {
     var infoUser = decodedJWT(result.token);
     showDropDown(infoUser.name);
-    // TH_name.innerHTML = infoUser.name;
     btnLogin.classList.add(`d-none`);
     sessionStorage.setItem('token', result.token);
     TH_close_modal_login.click();
