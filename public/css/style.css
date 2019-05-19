@@ -8,3 +8,43 @@
     border: 1px solid #ff765a;
     background: #fff5f3;
 }
+
+.successMessage {
+    margin: 15px 15px 0;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    width: calc(100% - 32px);
+    color: #018d2b;
+    border: 1px solid #7aee76;
+    background: #fff5f3;
+}
+
+#TH_name {
+    margin: 5px 5px 5px 10px;
+    float: left;
+}
+
+#TH_profile {
+    margin-right: 5rem;
+}
+
+#TH_txt_QLTK {
+    float: left;
+    margin: 5px 0 0 42px;
+}
+
+#TH_txt_QT {
+    float: left;
+    margin: 8px 0 0 10px;
+}
+
+#TH_txt_logout {
+    float: left;
+    margin: 6px;
+}
+
+.dropdown-value{
+    float: left;
+    margin: 5px 10px;
+}
