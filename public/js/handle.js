@@ -133,3 +133,8 @@ function decodedJWT(tokenEncoded) {
 function goIndex(){
     window.location.href = Dia_chi_Dich_vu
 }
+
+function getDateFormat(dateISO){
+    var date = new Date(dateISO);
+    return `${date.getDate()}-${(date.getMonth()+1)}-${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+}
