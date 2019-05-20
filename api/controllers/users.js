@@ -165,7 +165,7 @@ exports.users_get_user = async (req, res) => {
 
     const id = req.params.userId;
     User.findById(id)
-        .select('_id phoneNumber isAdmin isEmployee isUser messages subscribes created_at updated_at name address avatar facebook email status gender')
+        .select('_id phoneNumber isAdmin isEmployee isUser messages subscribes created_at updated_at name address avatar facebook email status gender note')
         .exec()
         .then(user => {
             res.status(200).json({
@@ -192,7 +192,7 @@ exports.user_update = async (req, res) => {
     }
 
     //check permission if update permission
-    if (updateOps.permission !== undefined) {
+    if (updateOps.isAdmin !== undefined || updateOps.isEmployee !== undefined || updateOps.isUser !== undefined) {
         const permission = await checkPermission(req.headers.authorization.split(" ")[1]);
         if (!permission)
             return res.status(401).json({
@@ -301,7 +301,7 @@ exports.user_update_avatar = (req, res) => {
 function checkPermission(tokenEncoded) {
     return new Promise(resolve => {
         const decoded = jwt.verify(tokenEncoded, config.JWT_KEY);
-        if (decoded.isAdmin || decoded.isEmployee) {
+        if (decoded.isAdmin) {
             resolve(1);
         } else {
             resolve(0);

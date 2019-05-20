@@ -11,7 +11,6 @@ const userSchema = mongoose.Schema({
     facebook: {type: String, trim: true },
     email: {type: String, match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ },
     gender: { type: Boolean },
-    // permission: { type: Number, default: 0},     //0: customer, 1: employee, 2: owner
     isAdmin: { type: Boolean, default: 0},
     isEmployee: { type: Boolean, default: 0},
     isUser: { type: Boolean, default: 1},

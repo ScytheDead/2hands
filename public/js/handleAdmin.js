@@ -34,21 +34,20 @@ async function showAllUsers() {
                 <td scope="row">${user.phoneNumber}</td>
                 <td>${user.name == null ? "" : user.name}</td>
                 <td>${user.address == null ? "" :  user.address}</td>
-                <td>${user.avatar == null ? "" :  user.avatar}</td>
+                <td><img src="${Dia_chi_Dich_vu}/${user.avatar}" width="70" height="70"/></td>
                 <td>${user.facebook == null ? "" :  user.facebook}</td>
                 <td>${user.email == null ? "" :  user.email}</td>
                 <td>${user.gender == null ? "" : user.gender}</td>
                 `
-                console.log(listUser)
                 if(user.isAdmin) chuoi_HTML += `<td>Admin</td>` 
                 else if(user.isEmployee) chuoi_HTML += `<td>Nhân viên</td>` 
                 else chuoi_HTML += `<td>Người dùng</td>` 
 
-                chuoi_HTML += `<td>${user.createdAt == null ? "" :  user.createdAt}</td>
+                chuoi_HTML += `<td>${getDateFormat(user.createdAt)}</td>
                 <td>${user.status == true ? "hoạt động" :  "khóa"}</td>
                 <td>${user.note == null ? "" :  user.note}</td>
                 <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/user/${user.id}0301${sessionStorage.getItem('token')}'">Sửa</button>
-                    <button class="btn btn-outline-danger" onclick="deleteUser('${sessionStorage.getItem('token')}', '${user.id}')">Xóa</button>
+                    <button class="btn btn-outline-danger mt-2" onclick="deleteUser('${sessionStorage.getItem('token')}', '${user.id}')">Xóa</button>
                 </td>
             </tr>`
             })
@@ -91,7 +90,9 @@ function messageError(err) {
 
 function messageSuccess(result) {
     if (result.message == 'User deleted') {
-        modelTitleThongBao.innerHTML = `Xóa user thành công`;
+        modelTitleThongBao.innerHTML = `Xóa tài khoản thành công`;
+    } else if (result.message == 'User updated') {
+        modelTitleThongBao.innerHTML = `Cập nhật tài khoản thành công`;
     }
     modal_ThongBao.click();
     setTimeout(() => {
