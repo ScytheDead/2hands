@@ -216,10 +216,10 @@ function checkPermission(tokenEncoded) {
                 _id: decoded.userId
             }).exec()
             .then(user => {
-                if (user.permission == 0) {
-                    resolve(0);
-                } else {
+                if (user.isAdmin || user.isEmployee) {
                     resolve(1);
+                } else {
+                    resolve(0);
                 }
             }).catch(err => {
                 res.status(500).json({

@@ -66,23 +66,28 @@ exports.user_login = (req, res, next) => {
                 if (result) {
                     const token = jwt.sign( //parse dữ liệu thành chuỗi token
                         {
+                            id: user._id,
                             phoneNumber: user.phoneNumber,
-                            userId: user._id,
-                            permission: user.permission,
+                            // permission: user.permission,
+                            isAdmin: user.isAdmin,
+                            isEmployee: user.isEmployee,
+                            isUser: user.isUser,
                             messages: user.messages,
                             subscribes: user.subscribes,
                             createdAt: user.created_at,
+                            updatedAt: user.updated_at,
                             name: user.name,
                             address: user.address,
                             avatar: user.avatar,
                             facebook: user.facebook,
                             email: user.email,
                             gender: user.gender,
-
+                            status: user.status,
+                            note: user.note
                         },
                         // config.JWT_KEY, {
                         config.JWT_KEY, {
-                            expiresIn: '2h'
+                            expiresIn: '4h'
                         }
                     );
                     return res.status(200).json({
@@ -110,7 +115,7 @@ exports.users_get_all = async (req, res) => {
     }
 
     User.find()
-        .select('_id phoneNumber permission messages subscribes created_at updated_at name address avatar facebook email gender')
+        .select('_id phoneNumber isAdmin isEmployee isUser messages subscribes created_at updated_at name address avatar facebook email gender status note')
         .exec()
         .then(users => {
             const response = {
@@ -119,7 +124,10 @@ exports.users_get_all = async (req, res) => {
                     return {
                         id: user._id,
                         phoneNumber: user.phoneNumber,
-                        permission: user.permission,
+                        // permission: user.permission,
+                        isAdmin: user.isAdmin,
+                        isEmployee: user.isEmployee,
+                        isUser: user.isUser,
                         messages: user.messages,
                         subscribes: user.subscribes,
                         createdAt: user.created_at,
@@ -130,6 +138,8 @@ exports.users_get_all = async (req, res) => {
                         facebook: user.facebook,
                         email: user.email,
                         gender: user.gender,
+                        status: user.status,
+                        note: user.note,
                         request: {
                             type: 'GET',
                             url: `${config.API_ADDRESS}/users/${user._id}`
@@ -155,7 +165,7 @@ exports.users_get_user = async (req, res) => {
 
     const id = req.params.userId;
     User.findById(id)
-        .select('_id phoneNumber permission messages subscribes created_at updated_at name address avatar facebook email gender')
+        .select('_id phoneNumber isAdmin isEmployee isUser messages subscribes created_at updated_at name address avatar facebook email status gender')
         .exec()
         .then(user => {
             res.status(200).json({
@@ -291,10 +301,10 @@ exports.user_update_avatar = (req, res) => {
 function checkPermission(tokenEncoded) {
     return new Promise(resolve => {
         const decoded = jwt.verify(tokenEncoded, config.JWT_KEY);
-        if (decoded.permission != 2) {
-            resolve(0);
-        } else {
+        if (decoded.isAdmin || decoded.isEmployee) {
             resolve(1);
+        } else {
+            resolve(0);
         }
     });
 }
