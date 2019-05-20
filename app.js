@@ -30,8 +30,8 @@ app.engine('hbs', hbs({
 app.use(express.static(__dirname + '/public'));
 
 // ImportView
-const routesClientIndex = require('./routes/index');
-app.use('/', routesClientIndex);
+const routes = require('./routes/index');
+app.use('/', routes);
 
 
 
