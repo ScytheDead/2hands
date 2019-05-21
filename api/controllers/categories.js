@@ -7,7 +7,7 @@ const config = require('../../config');
 
 exports.categories_get_all = (req, res) => {
     Category.find()
-    .select('_id title image updated_at')
+    .select('_id title image created_at updated_at')
     .exec()
     .then(categories => {
         const response = {
@@ -17,10 +17,10 @@ exports.categories_get_all = (req, res) => {
                     id: doc._id,
                     title: doc.title,
                     image: doc.image,
+                    createdAt: doc.created_at,
                     updatedAt: doc.updated_at,
                     request: {
                         type: 'GET',
-                        // url: `${host}/categories/` + doc._id
                         url: `${config.API_ADDRESS}/categories/${doc._id}`
                     }
                 }
@@ -212,19 +212,10 @@ exports.categories_update_image = async (req, res) => {
 function checkPermission(tokenEncoded) {
     return new Promise(resolve => {
         const decoded = jwt.verify(tokenEncoded, config.JWT_KEY);
-        User.findById({
-                _id: decoded.userId
-            }).exec()
-            .then(user => {
-                if (user.isAdmin || user.isEmployee) {
-                    resolve(1);
-                } else {
-                    resolve(0);
-                }
-            }).catch(err => {
-                res.status(500).json({
-                    error: err
-                });
-            });
+            if (decoded.isAdmin || decoded.isEmployee) {
+                resolve(1);
+            } else {
+                resolve(0);
+            }    
     })
 }

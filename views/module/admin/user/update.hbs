@@ -2,6 +2,9 @@
 <script src="../js/connectAPI.js"></script>
 <script src="../js/handle.js"></script>
 <script src="../js/handleAdmin.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.2/handlebars.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
 
 <div class="container mt-3">
     <input type="hidden" id="getIdUserCreatedUpdated"
@@ -39,9 +42,10 @@
 
             <div class="form-group">
                 <label>Giới tính: </label>&nbsp
-                <select id="gender" class="btn btn-danger ml-2">
-                    <option value="1" {{#if body.user.gender}}selected {{/if}}>Nam</option>
-                    <option value="0" {{#unless body.user.gender}}selected {{/unless}}>Nữ</option>
+                <select id="genderId" class="btn btn-danger ml-2">
+                    {{!-- <option value="" selected disabled hidden></option>
+                    <option value="1">Nam</option>
+                    <option value="0">Nữ</option>    --}}
                 </select>
             </div>
 
@@ -83,9 +87,27 @@
     </div>
 </div>
 
+
+<script>
+    var gender = `{{body.user.gender}}`; 
+    console.log(gender)
+    if(gender == 'true')
+        genderId.innerHTML = `<option value='1' selected >Nam</option> 
+        <option value='0' >Nữ</option>`;
+    else if(gender == 'false')
+        genderId.innerHTML = `<option value='1'>Nam</option> 
+        <option value='0' selected >Nữ</option>`;
+    else if (gender == ``)
+        genderId.innerHTML = `<option value='' selected disabled hidden>Chưa xác định</option> 
+        <option value='1'>Nam</option> 
+        <option value='0' >Nữ</option>`;
+</script>
+
+
+
 <script>
     TH_avatar.src = '../images/login_icon2.png';
-    
+
     var arrayGet = getIdUserCreatedUpdated.value.split('|');
     var idUser = arrayGet[0];
     var createdAt = arrayGet[1];
@@ -104,7 +126,7 @@
             { "propName": "address", "value": address.value },
             { "propName": "facebook", "value": facebook.value },
             { "propName": "email", "value": email.value },
-            { "propName": "gender", "value": gender.value },
+            { "propName": "gender", "value": genderId.value == "" ? null : genderId.value},
             { "propName": "status", "value": statusUser.value },
             { "propName": "note", "value": note.value },
         ]
@@ -123,7 +145,6 @@
             infoUserUpdate.push({ "propName": "isEmployee", "value": false })
             infoUserUpdate.push({ "propName": "isUser", "value": true })
         }
-
 
         updateAccountUser(sessionStorage.getItem('token'), idUser, infoUserUpdate)
             .then(result => {

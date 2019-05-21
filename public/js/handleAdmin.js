@@ -37,14 +37,65 @@ async function showAllUsers() {
                 <td><img src="${Dia_chi_Dich_vu}/${user.avatar}" width="70" height="70"/></td>
                 <td>${user.facebook == null ? "" :  user.facebook}</td>
                 <td>${user.email == null ? "" :  user.email}</td>
-                <td>${user.gender == null ? "" : user.gender}</td>
+                <td>${user.gender == null ? "" : (user.gender == 1 ? "Nam" : "Nữ")}</td>
                 `
                 if(user.isAdmin) chuoi_HTML += `<td>Admin</td>` 
                 else if(user.isEmployee) chuoi_HTML += `<td>Nhân viên</td>` 
                 else chuoi_HTML += `<td>Người dùng</td>` 
 
                 chuoi_HTML += `<td>${getDateFormat(user.createdAt)}</td>
-                <td>${user.status == true ? "hoạt động" :  "khóa"}</td>
+                <td>${user.status == true ? "Hoạt động" :  "Khóa"}</td>
+                <td>${user.note == null ? "" :  user.note}</td>
+                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/user/${user.id}0301${sessionStorage.getItem('token')}'">Sửa</button>
+                    <button class="btn btn-outline-danger mt-2" onclick="deleteUser('${sessionStorage.getItem('token')}', '${user.id}')">Xóa</button>
+                </td>
+            </tr>`
+            })
+
+            chuoi_HTML += ` </tbody>
+                        </table>`
+            controlAdmin.innerHTML = ``;
+            controlAdmin.innerHTML = chuoi_HTML;
+        })
+        .catch(err => {
+            messageError(err);
+        });
+}
+
+function showAllCategories(){
+    var token = sessionStorage.getItem('token');
+    await getAllCategories()
+        .then(listCategories => {
+            console.log(listCategories);
+            var chuoi_HTML = `<h3 class="text-primary mt-2">Danh sách chuyên mục tin (Tổng: ${listCategories.count})</h3>
+        <table class="table mt-3" style="">
+            <thead>
+                <tr>
+                    <th>Hình</th>
+                    <th>Tiêu đề</th>
+                    <th>Ngày tạo</th>
+                    <th>Lần cập nhật gần nhất</th>
+                    <th>Ghi chú</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody> `
+            listCategories.users.forEach(user => {
+                chuoi_HTML += `<tr>
+                <td scope="row">${user.phoneNumber}</td>
+                <td>${user.name == null ? "" : user.name}</td>
+                <td>${user.address == null ? "" :  user.address}</td>
+                <td><img src="${Dia_chi_Dich_vu}/${user.avatar}" width="70" height="70"/></td>
+                <td>${user.facebook == null ? "" :  user.facebook}</td>
+                <td>${user.email == null ? "" :  user.email}</td>
+                <td>${user.gender == null ? "" : (user.gender == 1 ? "Nam" : "Nữ")}</td>
+                `
+                if(user.isAdmin) chuoi_HTML += `<td>Admin</td>` 
+                else if(user.isEmployee) chuoi_HTML += `<td>Nhân viên</td>` 
+                else chuoi_HTML += `<td>Người dùng</td>` 
+
+                chuoi_HTML += `<td>${getDateFormat(user.createdAt)}</td>
+                <td>${user.status == true ? "Hoạt động" :  "Khóa"}</td>
                 <td>${user.note == null ? "" :  user.note}</td>
                 <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/user/${user.id}0301${sessionStorage.getItem('token')}'">Sửa</button>
                     <button class="btn btn-outline-danger mt-2" onclick="deleteUser('${sessionStorage.getItem('token')}', '${user.id}')">Xóa</button>
