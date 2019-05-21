@@ -21,7 +21,7 @@ exports.categories_get_all = (req, res) => {
                     updatedAt: doc.updated_at,
                     request: {
                         type: 'GET',
-                        url: `${config.API_ADDRESS}/categories/${doc._id}`
+                        url: `${config.API_ADDRESS}/api/categories/${doc._id}`
                     }
                 }
             }) 
@@ -61,7 +61,7 @@ exports.categories_create_category = async (req, res) => {
                 createdAt: result.created_at,
                 request: {
                     type: 'GET',
-                    url: `${config.API_ADDRESS}/categories/` + result._id
+                    url: `${config.API_ADDRESS}/api/categories/` + result._id
                 }
             }
         })
@@ -95,7 +95,7 @@ exports.categories_get_category = async (req, res) => {
                 category: doc,
                 request: {
                     type: 'GET',
-                    url: `${config.API_ADDRESS}/categories/`
+                    url: `${config.API_ADDRESS}/api/categories/`
                 }
             });
         } else {
@@ -168,7 +168,7 @@ exports.categories_update_category = async (req, res) => {
         }
         res.status(200).json({
             message: 'Category updated',
-            Category: `${config.API_ADDRESS}/categories/` + id
+            Category: `${config.API_ADDRESS}/api/categories/` + id
         });
     })
     .catch(err => {
@@ -197,7 +197,7 @@ exports.categories_update_image = async (req, res) => {
             .then(result => {
                 res.status(200).json({
                     message: 'Category image updated',
-                    Category: `${config.API_ADDRESS}/categories/` + id
+                    Category: `${config.API_ADDRESS}/api/categories/` + id
                 })
             })
         });
