@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+
+
+<script>
+    if (sessionStorage.getItem('token') != null) {
+        var user = decodedJWT(sessionStorage.getItem('token'));
+        if (user.isAdmin || user.isEmployee) {
+
+        } else {
+            window.location.href = Dia_chi_Dich_vu
+        }
+    } else {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+
+        <div class="col-md-3">
+            {{> admin/content-left}}
+        </div>
+
+        <div id="controlAdmin" class="col-md-9">
+            
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    TH_avatar.src = '../images/login_icon2.png';
+    showAllCategories();
+</script>

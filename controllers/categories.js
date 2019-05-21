@@ -22,3 +22,10 @@ exports.categories_get_all_index = (req, res) => {
         res.render('index', {layout: 'default', body: JSON.parse(body)});
     });
 }
+
+exports.categories_get_all = (req, res) => {
+    // Make the HTTP request
+    request(`${config.API_ADDRESS}/api/categories`, function (error, response, body) {
+        res.render('module/admin/category/all_category', {layout: 'default', body: JSON.parse(body)});
+    });
+}
