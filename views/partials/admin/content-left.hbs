@@ -1,14 +1,31 @@
+<h4 class="text-secondary">Chuyên mục quản trị</h4>
+<ul>
+    <li><button onclick="goHomeAdmin()" class="btn btn-outline-danger">Home</a></li>
+    <li><button onclick="" class="btn btn-outline-warning mt-1">Tin chờ duyệt</button></li>
+    <li><button onclick="" class="btn btn-outline-success mt-1">Tin đã duyệt</button></li>
+    <hr>
+    <li><button onclick="goAllCategoryAdmin()" class="btn btn-outline-primary mt-1">Quản lý chuyên mục tin</button></li>
+    <li><button onclick="" class="btn btn-outline-primary mt-1">Quản lý thể loại</button></li>
+    <li><button onclick="" class="btn btn-outline-primary mt-1">Quản lý hãng trong loại</button></li>
+    <li><button onclick="goAllUserAdmin()" class="btn btn-outline-primary mt-1">Quản lý tài khoản</button></li>
+    <hr>
+    <li><button class="btn btn-info" onclick="goIndex()">Trang chủ</button></li>
+</ul>
 
-    <h4 class="text-secondary">Chuyên mục quản trị</h4>
-    <ul>
-        <li><button onclick="goHomeAdmin()" class="btn btn-outline-danger">Home</a></li>
-        <li><button onclick="" class="btn btn-outline-warning mt-1">Tin chờ duyệt</button></li>
-        <li><button onclick="" class="btn btn-outline-success mt-1">Tin đã duyệt</button></li>
-        <hr>
-        <li><button onclick="" class="btn btn-outline-primary mt-1">Quản lý chuyên mục tin</button></li>
-        <li><button onclick="" class="btn btn-outline-primary mt-1">Quản lý thể loại</button></li>
-        <li><button onclick="" class="btn btn-outline-primary mt-1">Quản lý hãng trong loại</button></li>
-        <li><button onclick="goAllUserAdmin()" class="btn btn-outline-primary mt-1">Quản lý tài khoản</button></li>
-        <hr>
-        <li><button class="btn btn-info" onclick="goIndex()">Trang chủ</button></li>
-    </ul>
+<script>
+    function goAllCategoryAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/category'
+    }
+
+    function goAllUserAdmin() {
+        window.location = Dia_chi_Dich_vu + '/admin/user';
+    }
+
+    function goHomeAdmin() {
+        window.location = Dia_chi_Dich_vu + '/admin';
+    }
+
+    function goIndex() {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>

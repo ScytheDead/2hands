@@ -267,7 +267,7 @@ exports.user_update_avatar = (req, res) => {
     User.findById(id)
         .select('avatar')
         .exec()
-        .then(async result => {
+        .then(result => {
             if (result.avatar !== undefined && result.avatar !== null) {
                 fs.unlink(result.avatar, (err) => {
                     if (err) {

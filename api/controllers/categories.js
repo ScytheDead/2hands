@@ -124,15 +124,18 @@ exports.categories_delete_category = async (req, res) => {
     .select('image')
     .exec()
     .then(result => {
-        fs.unlink(result.image, (err) => {
-            if(err)  throw err;
-            Category.deleteOne({_id: id})
-            .exec()
-            .then(result => {
-                res.status(200).json({
-                    message: 'Category deleted'
-                });
-            })
+        if(result.image !== undefined && result.image !== null){
+            fs.unlink(result.image, (err) => {
+                if(err)  throw err;
+            });
+        }
+        
+        Category.deleteOne({_id: id})
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'Category deleted'
+            });
         })
     })
     .catch(err => {
@@ -190,17 +193,19 @@ exports.categories_update_image = async (req, res) => {
     .select('image')
     .exec()
     .then(result => {
-        fs.unlink(result.image, (err) => {
-            if(err)  throw err;
-            Category.updateOne({_id: id}, {$set: {"image": req.file.path}})
-            .exec()
-            .then(result => {
-                res.status(200).json({
-                    message: 'Category image updated',
-                    Category: `${config.API_ADDRESS}/api/categories/` + id
+        if(req.file !== undefined && req.file !== null){
+            fs.unlink(result.image, (err) => {
+                if(err)  throw err;
+                Category.updateOne({_id: id}, {$set: {"image": req.file.path}})
+                .exec()
+                .then(result => {
+                    res.status(200).json({
+                        message: 'Category image updated',
+                        Category: `${config.API_ADDRESS}/api/categories/` + id
+                    })
                 })
-            })
-        });
+            });
+        }
     })
     .catch(err => {
         res.status(500).json({

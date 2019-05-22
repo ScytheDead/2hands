@@ -29,3 +29,8 @@ exports.categories_get_all = (req, res) => {
         res.render('module/admin/category/all_category', {layout: 'default', body: JSON.parse(body)});
     });
 }
+
+exports.get_category = (req, res) => {
+    var idCategory = req.params.categoryId;
+    res.render('module/admin/category/add_or_edit_category', { layout: 'default', categoryId: idCategory });
+}
