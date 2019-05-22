@@ -41,7 +41,7 @@
         getAllCategoriesAPI()
             .then(listCategories => {
                 var chuoi_HTML = `<h3 class="text-primary mt-2">Danh sách chuyên mục tin (Tổng: ${listCategories.count})</h3>
-            <button class="btn btn-primary" onclick="">Thêm chuyên mục tin</button>
+            <button class="btn btn-primary" onclick="goCreateCategory()">Thêm chuyên mục tin</button>
         <table class="table mt-3" style="">
             <thead>
                 <tr>
@@ -86,5 +86,9 @@
             .catch(err => {
                 messageError(err);
             });
+    }
+
+    function goCreateCategory(){
+        window.location = Dia_chi_Dich_vu + '/category';
     }
 </script>

@@ -5,11 +5,11 @@
 
 <div class="container mt-3">
     <div class="row">
-        <div>
-            <h1 class="text-info">CHỈNH SỬA CHUYÊN MỤC TIN {{categoryId}}</h1>
+        <div class="col-md-12">
+            <h1 id="formTitleId" class="text-info"></h1>
         </div>
         {{!-- <form method="post" enctype="multipart/form-data"> --}}
-        <div>
+        <div class="col-md-9">
 
             <div class="form-group">
                 <label>Tiêu đề: </label>
@@ -32,7 +32,8 @@
             <div class="form-group">
                 <label>Hình ảnh: </label>
                 <img id="imageId" src="" width="100" height="100">
-                <button class="btn btn-outline-warning" id="showModalUploadId" value="">Cập nhật ảnh</button>
+                <input class="btn btn-outline-primary" type="file" name="file" id="uploadImage">
+                <button class="btn btn-outline-warning" id="showModalUploadId">Cập nhật ảnh</button>
             </div>
 
             <!-- Nút Xác nhận Lưu, Hủy -->
@@ -44,7 +45,8 @@
 </div>
 
 <!-- Button trigger modal -->
-<button id="modalUploadId" type="button" class="btn btn-primary btn-lg d-none" data-toggle="modal" data-target="#modelId">
+<button id="modalUploadId" type="button" class="btn btn-primary btn-lg d-none" data-toggle="modal"
+    data-target="#modelId">
     Launch
 </button>
 
@@ -64,8 +66,8 @@
                 <input class="btn btn-outline-warning" type="file" id="uploadId" name="image">
 
                 <div class="modal-footer mt-3">
-                    <button id="btnCloseModalUpload" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <button class="btn btn-primary" id="btnUpload">Cập nhật</button>
+                    <button id="btnCloseModalUpload" class="btn btn-outline-danger" data-dismiss="modal">Đóng</button>
+                    <button class="btn btn-success" id="btnUpload">Cập nhật</button>
                 </div>
 
             </div>
@@ -77,65 +79,99 @@
 
     var idCategory = `{{categoryId}}`;
 
-    getCategoryAPI(sessionStorage.getItem('token'), idCategory)
-        .then(result => {
-            console.log(result.category)
-            titleId.value = result.category.title;
-            createdAtId.innerHTML = 'Ngày tham gia: ' + getDateFormat(result.category.created_at);
-            updatedAtId.innerHTML = 'Chỉnh sửa gần đây nhất: ' + getDateFormat(result.category.updated_at);
-            noteId.value = result.category.note == undefined ? "" : result.category.note;
-            imageId.src = `${Dia_chi_Dich_vu}/${result.category.image}`;
-            imageModalId.src = imageId.src;
-        })
-        .catch(err => {
-            messageError(err);
-        });
+    if (idCategory == ``) {  // Create
+        showModalUploadId.classList.add('d-none');
+        imageId.classList.add('d-none');
+        updatedAtId.classList.add('d-none');
 
-    showModalUploadId.onclick = () => {
-        modalUploadId.click();
-    };
+        formTitleId.innerHTML = `TẠO MỚI CHUYÊN MỤC TIN`;
+        createdAtId.innerHTML = 'Ngày tạo: ' + getDateFormat(new Date());
 
-    btnUpload.onclick = () => {
-        var formData = new FormData();
-        formData.append('image', uploadId.files[0]);
 
-        updateImageCategoryAPI(sessionStorage.getItem('token'), idCategory, formData)
-        .then(result => {
-            messageSuccess(result);
-            btnCloseModalUpload.click();
-            setTimeout(() => {
-                window.location = `${Dia_chi_Dich_vu}/category/${idCategory}`;
-            }, 1500);
-        })
-        .catch(err => {
-            messageError(err);
-        });
-    }
+        luu.onclick = () => {
+            var formData = new FormData();
+            formData.append('image', uploadImage.files[0]);
+            formData.append('title', titleId.value);
+            formData.append('note', noteId.value);
+
+            createCategoryAPI(sessionStorage.getItem('token'), formData)
+                .then(result => {
+                    messageSuccess(result);
+                    setTimeout(() => {
+                        window.location = Dia_chi_Dich_vu + '/admin/category';
+                    }, 1500);
+                })
+                .catch(err => {
+                    messageError(err);
+                });
+        }
+
+    }  // End Create
+    else {    // Update
+        uploadImage.classList.add('d-none');
+        formTitleId.innerHTML = `CHỈNH SỬA CHUYÊN MỤC TIN`;
+
+        getCategoryAPI(sessionStorage.getItem('token'), idCategory)
+            .then(result => {
+                console.log(result.category)
+                titleId.value = result.category.title;
+                createdAtId.innerHTML = 'Ngày tham gia: ' + getDateFormat(result.category.created_at);
+                updatedAtId.innerHTML = 'Chỉnh sửa gần đây nhất: ' + getDateFormat(result.category.updated_at);
+                noteId.value = result.category.note == undefined ? "" : result.category.note;
+                imageId.src = `${Dia_chi_Dich_vu}/${result.category.image}`;
+                imageModalId.src = imageId.src;
+            })
+            .catch(err => {
+                messageError(err);
+            });
+
+        luu.onclick = () => {
+            var categoryUpdate = [
+                { "propName": "title", "value": titleId.value },
+                { "propName": "note", "value": noteId.value }
+            ]
+
+            updateCategoryAPI(sessionStorage.getItem('token'), idCategory, categoryUpdate)
+                .then(result => {
+                    console.log(result);
+                    messageSuccess(result);
+                    setTimeout(() => {
+                        window.location = Dia_chi_Dich_vu + '/admin/category';
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.log(err);
+                    messageError(err);
+                });
+        }
+
+
+        showModalUploadId.onclick = () => {
+            modalUploadId.click();
+        }
+
+
+        btnUpload.onclick = () => {
+            var formData = new FormData();
+            formData.append('image', uploadId.files[0]);
+
+            updateImageCategoryAPI(sessionStorage.getItem('token'), idCategory, formData)
+                .then(result => {
+                    messageSuccess(result);
+                    btnCloseModalUpload.click();
+                    setTimeout(() => {
+                        window.location = `${Dia_chi_Dich_vu}/category/${idCategory}`;
+                    }, 1500);
+                })
+                .catch(err => {
+                    messageError(err);
+                });
+        }
+    }   // End update
+
 
     huy.onclick = () => {
         window.location = Dia_chi_Dich_vu + '/admin/category';
     }
 
-    luu.onclick = () => {
-        var infoUserUpdate = [
-            { "propName": "name", "value": fullname.value },
-            { "propName": "address", "value": address.value },
-            { "propName": "facebook", "value": facebook.value },
-            { "propName": "email", "value": email.value },
-            { "propName": "gender", "value": genderId.value == "" ? null : genderId.value },
-            { "propName": "status", "value": statusUser.value },
-            { "propName": "note", "value": note.value },
-        ]
-
-        updateAccountUserAPI(sessionStorage.getItem('token'), idUser, infoUserUpdate)
-            .then(result => {
-                messageSuccess(result);
-                setTimeout(() => {
-                    window.location = Dia_chi_Dich_vu + '/admin/categories';
-                }, 1500);
-            })
-            .catch(err => {
-                messageError(err);
-            })
-    }
 </script>

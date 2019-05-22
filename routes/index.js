@@ -12,6 +12,7 @@ router.get('/admin/user', controllerAdmin.get_all_users);
 
 router.get('/admin/category', controllerCategory.categories_get_all);
 router.get('/category/:categoryId', controllerCategory.get_category);
+router.get('/category', controllerCategory.create_category);
 
 
 module.exports = router;
