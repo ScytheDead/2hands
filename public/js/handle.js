@@ -43,7 +43,7 @@ submitLogin.onclick = async () => {
     }
 
     if (document.getElementById("modalTitle").textContent == 'Đăng nhập') {
-        await login(info)
+        await loginAPI(info)
             .then(result => {
                 if (result.message == 'Auth successful') { //Auth successful
                     XL_Login(result);
@@ -59,7 +59,7 @@ submitLogin.onclick = async () => {
                 }
             })
     } else if (document.getElementById("modalTitle").textContent == 'Đăng ký') {
-        await signup(info)
+        await signupAPI(info)
             .then(result => {
                 if (result.message == 'User created') {
                     TH_errorMessage.className = `successMessage`;
@@ -132,10 +132,6 @@ function showDropDown(info) {
 function decodedJWT(tokenEncoded) {
     var infoUser = JSON.parse(atob(tokenEncoded.split('.')[1]));
     return infoUser;
-}
-
-function goIndex() {
-    window.location.href = Dia_chi_Dich_vu
 }
 
 function getDateFormat(dateISO) {
