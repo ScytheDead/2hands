@@ -34,3 +34,7 @@ exports.get_category = (req, res) => {
     var idCategory = req.params.categoryId;
     res.render('module/admin/category/add_or_edit_category', { layout: 'default', categoryId: idCategory });
 }
+
+exports.create_category = (req, res) => {
+    res.render('module/admin/category/add_or_edit_category', { layout: 'default' });
+}

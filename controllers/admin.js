@@ -31,7 +31,7 @@ exports.get_user = (req, res) => {
         // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log(body);
         console.log(JSON.parse(body)); // Print the HTML for the Google homepage.
-        res.render('module/admin/user/update', {layout: 'default', body: JSON.parse(body)});
+        res.render('module/admin/user/add_or_edit_user', {layout: 'default', body: JSON.parse(body)});
     });
 }
 

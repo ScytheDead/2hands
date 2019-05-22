@@ -7,7 +7,7 @@ const config = require('../../config');
 
 exports.categories_get_all = (req, res) => {
     Category.find()
-    .select('_id title image created_at updated_at')
+    .select('_id title note image created_at updated_at')
     .exec()
     .then(categories => {
         const response = {
@@ -19,6 +19,7 @@ exports.categories_get_all = (req, res) => {
                     image: doc.image,
                     createdAt: doc.created_at,
                     updatedAt: doc.updated_at,
+                    note: doc.note,
                     request: {
                         type: 'GET',
                         url: `${config.API_ADDRESS}/api/categories/${doc._id}`
@@ -205,12 +206,16 @@ exports.categories_update_image = async (req, res) => {
                     })
                 })
             });
+        } else {
+            res.status(404).json({
+                error: 'Not found image'
+            });
         }
     })
     .catch(err => {
         res.status(500).json({
             error: 'No valid entry found for provided ID'
-        })
+        });
     });
 }
 

@@ -240,8 +240,19 @@ exports.user_delete = async (req, res) => {
             messages: 'You don\'t have permission'
         });
     }
+    
+    const userId = req.params.userId;
+    User.findById(userId)
+    .select('avatar')
+    .exec()
+    .then(result => {
+        if(result.avatar !== undefined && result.avatar !== null){
+            fs.unlink(result.avatar, (err) => {
+                if(err)  throw err;
+            });
+        }
 
-    User.deleteOne({
+        User.deleteOne({
             _id: req.params.userId
         })
         .exec()
@@ -255,11 +266,12 @@ exports.user_delete = async (req, res) => {
                 message: 'User deleted'
             });
         })
-        .catch(err => {
-            res.status(500).json({
-                error: err
-            });
+    })
+    .catch(err => {
+        res.status(500).json({
+            error: 'No valid entry found for provided ID'
         });
+    });
 }
 
 exports.user_update_avatar = (req, res) => {
