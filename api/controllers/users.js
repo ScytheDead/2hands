@@ -157,12 +157,6 @@ exports.users_get_all = async (req, res) => {
 }
 
 exports.users_get_user = async (req, res) => {
-    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
-        return res.status(401).json({
-            message: 'You don\'t have permission'
-        });
-    }
-
     const id = req.params.userId;
     User.findById(id)
         .select('_id phoneNumber isAdmin isEmployee isUser messages subscribes created_at updated_at name address avatar facebook email status gender note')
