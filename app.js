@@ -12,7 +12,7 @@ const usersRoutes = require('./api/routes/users');
 // const producersRoutes = require('./api/routes/producers');
 // const postsRoutes = require('./api/routes/posts');
 // const messagesRoutes = require('./api/routes/messages');
-// const classifiesRoutes = require('./api/routes/classifies');
+const classifiesRoutes = require('./api/routes/classifies');
 const categoriesRoutes = require('./api/routes/categories');
 
 // Connect MongoDB
@@ -59,7 +59,7 @@ app.use('/api/users', usersRoutes);
 // app.use('/api/producers', producersRoutes);
 // app.use('/api/posts', postsRoutes);
 // app.use('/api/messages', messagesRoutes);
-// app.use('/api/classifies', classifiesRoutes);
+app.use('/api/classifies', classifiesRoutes);
 app.use('/api/categories', categoriesRoutes);
 
 //Custom message error khi lỗi 404

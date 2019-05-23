@@ -1,5 +1,4 @@
 const Category = require('../models/categories');
-const User = require('../models/users');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -52,9 +51,9 @@ exports.categories_create_category = async (req, res) => {
     });
     category.save()
     .then(result => {
-        res.status(200).json({
+        res.status(201).json({
             message: 'Created category successful',
-            createCategory: {
+            createdCategory: {
                 id: result._id,
                 title: result.title,
                 image: result.image,
@@ -213,8 +212,15 @@ exports.categories_update_image = async (req, res) => {
         }
     })
     .catch(err => {
+        if (req.file !== undefined && req.file !== null) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) throw err;
+            });
+        }
+
         res.status(500).json({
-            error: 'No valid entry found for provided ID'
+            message: 'No valid entry found for provided ID',
+            error: err
         });
     });
 }
