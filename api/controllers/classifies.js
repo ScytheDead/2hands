@@ -204,11 +204,6 @@ exports.classifies_update_classify = async (req, res) => {
         })
         .exec()
         .then(result => {
-            // if (result.n <= 0) {
-            //     return res.status(500).json({
-            //         error: "Not found classify"
-            //     });
-            // }
             res.status(200).json({
                 message: 'Classify updated',
                 ClassifyURL: `${config.API_ADDRESS}/api/classifies/` + id
@@ -284,7 +279,6 @@ exports.classifies_update_image = async (req, res) => {
             });
         } else {
             res.status(404).json({
-                message: 'No valid entry found for provided Classify ID',
                 error: err
             });
         }
@@ -296,10 +290,17 @@ exports.classifies_update_image = async (req, res) => {
             });
         }
 
-        res.status(500).json({
-            message: 'No valid entry found for provided Classify ID',
-            error: err
-        });
+        if(err.kind == 'ObjectId'){
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        }else{
+            res.status(404).json({
+                message: 'Not found image',
+                error: err
+            });
+        }    
     });
 }
 
