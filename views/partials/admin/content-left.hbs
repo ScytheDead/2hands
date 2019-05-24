@@ -5,7 +5,7 @@
     <li><button onclick="" class="btn btn-outline-success mt-1">Tin đã duyệt</button></li>
     <hr>
     <li><button onclick="goAllCategoryAdmin()" class="btn btn-outline-primary mt-1">Quản lý chuyên mục tin</button></li>
-    <li><button onclick="" class="btn btn-outline-primary mt-1">Quản lý thể loại</button></li>
+    <li><button onclick="goAllClassifyAdmin()" class="btn btn-outline-primary mt-1">Quản lý thể loại</button></li>
     <li><button onclick="" class="btn btn-outline-primary mt-1">Quản lý hãng trong loại</button></li>
     <li><button onclick="goAllUserAdmin()" class="btn btn-outline-primary mt-1">Quản lý tài khoản</button></li>
     <hr>
@@ -13,6 +13,10 @@
 </ul>
 
 <script>
+    function goAllClassifyAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/classify'
+    }
+
     function goAllCategoryAdmin(){
         window.location = Dia_chi_Dich_vu + '/admin/category'
     }
