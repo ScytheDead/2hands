@@ -1,4 +1,6 @@
 const Category = require('../models/categories');
+const Classify = require('../models/classifies');
+const Producer = require('../models/producers');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -6,37 +8,37 @@ const config = require('../../config');
 
 exports.categories_get_all = (req, res) => {
     Category.find()
-    .select('_id title note image created_at updated_at')
-    .exec()
-    .then(categories => {
-        const response = {
-            count: categories.length,
-            categories: categories.map(doc => {
-                return {
-                    id: doc._id,
-                    title: doc.title,
-                    image: doc.image,
-                    createdAt: doc.created_at,
-                    updatedAt: doc.updated_at,
-                    note: doc.note,
-                    request: {
-                        type: 'GET',
-                        url: `${config.API_ADDRESS}/api/categories/${doc._id}`
+        .select('_id title note image created_at updated_at')
+        .exec()
+        .then(categories => {
+            const response = {
+                count: categories.length,
+                categories: categories.map(doc => {
+                    return {
+                        id: doc._id,
+                        title: doc.title,
+                        image: doc.image,
+                        createdAt: doc.created_at,
+                        updatedAt: doc.updated_at,
+                        note: doc.note,
+                        request: {
+                            type: 'GET',
+                            url: `${config.API_ADDRESS}/api/categories/${doc._id}`
+                        }
                     }
-                }
-            }) 
-        };
-        res.status(200).json(response);
-    })
-    .catch(err => {
-        res.status(500).json({
-            error: err
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
         });
-    });
 }
 
 exports.categories_create_category = async (req, res) => {
-    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -50,36 +52,36 @@ exports.categories_create_category = async (req, res) => {
         note: req.body.note
     });
     category.save()
-    .then(result => {
-        res.status(201).json({
-            message: 'Created category successful',
-            createdCategory: {
-                id: result._id,
-                title: result.title,
-                image: result.image,
-                note: result.note,
-                createdAt: result.created_at,
-                request: {
-                    type: 'GET',
-                    url: `${config.API_ADDRESS}/api/categories/` + result._id
+        .then(result => {
+            res.status(201).json({
+                message: 'Created category successful',
+                createdCategory: {
+                    id: result._id,
+                    title: result.title,
+                    image: result.image,
+                    note: result.note,
+                    createdAt: result.created_at,
+                    request: {
+                        type: 'GET',
+                        url: `${config.API_ADDRESS}/api/categories/` + result._id
+                    }
                 }
+            })
+        })
+        .catch(err => {
+            if (req.file !== undefined) {
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                });
             }
-        })
-    })
-    .catch(err => {
-        if(req.file !== undefined) {
-            fs.unlink(req.file.path, (err) => {
-                if(err)  throw err;
-            });
-        }
-        res.status(500).json({
-            error: err
-        })
-    });
+            res.status(500).json({
+                error: err
+            })
+        });
 }
 
 exports.categories_get_category = async (req, res) => {
-    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -87,66 +89,106 @@ exports.categories_get_category = async (req, res) => {
 
     const id = req.params.categoryId;
     Category.findById(id)
-    .select('_id title image note created_at updated_at')
-    .exec()
-    .then(doc => {
-        if(doc) {
-            res.status(200).json({
-                category: doc,
-                request: {
-                    type: 'GET',
-                    url: `${config.API_ADDRESS}/api/categories/`
-                }
+        .select('_id title image note created_at updated_at')
+        .exec()
+        .then(doc => {
+            if (doc) {
+                res.status(200).json({
+                    category: doc,
+                    request: {
+                        type: 'GET',
+                        url: `${config.API_ADDRESS}/api/categories/`
+                    }
+                });
+            } else {
+                res.status(404).json({
+                    message: 'No valid entry found for provided ID'
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
             });
-        } else {
-            res.status(404).json({
-                message: 'No valid entry found for provided ID'
-            });
-        }
-    })
-    .catch(err => {
-        res.status(500).json({
-            message: 'No valid entry found for provided ID',
-            error: err
         });
-    });
 }
 
 exports.categories_delete_category = async (req, res) => {
-    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
     }
 
-    const id = req.params.categoryId;
-    Category.findById(id)
-    .select('image')
-    .exec()
-    .then(result => {
-        if(result.image !== undefined && result.image !== null){
-            fs.unlink(result.image, (err) => {
-                if(err)  throw err;
-            });
-        }
-        
-        Category.deleteOne({_id: id})
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                message: 'Category deleted'
-            });
+    const categoryId = req.params.categoryId;
+
+    Classify.find({
+            category: req.params.categoryId
         })
-    })
-    .catch(err => {
+        .then(classifies => {
+            console.log('classifies', classifies.length)
+            if (classifies.length > 0) {
+                res.status(500).json({
+                    message: 'This category have still contains classify'
+                });
+            } else {
+                Producer.find({
+                        category: req.params.categoryId
+                    })
+                    .then(producers => {
+                        console.log('producers', producers.length);
+                        if (producers.length > 0) {
+                            res.status(500).json({
+                                message: 'This category have still contains producer'
+                            });
+                        } else {
+                            Category.findById(categoryId)
+                                .select('image')
+                                .exec()
+                                .then(result => {
+                                    if (result.image !== undefined && result.image !== null) {
+                                        fs.unlink(result.image, (err) => {
+                                            if (err) throw err;
+                                        });
+                                    }
+
+                                    Category.deleteOne({
+                                            _id: categoryId
+                                        })
+                                        .exec()
+                                        .then(result => {
+                                            res.status(200).json({
+                                                message: 'Category deleted'
+                                            });
+                                        })
+                                })
+                                .catch(err => {
+                                    res.status(500).json({
+                                        message: 'No valid entry found for provided ID',
+                                        error: err
+                                    });
+                                });
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'No valid entry found for provided ID',
+                            error: err
+                        });
+                    });
+            }
+        })
+        .catch(err => {
             res.status(500).json({
-                error: 'No valid entry found for provided ID'
-            })
-    });
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
 }
 
 exports.categories_update_category = async (req, res) => {
-    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -157,32 +199,36 @@ exports.categories_update_category = async (req, res) => {
         updateOps[ops.propName] = ops.value;
     }
 
-    if(updateOps.image !== undefined) {
+    if (updateOps.image !== undefined) {
         await delete updateOps.image;
     }
 
-    Category.updateOne({_id: id}, {$set: updateOps})
-    .exec()
-    .then(result => {
-        if (result.n <= 0) {
-            return res.status(500).json({
-                error: "Not found category"
+    Category.updateOne({
+            _id: id
+        }, {
+            $set: updateOps
+        })
+        .exec()
+        .then(result => {
+            if (result.n <= 0) {
+                return res.status(500).json({
+                    error: "Not found category"
+                });
+            }
+            res.status(200).json({
+                message: 'Category updated',
+                Category: `${config.API_ADDRESS}/api/categories/` + id
             });
-        }
-        res.status(200).json({
-            message: 'Category updated',
-            Category: `${config.API_ADDRESS}/api/categories/` + id
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
         });
-    })
-    .catch(err => {
-        res.status(500).json({
-            error: err
-        });
-    });
 }
 
 exports.categories_update_image = async (req, res) => {
-    if(! await checkPermission(req.headers.authorization.split(" ")[1])){
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
         return res.status(401).json({
             message: 'You don\'t have permission'
         });
@@ -190,48 +236,54 @@ exports.categories_update_image = async (req, res) => {
 
     const id = req.params.categoryId;
     Category.findById(id)
-    .select('image')
-    .exec()
-    .then(result => {
-        if(req.file !== undefined && req.file !== null){
-            fs.unlink(result.image, (err) => {
-                if(err)  throw err;
-                Category.updateOne({_id: id}, {$set: {"image": req.file.path}})
-                .exec()
-                .then(result => {
-                    res.status(200).json({
-                        message: 'Category image updated',
-                        Category: `${config.API_ADDRESS}/api/categories/` + id
-                    })
-                })
-            });
-        } else {
-            res.status(404).json({
-                error: 'Not found image'
-            });
-        }
-    })
-    .catch(err => {
-        if (req.file !== undefined && req.file !== null) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) throw err;
-            });
-        }
+        .select('image')
+        .exec()
+        .then(result => {
+            if (req.file !== undefined && req.file !== null) {
+                fs.unlink(result.image, (err) => {
+                    if (err) throw err;
+                    Category.updateOne({
+                            _id: id
+                        }, {
+                            $set: {
+                                "image": req.file.path
+                            }
+                        })
+                        .exec()
+                        .then(result => {
+                            res.status(200).json({
+                                message: 'Category image updated',
+                                Category: `${config.API_ADDRESS}/api/categories/` + id
+                            })
+                        })
+                });
+            } else {
+                res.status(404).json({
+                    error: 'Not found image'
+                });
+            }
+        })
+        .catch(err => {
+            if (req.file !== undefined && req.file !== null) {
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                });
+            }
 
-        res.status(500).json({
-            message: 'No valid entry found for provided ID',
-            error: err
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
         });
-    });
 }
 
 function checkPermission(tokenEncoded) {
     return new Promise(resolve => {
         const decoded = jwt.verify(tokenEncoded, config.JWT_KEY);
-            if (decoded.isAdmin || decoded.isEmployee) {
-                resolve(1);
-            } else {
-                resolve(0);
-            }    
+        if (decoded.isAdmin || decoded.isEmployee) {
+            resolve(1);
+        } else {
+            resolve(0);
+        }
     })
 }

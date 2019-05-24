@@ -1,5 +1,6 @@
 const Producer = require('../models/producers');
 const Classify = require('../models/classifies');
+const Category = require('../models/categories');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -9,8 +10,18 @@ const config = require('../../config');
 
 exports.producers_get_all = async (req, res) => {
     Producer.find()
-        .select('_id classify title image note created_at updated_at')
-        .populate('classify', 'title')
+        .select('_id category classify title image note created_at updated_at')
+        // .populate('classify', 'title')
+        // .populate('category', 'title')
+        .populate([{
+                path: 'category',
+                select: 'title'
+            },
+            {
+                path: 'classify',
+                select: 'title'
+            }
+        ])
         .exec()
         .then(producers => {
             const response = {
@@ -18,6 +29,7 @@ exports.producers_get_all = async (req, res) => {
                 producers: producers.map(doc => {
                     return {
                         id: doc._id,
+                        category: doc.category,
                         classify: doc.classify,
                         title: doc.title,
                         image: doc.image,
@@ -49,8 +61,9 @@ exports.producers_get_producer = async (req, res) => {
 
     const id = req.params.producerId;
     Producer.findById(id)
-        .select('_id classify title image note created_at updated_at')
+        .select('_id category classify title image note created_at updated_at')
         .populate('classify', 'title')
+        .populate('category', 'title')
         .exec()
         .then(doc => {
             if (doc) {
@@ -78,36 +91,65 @@ exports.producers_create_producer = async (req, res) => {
         });
     }
 
-    Classify.findById(req.body.classify)
-        .then(classify => {
-            const CheckImage = req.file === undefined ? null : req.file.path;
-            const producer = new Producer({
-                _id: mongoose.Types.ObjectId(),
-                classify: req.body.classify,
-                title: req.body.title,
-                image: CheckImage,
-                note: req.body.note
-            });
-            producer.save()
-                .then(result => {
-                    res.status(201).json({
-                        message: 'Created producer successful',
-                        createdProducer: {
-                            id: result._id,
-                            classify: {
-                                _id: result.classify,
-                                title: classify.title
-                            },
-                            title: result.title,
-                            image: result.image,
-                            note: result.note,
-                            createdAt: result.created_at,
-                            request: {
-                                type: 'GET',
-                                createdProducerURL: `${config.API_ADDRESS}/api/producers/` + result._id
-                            }
+    Category.findById(req.body.category)
+        .then(category => {
+            Classify.findById(req.body.classify)
+                .then(classify => {
+                    if (classify.category._id.toString() === category._id.toString()) {
+                        const CheckImage = req.file === undefined ? null : req.file.path;
+                        const producer = new Producer({
+                            _id: mongoose.Types.ObjectId(),
+                            category: req.body.category,
+                            classify: req.body.classify,
+                            title: req.body.title,
+                            image: CheckImage,
+                            note: req.body.note
+                        });
+                        producer.save()
+                            .then(result => {
+                                res.status(201).json({
+                                    message: 'Created producer successful',
+                                    createdProducer: {
+                                        id: result._id,
+                                        category: {
+                                            _id: result.category,
+                                            title: category.title
+                                        },
+                                        classify: {
+                                            _id: result.classify,
+                                            title: classify.title
+                                        },
+                                        title: result.title,
+                                        image: result.image,
+                                        note: result.note,
+                                        createdAt: result.created_at,
+                                        request: {
+                                            type: 'GET',
+                                            createdProducerURL: `${config.API_ADDRESS}/api/producers/` + result._id
+                                        }
+                                    }
+                                });
+                            })
+                            .catch(err => {
+                                if (req.file !== undefined && req.file !== null) {
+                                    fs.unlink(req.file.path, (err) => {
+                                        if (err) throw err;
+                                    });
+                                }
+                                res.status(500).json({
+                                    error: err
+                                });
+                            });
+                    } else {
+                        if (req.file !== undefined && req.file !== null) {
+                            fs.unlink(req.file.path, (err) => {
+                                if (err) throw err;
+                            });
                         }
-                    });
+                        res.status(500).json({
+                            message: 'classify not of category'
+                        });
+                    }
                 })
                 .catch(err => {
                     if (req.file !== undefined && req.file !== null) {
@@ -115,7 +157,9 @@ exports.producers_create_producer = async (req, res) => {
                             if (err) throw err;
                         });
                     }
+
                     res.status(500).json({
+                        message: 'Classify not found',
                         error: err
                     });
                 });
@@ -128,7 +172,47 @@ exports.producers_create_producer = async (req, res) => {
             }
 
             res.status(500).json({
-                message: 'Classify not found',
+                message: 'Category not found',
+                error: err
+            });
+        });
+
+}
+
+exports.producers_get_producer_by_category = async (req, res) => {
+    const categoryId = req.params.categoryId;
+    Producer.find({
+            category: categoryId
+        })
+        .select('_id category classify title image note created_at updated_at')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .exec()
+        .then(producers => {
+            const response = {
+                count: producers.length,
+                producers: producers.map(doc => {
+                    return {
+                        id: doc._id,
+                        category: doc.category,
+                        classify: doc.classify,
+                        title: doc.title,
+                        image: doc.image,
+                        createdAt: doc.created_at,
+                        updatedAt: doc.updated_at,
+                        note: doc.note,
+                        request: {
+                            type: 'GET',
+                            producerURL: `${config.API_ADDRESS}/api/producers/${doc._id}`
+                        }
+                    }
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
                 error: err
             });
         });
@@ -136,37 +220,41 @@ exports.producers_create_producer = async (req, res) => {
 
 exports.producers_get_producer_by_classify = async (req, res) => {
     const classifyId = req.params.classifyId;
-    Producer.find({classify: classifyId})
-    .select('_id classify title image note created_at updated_at')
-    .populate('classify', 'title')
-    .exec()
-    .then(producers => {
-        const response = {
-            count: producers.length,
-            producers: producers.map(doc => {
-                return {
-                    id: doc._id,
-                    classify: doc.classify,
-                    title: doc.title,
-                    image: doc.image,
-                    createdAt: doc.created_at,
-                    updatedAt: doc.updated_at,
-                    note: doc.note,
-                    request: {
-                        type: 'GET',
-                        ClassifyURL: `${config.API_ADDRESS}/api/producers/${doc._id}`
+    Producer.find({
+            classify: classifyId,
+        })
+        .select('_id category classify title image note created_at updated_at')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .exec()
+        .then(producers => {
+            const response = {
+                count: producers.length,
+                producers: producers.map(doc => {
+                    return {
+                        id: doc._id,
+                        category: doc.category,
+                        classify: doc.classify,
+                        title: doc.title,
+                        image: doc.image,
+                        createdAt: doc.created_at,
+                        updatedAt: doc.updated_at,
+                        note: doc.note,
+                        request: {
+                            type: 'GET',
+                            producerURL: `${config.API_ADDRESS}/api/producers/${doc._id}`
+                        }
                     }
-                }
-            })
-        };
-        res.status(200).json(response);
-    })
-    .catch(err => {
-        res.status(404).json({
-            message: 'No valid entry found for provided ID',
-            error: err
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
         });
-    });
 }
 
 exports.producers_update_producer = async (req, res) => {
@@ -186,6 +274,14 @@ exports.producers_update_producer = async (req, res) => {
         await delete updateOps.image;
     }
 
+    if (updateOps.classify !== undefined) {
+        await delete updateOps.classify;
+    }
+
+    if (updateOps.category !== undefined) {
+        await delete updateOps.category;
+    }
+
     Producer.updateOne({
             _id: id
         }, {
@@ -193,7 +289,6 @@ exports.producers_update_producer = async (req, res) => {
         })
         .exec()
         .then(result => {
-            console.log(result)
             res.status(200).json({
                 message: 'Producer updated',
                 ClassifyURL: `${config.API_ADDRESS}/api/producers/` + id
@@ -251,46 +346,52 @@ exports.producers_update_image = async (req, res) => {
 
     const id = req.params.producerId;
     Producer.findById(id)
-    .select('image')
-    .exec()
-    .then(result => {
-        if(req.file !== undefined && req.file !== null){
-            fs.unlink(result.image, (err) => {
-                if(err)  throw err;
-                Producer.updateOne({_id: id}, {$set: {"image": req.file.path}})
-                .exec()
-                .then(result => {
-                    res.status(200).json({
-                        message: 'Producer image updated',
-                        Category: `${config.API_ADDRESS}/api/producers/` + id
-                    })
-                })
-            });
-        } else {
-            res.status(404).json({
-                error: err
-            });
-        }
-    })
-    .catch(err => {
-        if (req.file !== undefined && req.file !== null) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) throw err;
-            });
-        }
-        
-        if(err.kind == 'ObjectId'){
-            res.status(500).json({
-                message: 'No valid entry found for provided ID',
-                error: err
-            });
-        }else{
-            res.status(404).json({
-                message: 'Not found image',
-                error: err
-            });
-        }    
-    });
+        .select('image')
+        .exec()
+        .then(result => {
+            if (req.file !== undefined && req.file !== null) {
+                fs.unlink(result.image, (err) => {
+                    if (err) throw err;
+                    Producer.updateOne({
+                            _id: id
+                        }, {
+                            $set: {
+                                "image": req.file.path
+                            }
+                        })
+                        .exec()
+                        .then(result => {
+                            res.status(200).json({
+                                message: 'Producer image updated',
+                                Category: `${config.API_ADDRESS}/api/producers/` + id
+                            })
+                        })
+                });
+            } else {
+                res.status(404).json({
+                    error: err
+                });
+            }
+        })
+        .catch(err => {
+            if (req.file !== undefined && req.file !== null) {
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                });
+            }
+
+            if (err.kind == 'ObjectId') {
+                res.status(500).json({
+                    message: 'No valid entry found for provided ID',
+                    error: err
+                });
+            } else {
+                res.status(404).json({
+                    message: 'Not found image',
+                    error: err
+                });
+            }
+        });
 }
 
 function checkPermission(tokenEncoded) {

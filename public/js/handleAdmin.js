@@ -20,7 +20,7 @@ function messageError(err) {
         setTimeout(() => {
             Tat_Thong_bao.click();
         }, 1500);
-    } else if (err = 'Internal Server Error') {
+    } else if (err == 'Internal Server Error') {
         modelTitleThongBao.innerHTML = `Tạo mới thất bại !`
         modelTitleThongBao.classList.remove('text-success');
         modelTitleThongBao.classList.add('text-danger');
@@ -28,6 +28,22 @@ function messageError(err) {
         setTimeout(() => {
             Tat_Thong_bao.click();
         }, 1500);
+    } else if (err == 'This category have still contains classify') {
+        modelTitleThongBao.innerHTML = `Chuyên mục này vẫn còn chứa thể loại bên trong !`
+        modelTitleThongBao.classList.remove('text-success');
+        modelTitleThongBao.classList.add('text-danger');
+        modal_ThongBao.click();
+        setTimeout(() => {
+            Tat_Thong_bao.click();
+        }, 2000);
+    } else if (err == 'This category have still contains producer') {
+        modelTitleThongBao.innerHTML = `Chuyên mục này vẫn còn chứa nhà sản xuất bên trong !`
+        modelTitleThongBao.classList.remove('text-success');
+        modelTitleThongBao.classList.add('text-danger');
+        modal_ThongBao.click();
+        setTimeout(() => {
+            Tat_Thong_bao.click();
+        }, 2000);
     }
 }
 

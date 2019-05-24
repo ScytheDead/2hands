@@ -1,5 +1,5 @@
-var Dia_chi_Dich_vu = 'https://secondhandsapp.herokuapp.com';
-// var Dia_chi_Dich_vu = 'http://localhost:3000';
+// var Dia_chi_Dich_vu = 'https://secondhandsapp.herokuapp.com';
+var Dia_chi_Dich_vu = 'http://localhost:3000';
 
 
 // -------------User-------------------
@@ -170,7 +170,7 @@ function deleteCategoryAPI(token, id){
                 if (Xu_ly_HTTP.status === 200)
                     resolve(JSON.parse(Xu_ly_HTTP.responseText));
                 else
-                    reject(Xu_ly_HTTP.statusText);
+                    reject(Xu_ly_HTTP.responseText);
         }
         Xu_ly_HTTP.onerror = () => {
             reject(Xu_ly_HTTP.statusText);
@@ -210,7 +210,7 @@ function createCategoryAPI(token, formCreateCategory) {
         Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
         Xu_ly_HTTP.onload = () => {
             if (Xu_ly_HTTP.readyState === 4)
-                if (Xu_ly_HTTP.status === 200)
+                if (Xu_ly_HTTP.status === 201)
                     resolve(JSON.parse(Xu_ly_HTTP.responseText));
                 else 
                     reject(Xu_ly_HTTP.statusText);     

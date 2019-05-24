@@ -1,5 +1,6 @@
 const Classify = require('../models/classifies');
 const Category = require('../models/categories');
+const Producer = require('../models/producers');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -147,37 +148,39 @@ exports.classifies_get_classify = async (req, res) => {
 
 exports.classifies_get_classify_by_category = (req, res) => {
     const CategoryId = req.params.categoryId;
-    Classify.find({category: CategoryId})
-    .select('_id category title image note created_at updated_at')
-    .populate('category', 'title')
-    .exec()
-    .then(classifies => {
-        const response = {
-            count: classifies.length,
-            classifies: classifies.map(doc => {
-                return {
-                    id: doc._id,
-                    category: doc.category,
-                    title: doc.title,
-                    image: doc.image,
-                    createdAt: doc.created_at,
-                    updatedAt: doc.updated_at,
-                    note: doc.note,
-                    request: {
-                        type: 'GET',
-                        ClassifyURL: `${config.API_ADDRESS}/api/classifies/${doc._id}`
+    Classify.find({
+            category: CategoryId
+        })
+        .select('_id category title image note created_at updated_at')
+        .populate('category', 'title')
+        .exec()
+        .then(classifies => {
+            const response = {
+                count: classifies.length,
+                classifies: classifies.map(doc => {
+                    return {
+                        id: doc._id,
+                        category: doc.category,
+                        title: doc.title,
+                        image: doc.image,
+                        createdAt: doc.created_at,
+                        updatedAt: doc.updated_at,
+                        note: doc.note,
+                        request: {
+                            type: 'GET',
+                            ClassifyURL: `${config.API_ADDRESS}/api/classifies/${doc._id}`
+                        }
                     }
-                }
-            })
-        };
-        res.status(200).json(response);
-    })
-    .catch(err => {
-        res.status(404).json({
-            message: 'No valid entry found for provided Category ID',
-            error: err
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided Category ID',
+                error: err
+            });
         });
-    });
 }
 
 exports.classifies_update_classify = async (req, res) => {
@@ -224,33 +227,51 @@ exports.classifies_delete_classify = async (req, res) => {
         });
     }
 
-    const id = req.params.classifyId;
-    Classify.findById(id)
-        .select('image')
-        .exec()
-        .then(result => {
-            if (result.image !== undefined && result.image !== null) {
-                fs.unlink(result.image, (err) => {
-                    if (err) throw err;
-                });
-            }
+    const classifyId = req.params.classifyId;
 
-            Classify.deleteOne({
-                    _id: id
-                })
-                .exec()
-                .then(result => {
-                    res.status(200).json({
-                        message: 'Classify deleted'
+    Producer.find({
+            classify: classifyId
+        })
+        .then(producers => {
+            if (producers.length > 0) {
+                res.status(500).json({
+                    message: 'This classify have still contains producer'
+                });
+            } else {
+                Classify.findById(classifyId)
+                    .select('image')
+                    .exec()
+                    .then(result => {
+                        if (result.image !== undefined && result.image !== null) {
+                            fs.unlink(result.image, (err) => {
+                                if (err) throw err;
+                            });
+                        }
+
+                        Classify.deleteOne({
+                                _id: classifyId
+                            })
+                            .exec()
+                            .then(result => {
+                                res.status(200).json({
+                                    message: 'Classify deleted'
+                                });
+                            })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'No valid entry found for provided Classify ID',
+                            error: err
+                        });
                     });
-                })
+            }
         })
         .catch(err => {
             res.status(500).json({
-                message: 'No valid entry found for provided Classify ID',
+                message: 'No valid entry found for provided ID',
                 error: err
-            })
-        });
+            });
+        })
 }
 
 exports.classifies_update_image = async (req, res) => {
@@ -262,46 +283,52 @@ exports.classifies_update_image = async (req, res) => {
 
     const id = req.params.classifyId;
     Classify.findById(id)
-    .select('image')
-    .exec()
-    .then(result => {
-        if(req.file !== undefined && req.file !== null){
-            fs.unlink(result.image, (err) => {
-                if(err)  throw err;
-                Classify.updateOne({_id: id}, {$set: {"image": req.file.path}})
-                .exec()
-                .then(result => {
-                    res.status(200).json({
-                        message: 'Classify image updated',
-                        Category: `${config.API_ADDRESS}/api/classifies/` + id
-                    })
-                })
-            });
-        } else {
-            res.status(404).json({
-                error: err
-            });
-        }
-    })
-    .catch(err => {
-        if (req.file !== undefined && req.file !== null) {
-            fs.unlink(req.file.path, (err) => {
-                if (err) throw err;
-            });
-        }
+        .select('image')
+        .exec()
+        .then(result => {
+            if (req.file !== undefined && req.file !== null) {
+                fs.unlink(result.image, (err) => {
+                    if (err) throw err;
+                    Classify.updateOne({
+                            _id: id
+                        }, {
+                            $set: {
+                                "image": req.file.path
+                            }
+                        })
+                        .exec()
+                        .then(result => {
+                            res.status(200).json({
+                                message: 'Classify image updated',
+                                Category: `${config.API_ADDRESS}/api/classifies/` + id
+                            })
+                        })
+                });
+            } else {
+                res.status(404).json({
+                    error: err
+                });
+            }
+        })
+        .catch(err => {
+            if (req.file !== undefined && req.file !== null) {
+                fs.unlink(req.file.path, (err) => {
+                    if (err) throw err;
+                });
+            }
 
-        if(err.kind == 'ObjectId'){
-            res.status(500).json({
-                message: 'No valid entry found for provided ID',
-                error: err
-            });
-        }else{
-            res.status(404).json({
-                message: 'Not found image',
-                error: err
-            });
-        }    
-    });
+            if (err.kind == 'ObjectId') {
+                res.status(500).json({
+                    message: 'No valid entry found for provided ID',
+                    error: err
+                });
+            } else {
+                res.status(404).json({
+                    message: 'Not found image',
+                    error: err
+                });
+            }
+        });
 }
 
 
