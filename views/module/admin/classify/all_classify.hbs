@@ -1,0 +1,163 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+
+
+<script>
+    if (sessionStorage.getItem('token') != null) {
+        var user = decodedJWT(sessionStorage.getItem('token'));
+        if (user.isAdmin || user.isEmployee) {
+
+        } else {
+            window.location.href = Dia_chi_Dich_vu
+        }
+    } else {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+
+        <div class="col-md-3">
+            {{> admin/content-left}}
+        </div>
+
+        <div id="controlAdmin" class="col-md-9">
+
+            <h3 id="listCountId" class="text-primary mt-2"></h3>
+            <button onclick="goCreateClassify()" class="btn btn-primary">Thêm Thể loại</button>
+            <div class="form-group">
+                <label for="">Lọc theo chuyên mục</label>
+                <select id="filterCategoryId" class="btn btn-outline-secondary">
+
+                </select>
+            </div>
+
+            <div id="toastMessageId"></div>
+            <table id="tableClassifiesId" class="table mt-3" style="">
+                <thead>
+                    <tr>
+                        <th>Hình</th>
+                        <th>Tiêu đề</th>
+                        <th>Chuyên mục</th>
+                        <th>Ngày tạo</th>
+                        <th>Lần cập nhật gần nhất</th>
+                        <th>Ghi chú</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBodyId">
+
+                </tbody>
+            </table>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    TH_avatar.src = '../images/login_icon2.png';
+    showAllClassifies();
+
+    getAllCategoriesAPI()
+        .then(listCategories => {
+            var chuoi_HTML = `<option value="all">Hiển thị tất cả</option>`;
+            listCategories.categories.forEach(category => {
+                chuoi_HTML += `<option value="${category.id}">${category.title}</option>`
+            });
+            filterCategoryId.innerHTML = chuoi_HTML;
+
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+    function showAllClassifies() {
+        var token = sessionStorage.getItem('token');
+        getAllClassifyAPI()
+            .then(listClassifies => {
+                listCountId.innerHTML = `Danh sách tất cả thể loại (Tổng: ${listClassifies.count})`
+                showTableClassifies(listClassifies.classifies);
+            })
+            .catch(err => {
+                console.log(err)
+                messageError(err);
+            });
+    }
+
+    filterCategoryId.onchange = () => {
+        if (filterCategoryId.value != 'all') {
+            getClassifiesByCategory(filterCategoryId.value)
+        }
+        else {
+            toastMessageId.innerHTML = ``;
+            tableClassifiesId.classList.remove('d-none');
+            showAllClassifies();
+        }
+    }
+
+    function showTableClassifies(listClassifies) {
+        chuoi_HTML = ``;
+        listClassifies.forEach(classify => {
+            chuoi_HTML += `<tr>
+                <td scope="row"><img src="${Dia_chi_Dich_vu}/${classify.image}" width="70" height="70"></td>
+                <td>${classify.title}</td>
+                <td>${classify.category.title}</td>
+                <td>${getDateFormat(classify.createdAt)}</td>
+                <td>${getDateFormat(classify.updatedAt)}</td>
+                <td>${classify.note == null ? "" : classify.note}</td>
+                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/classify/${classify.id}'">Sửa</button>
+                    <button class="btn btn-outline-danger" onclick="deleteClassify('${sessionStorage.getItem('token')}', '${classify.id}')">Xóa</button>
+                </td>
+            </tr>`;
+        });
+        tableBodyId.innerHTML = chuoi_HTML;
+    }
+
+    function deleteClassify(token, id) {
+        deleteClassifyAPI(token, id)
+            .then(result => {
+                messageSuccess(result);
+                if (filterCategoryId.value != 'all')
+                    getClassifiesByCategory(filterCategoryId.value)
+                else
+                    showAllClassifies();
+            })
+            .catch(err => {
+                console.log(err)
+                messageError(err);
+            });
+    }
+
+    function goCreateClassify() {
+        window.location = Dia_chi_Dich_vu + '/classify';
+    }
+
+    async function getClassifiesByCategory(CategoryId) {
+        var category = await getCategoryAPI(sessionStorage.getItem('token'), CategoryId);
+        getClassifiesByCategoryAPI(CategoryId)
+            .then(listClassifies => {
+                if (listClassifies.count > 0) {
+                    toastMessageId.innerHTML = ``;
+                    tableClassifiesId.classList.remove('d-none');
+
+                    listCountId.innerHTML = `Danh sách thể loại thuộc ${category.category.title} (Tổng: ${listClassifies.count})`
+                    showTableClassifies(listClassifies.classifies);
+                } else {
+                    listCountId.innerHTML = `Danh sách thể loại thuộc ${category.category.title} (Tổng: ${listClassifies.count})`
+                    toastMessageId.innerHTML = `Chuyên mục này không có thể loại nào`
+                    tableClassifiesId.classList.add('d-none');
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                messageError(err);
+            })
+    }
+
+</script>

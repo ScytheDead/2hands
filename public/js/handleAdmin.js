@@ -40,15 +40,23 @@ function messageSuccess(result) {
     } else if (result.message == 'User updated') {
         modelTitleThongBao.innerHTML = `Cập nhật tài khoản thành công`;
     } else if (result.message == 'Category deleted') {
-        modelTitleThongBao.innerHTML = `Xóa chuyên mục tin thành công`;
+        modelTitleThongBao.innerHTML = `Xóa chuyên mục thành công`;
     } else if (result.message == 'Category image updated') {
         modelTitleThongBao.innerHTML = `Cập nhật hình ảnh thành công`;
     } else if (result.message == 'Category updated') {
-        modelTitleThongBao.innerHTML = `Cập nhật chuyên mục tin thành công`;
+        modelTitleThongBao.innerHTML = `Cập nhật chuyên mục thành công`;
     } else if (result.message == 'Created category successful') {
-        modelTitleThongBao.innerHTML = `Tạo mới chuyên mục tin thành công`;
+        modelTitleThongBao.innerHTML = `Tạo mới chuyên mục thành công`;
     } else if (result.message == 'Users avatar updated') {
         modelTitleThongBao.innerHTML = `Cập nhật ảnh đại diện thành công`;
+    } else if (result.message == 'Classify deleted') {
+        modelTitleThongBao.innerHTML = `Xóa thể loại thành công`;
+    } else if (result.message == 'Created classify successful') {
+        modelTitleThongBao.innerHTML = `Tạo mới thể loại thành công`;
+    } else if (result.message == 'Classify image updated') {
+        modelTitleThongBao.innerHTML = `Cập nhật hình ảnh thành công`;
+    } else if (result.message == 'Classify updated') {
+        modelTitleThongBao.innerHTML = `Cập nhật thể loại thành công`;
     }
 
     modal_ThongBao.click();
