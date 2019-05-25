@@ -2,7 +2,11 @@
 var Dia_chi_Dich_vu = 'http://localhost:3000';
 
 
-// -------------User-------------------
+// -------------------User--------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
 function loginAPI(info) {
     return new Promise((resolve, reject) => {
         var Xu_ly_HTTP = new XMLHttpRequest();
@@ -136,6 +140,10 @@ function updateAvatarUserAPI(token, userId, formData){
 
 
 // ----------------Category-------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
 function getAllCategoriesAPI(){
     return new Promise((resolve, reject) => {
         var Xu_ly_HTTP = new XMLHttpRequest();
@@ -266,6 +274,10 @@ function updateImageCategoryAPI(token, id, formData){
 }
 
 // ----------------Classify-------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
 function getAllClassifyAPI(){
     return new Promise((resolve, reject) => {
         var Xu_ly_HTTP = new XMLHttpRequest();
@@ -414,3 +426,178 @@ function updateClassifyAPI(token, id, updateClassify){
         Xu_ly_HTTP.send(JSON.stringify(updateClassify));
     });
 }
+
+// ----------------Producer-------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
+// -------------------------------------------
+function getAllProducerAPI(){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers/`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function getProducerAPI(token, id){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function getProducerByCategoryAPI(CategoryId){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers/category`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${CategoryId}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function getProducerByClassifyAPI(classifyId){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers/classify`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${classifyId}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function createProducerAPI(token, formCreateProducer) {
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}`;
+        Xu_ly_HTTP.open(`POST`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 201)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else 
+                    reject(Xu_ly_HTTP.statusText);     
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(formCreateClassify);
+    });
+}
+
+function deleteProducerAPI(token, id){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
+        Xu_ly_HTTP.open(`DELETE`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.responseText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function updateImageProducerAPI(token, id, formData){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers/image`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
+        Xu_ly_HTTP.open(`PATCH`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(formData);
+    });
+}
+
+function updateProducerAPI(token, id, updateProducer){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/producers`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
+        Xu_ly_HTTP.open(`PATCH`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else 
+                    reject(Xu_ly_HTTP.statusText);     
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(JSON.stringify(updateProducer));
+    });
+}
+

@@ -132,7 +132,7 @@
             })
             .catch(err => {
                 console.log(err)
-                messageError(err);
+                messageError(JSON.parse(err).message);
             });
     }
 
