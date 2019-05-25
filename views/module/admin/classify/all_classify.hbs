@@ -61,6 +61,8 @@
 
 
 <script>
+    btnClassify.classList.add('active');
+
     TH_avatar.src = '../images/login_icon2.png';
     showAllClassifies();
 
@@ -130,7 +132,7 @@
             })
             .catch(err => {
                 console.log(err)
-                messageError(err);
+                messageError(JSON.parse(err).message);
             });
     }
 
@@ -138,24 +140,29 @@
         window.location = Dia_chi_Dich_vu + '/classify';
     }
 
-    async function getClassifiesByCategory(CategoryId) {
-        var category = await getCategoryAPI(sessionStorage.getItem('token'), CategoryId);
-        getClassifiesByCategoryAPI(CategoryId)
-            .then(listClassifies => {
-                if (listClassifies.count > 0) {
-                    toastMessageId.innerHTML = ``;
-                    tableClassifiesId.classList.remove('d-none');
+    function getClassifiesByCategory(CategoryId) {
+        getCategoryAPI(sessionStorage.getItem('token'), CategoryId)
+            .then(category => {
+                getClassifiesByCategoryAPI(CategoryId)
+                    .then(listClassifies => {
+                        if (listClassifies.count > 0) {
+                            toastMessageId.innerHTML = ``;
+                            tableClassifiesId.classList.remove('d-none');
 
-                    listCountId.innerHTML = `Danh sách thể loại thuộc ${category.category.title} (Tổng: ${listClassifies.count})`
-                    showTableClassifies(listClassifies.classifies);
-                } else {
-                    listCountId.innerHTML = `Danh sách thể loại thuộc ${category.category.title} (Tổng: ${listClassifies.count})`
-                    toastMessageId.innerHTML = `Chuyên mục này không có thể loại nào`
-                    tableClassifiesId.classList.add('d-none');
-                }
+                            listCountId.innerHTML = `Danh sách thể loại thuộc ${category.category.title} (Tổng: ${listClassifies.count})`
+                            showTableClassifies(listClassifies.classifies);
+                        } else {
+                            listCountId.innerHTML = `Danh sách thể loại thuộc ${category.category.title} (Tổng: ${listClassifies.count})`
+                            toastMessageId.innerHTML = `Chuyên mục này không có thể loại nào`
+                            tableClassifiesId.classList.add('d-none');
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        messageError(err);
+                    })
             })
             .catch(err => {
-                console.log(err);
                 messageError(err);
             })
     }

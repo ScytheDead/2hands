@@ -31,8 +31,10 @@
     </div>
 </div>
 
-<img src="" alt="">
+
 <script>
+    btnCategory.classList.add('active');
+
     TH_avatar.src = '../images/login_icon2.png';
     showAllCategories();
 
@@ -84,7 +86,7 @@
                 showAllCategories();
             })
             .catch(err => {
-                messageError(err);
+                messageError(JSON.parse(err).message);
             });
     }
 
