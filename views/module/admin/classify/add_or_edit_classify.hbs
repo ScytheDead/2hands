@@ -111,22 +111,35 @@
 
 
         luu.onclick = () => {
-            var formData = new FormData();
-            formData.append('title', titleId.value);
-            formData.append('image', uploadImage.files[0]);
-            formData.append('category', filterCategoryId.value);
-            formData.append('note', noteId.value);
+            getBase64(uploadImage.files[0])
+                .then(base64Image => {
+                    var infoClassifyCreate = {
+                        title: titleId.value,
+                        image: base64Image,
+                        category: filterCategoryId.value,
+                        note: noteId.value
+                    }
 
-            createClassifyAPI(sessionStorage.getItem('token'), formData)
-                .then(result => {
-                    messageSuccess(result);
-                    setTimeout(() => {
-                        window.location = Dia_chi_Dich_vu + '/admin/classify';
-                    }, 1500);
+                    createClassifyAPI(sessionStorage.getItem('token'), infoClassifyCreate)
+                        .then(result => {
+                            messageSuccess(result);
+                            setTimeout(() => {
+                                window.location = Dia_chi_Dich_vu + '/admin/classify';
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            if (JSON.parse(err).error.message != undefined)
+                                messageError(JSON.parse(err).error.message);
+                            else if (JSON.parse(err).message != undefined)
+                                messageError(JSON.parse(err).message);
+                            else
+                                messageError(err);
+                        });
                 })
                 .catch(err => {
                     messageError(err);
-                });
+                })
         }
 
     }  // End Create
@@ -172,21 +185,29 @@
         }
 
         btnUpload.onclick = () => {
-            var formData = new FormData();
-            formData.append('image', uploadId.files[0]);
-
-            updateImageClassifyAPI(sessionStorage.getItem('token'), idClassify, formData)
-                .then(result => {
-                    messageSuccess(result);
-                    btnCloseModalUpload.click();
-                    setTimeout(() => {
-                        window.location = `${Dia_chi_Dich_vu}/classify/${idClassify}`;
-                    }, 1500);
+            getBase64(uploadId.files[0])
+                .then(base64Image => {
+                    var image = {
+                        image: base64Image
+                    }
+                    updateImageClassifyAPI(sessionStorage.getItem('token'), idClassify, image)
+                        .then(result => {
+                            messageSuccess(result);
+                            setTimeout(() => {
+                                window.location = `${Dia_chi_Dich_vu}/classify/${idClassify}`;
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            if (JSON.parse(err).error.message !== undefined)
+                                messageError(JSON.parse(err).error.message);
+                            else
+                                messageError(JSON.parse(err).error);
+                        });
                 })
                 .catch(err => {
-                    btnCloseModalUpload.click();
                     messageError(err);
                 });
+            btnCloseModalUpload.click();
         }
     }   // End update
 

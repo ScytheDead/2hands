@@ -34,10 +34,7 @@
 
                 </select>
 
-                <label for="">Lọc theo thể loại</label>
-                <select id="filterClassifyId" class="btn btn-outline-primary">
-                    <option value="all">Hiển thị tất cả</option>
-                </select>
+
 
             </div>
             <div id="groupBTNClassifies" class="form-group">
@@ -75,7 +72,7 @@
 
     TH_avatar.src = '../images/login_icon2.png';
 
-    filterClassifyId.disabled = true;
+
 
     showAllProducers();
 
@@ -109,12 +106,9 @@
 
     filterCategoryId.onchange = () => {
         if (filterCategoryId.value != 'all') {
-            filterClassifyId.disabled = false;
             getProducersByCategory(filterCategoryId.value)
         }
         else {
-            filterClassifyId.disabled = true;
-            filterClassifyId.value = 'all';
             toastMessageId.innerHTML = ``;
             groupBTNClassifies.innerHTML = ``;
             tableProducersId.classList.remove('d-none');
@@ -166,11 +160,7 @@
                 getClassifiesByCategoryAPI(CategoryId)
                     .then(listClassifies => {
                         if (listClassifies.count > 0) {
-                            var chuoi_HTML = `<option value="all">Hiển thị tất cả</option>`;
-                            listClassifies.classifies.forEach(classify => {
-                                chuoi_HTML += `<option value="${classify.id}">${classify.title}</option>`
-                            });
-                            filterClassifyId.innerHTML = chuoi_HTML;
+
                             // group btn
                             groupBTNClassifies.classList.remove('d-none');
                             var chuoi_HTML_button_classifies = ``;
@@ -213,7 +203,7 @@
     function getProducersByClassify(ClassifyId) {
         getClassifyAPI(sessionStorage.getItem('token'), ClassifyId)
             .then(classify => {
-                
+
                 getProducerByClassifyAPI(ClassifyId)
                     .then(listProducers => {
                         if (listProducers.count > 0) {

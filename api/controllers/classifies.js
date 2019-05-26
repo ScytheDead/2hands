@@ -47,68 +47,78 @@ exports.classifies_create_classify = async (req, res) => {
         });
     }
 
-    Category.findById(req.body.category)
-        .then(category => {
-            const CheckImage = req.file === undefined ? null : req.file.path;
-            const classify = new Classify({
-                _id: mongoose.Types.ObjectId(),
-                category: req.body.category,
-                title: req.body.title,
-                image: CheckImage,
-                note: req.body.note
-            });
-            classify.save()
-                .then(result => {
-                    res.status(201).json({
-                        message: 'Created classify successful',
-                        createdClassify: {
-                            id: result._id,
-                            category: {
-                                _id: result.category,
-                                title: category.title
-                            },
-                            title: result.title,
-                            image: result.image,
-                            note: result.note,
-                            createdAt: result.created_at,
-                            request: {
-                                type: 'GET',
-                                createdClassifyURL: `${config.API_ADDRESS}/api/classifies/` + result._id
-                            }
-                        }
-                    });
-                })
-                .catch(err => {
-                    if (req.file !== undefined && req.file !== null) {
+    const pathImage = 'uploads/classifies/';
+    if (req.body.image !== undefined && req.body.image !== null) {
+        saveImage(pathImage, req.body.image)
+            .then(infoImage => {
+                Category.findById(req.body.category)
+                    .then(category => {
+                        const classify = new Classify({
+                            _id: new mongoose.Types.ObjectId(),
+                            category: req.body.category,
+                            title: req.body.title,
+                            image: pathImage + infoImage.fileName + '.' + infoImage.typeImage,
+                            note: req.body.note
+                        });
+                        classify.save()
+                            .then(result => {
+                                res.status(201).json({
+                                    message: 'Created classify successful',
+                                    createdClassify: {
+                                        id: result._id,
+                                        category: {
+                                            _id: result.category,
+                                            title: category.title
+                                        },
+                                        title: result.title,
+                                        image: result.image,
+                                        note: result.note,
+                                        createdAt: result.created_at,
+                                        request: {
+                                            type: 'GET',
+                                            createdClassifyURL: `${config.API_ADDRESS}/api/classifies/` + result._id
+                                        }
+                                    }
+                                });
+                            })
+                            .catch(err => {
+                                fs.unlink(req.file.path, (err) => {
+                                    if (err) throw err;
+                                });
+
+                                if (err.name == "MongoError") {
+                                    res.status(500).json({
+                                        message: 'The title already exists',
+                                        error: err
+                                    });
+                                } else {
+                                    res.status(500).json({
+                                        error: err
+                                    });
+                                }
+                            });
+                    })
+                    .catch(err => {
                         fs.unlink(req.file.path, (err) => {
                             if (err) throw err;
                         });
-                    }
 
-                    if (err.name == "MongoError") {
                         res.status(500).json({
-                            message: 'The title already exists',
+                            message: 'Category not found',
                             error: err
                         });
-                    } else {
-                        res.status(500).json({
-                            error: err
-                        });
-                    }
+                    });
+            })
+            .catch(err => {
+                res.status(422).json({
+                    error: err
                 });
-        })
-        .catch(err => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                });
-            }
-
-            res.status(500).json({
-                message: 'Category not found',
-                error: err
             });
+    } else {
+        res.status(404).json({
+            error: 'Not found image'
         });
+    }
 }
 
 exports.classifies_get_classify = async (req, res) => {
@@ -281,54 +291,60 @@ exports.classifies_update_image = async (req, res) => {
         });
     }
 
-    const id = req.params.classifyId;
-    Classify.findById(id)
-        .select('image')
-        .exec()
-        .then(result => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(result.image, (err) => {
-                    if (err) throw err;
-                    Classify.updateOne({
-                            _id: id
-                        }, {
-                            $set: {
-                                "image": req.file.path
-                            }
-                        })
-                        .exec()
-                        .then(result => {
-                            res.status(200).json({
-                                message: 'Classify image updated',
-                                Category: `${config.API_ADDRESS}/api/classifies/` + id
-                            })
-                        })
-                });
-            } else {
-                res.status(404).json({
-                    error: err
-                });
-            }
-        })
-        .catch(err => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                });
-            }
+    const pathImage = 'uploads/classifies/';
+    if (req.body.image !== undefined && req.body.image !== null) {
+        saveImage(pathImage, req.body.image)
+            .then(infoImage => {
+                const id = req.params.classifyId;
+                Classify.findById(id)
+                    .select('image')
+                    .exec()
+                    .then(result => {
+                        fs.unlink(result.image, (err) => {
+                            if (err) throw err;
+                            Classify.updateOne({
+                                    _id: id
+                                }, {
+                                    $set: {
+                                        "image": pathImage + infoImage.fileName + '.' + infoImage.typeImage
+                                    }
+                                })
+                                .exec()
+                                .then(result => {
+                                    res.status(200).json({
+                                        message: 'Classify image updated',
+                                        Category: `${config.API_ADDRESS}/api/classifies/` + id
+                                    });
+                                })
+                                .catch(err => {
+                                    res.status(500).json({
+                                        error: err
+                                    });
+                                });
+                        });
+                    })
+                    .catch(err => {
+                        fs.unlink(req.file.path, (err) => {
+                            if (err) throw err;
+                        });
 
-            if (err.kind == 'ObjectId') {
-                res.status(500).json({
-                    message: 'No valid entry found for provided ID',
+                        res.status(500).json({
+                            message: 'No valid entry found for provided ID',
+                            error: err
+                        });
+
+                    });
+            })
+            .catch(err => {
+                res.status(422).json({
                     error: err
                 });
-            } else {
-                res.status(404).json({
-                    message: 'Not found image',
-                    error: err
-                });
-            }
+            });
+    } else {
+        res.status(404).json({
+            message: 'Not found image',
         });
+    }
 }
 
 
@@ -339,6 +355,32 @@ function checkPermission(tokenEncoded) {
             resolve(1);
         } else {
             resolve(0);
+        }
+    })
+}
+
+function saveImage(pathImage, base64String) {
+    return new Promise((resolve, reject) => {
+        let arrayBase64Image = base64String.split(';base64,');
+        let typeFile = arrayBase64Image[0].split('/')[0];
+
+        if (typeFile === 'data:image') {
+            let typeImage = arrayBase64Image[0].split('/')[1];
+            let base64Image = arrayBase64Image[1];
+            let fileName = Date.now();
+
+            fs.writeFile(pathImage + fileName + '.' + typeImage, base64Image, {
+                encoding: 'base64'
+            }, function (err) {
+                if (err) reject(err);
+                var infoImageArray = [];
+                infoImageArray['typeImage'] = typeImage;
+                infoImageArray['fileName'] = fileName;
+                resolve(infoImageArray);
+
+            });
+        } else {
+            reject('Wrong file format');
         }
     })
 }

@@ -234,41 +234,43 @@ exports.user_delete = async (req, res) => {
             messages: 'You don\'t have permission'
         });
     }
-    
+
     const userId = req.params.userId;
     User.findById(userId)
-    .select('avatar')
-    .exec()
-    .then(result => {
-        if(result.avatar !== undefined && result.avatar !== null){
-            fs.unlink(result.avatar, (err) => {
-                if(err)  throw err;
-            });
-        }
-
-        User.deleteOne({
-            _id: req.params.userId
-        })
+        .select('avatar')
         .exec()
         .then(result => {
-            if (result.deletedCount <= 0) {
-                return res.status(500).json({
-                    error: "Not found user"
+            if (result.avatar !== undefined && result.avatar !== null) {
+                fs.unlink(result.avatar, (err) => {
+                    if (err) throw err;
                 });
             }
-            res.status(200).json({
-                message: 'User deleted'
-            });
+
+            User.deleteOne({
+                    _id: req.params.userId
+                })
+                .exec()
+                .then(result => {
+                    if (result.deletedCount <= 0) {
+                        return res.status(500).json({
+                            error: "Not found user"
+                        });
+                    }
+                    res.status(200).json({
+                        message: 'User deleted'
+                    });
+                })
         })
-    })
-    .catch(err => {
-        res.status(500).json({
-            error: 'No valid entry found for provided ID'
+        .catch(err => {
+            res.status(500).json({
+                error: 'No valid entry found for provided ID'
+            });
         });
-    });
 }
 
 exports.user_update_avatar = (req, res) => {
+    const pathImage = 'uploads/users/';
+
     const id = req.params.userId;
     User.findById(id)
         .select('avatar')
@@ -283,24 +285,81 @@ exports.user_update_avatar = (req, res) => {
                     }
                 });
             }
-            User.updateOne({
+            if (req.body.avatar !== undefined && req.body.avatar !== null) {
+                saveImage(pathImage, req.body.avatar)
+                    .then(infoImage => {
+                        User.updateOne({
+                                _id: id
+                            }, {
+                                $set: {
+                                    "avatar": pathImage + infoImage.fileName + '.' + infoImage.typeImage
+                                    // req.body.avatar !== undefined ? req.file.path : undefined
+                                }
+                            })
+                            .exec()
+                            .then(result => {
+                                res.status(200).json({
+                                    message: 'Users avatar updated',
+                                });
+                            })
+                            .catch(err => {
+                                fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                                    if (err) throw err;
+                                });
+                                res.status(500).json({
+                                    message: 'No valid entry found for provided ID',
+                                    error: err
+                                });
+                            });
+                    })
+                    .catch(err => {
+                        User.updateOne({
+                            _id: id
+                        }, {
+                            $set: {
+                                "avatar": undefined
+                            }
+                        })
+                        .exec()
+                        .then(result => {
+                            res.status(422).json({
+                                error: err
+                            });
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                message: 'No valid entry found for provided ID',
+                                error: err
+                            });
+                        });
+                    });
+            } else {
+                User.updateOne({
                     _id: id
                 }, {
                     $set: {
-                        "avatar": req.file !== undefined ? req.file.path : undefined
+                        "avatar": undefined
                     }
                 })
                 .exec()
                 .then(result => {
-                    res.status(200).json({
-                        message: 'Users avatar updated',
+                    res.status(404).json({
+                        error: 'Not found image'
                     });
                 })
+                .catch(err => {
+                    res.status(500).json({
+                        message: 'No valid entry found for provided ID',
+                        error: err
+                    });
+                });
+            }
         })
         .catch(err => {
             res.status(500).json({
+                message: 'No valid entry found for provided ID',
                 error: err
-            })
+            });
         })
 }
 
@@ -328,4 +387,33 @@ function hash(password) {
 
         })
     })
+}
+
+function saveImage(pathImage, base64String) {
+    return new Promise((resolve, reject) => {
+        let arrayBase64Image = base64String.split(';base64,');
+        let typeFile = arrayBase64Image[0].split('/')[0];
+
+        if (typeFile === 'data:image') {
+            let typeImage = arrayBase64Image[0].split('/')[1];
+            let base64Image = arrayBase64Image[1];
+            let fileName = Date.now();
+            fs.writeFile(pathImage + fileName + '.' + typeImage, base64Image, {
+                encoding: 'base64'
+            }, function (err) {
+                if (err) reject(err);
+                var infoImageArray = [];
+                infoImageArray['typeImage'] = typeImage;
+                infoImageArray['fileName'] = fileName;
+                resolve(infoImageArray);
+
+            });
+        } else {
+            reject('Wrong file format');
+        }
+    })
+}
+
+function updateAvatarUser(id, pathAvatar) {
+    
 }
