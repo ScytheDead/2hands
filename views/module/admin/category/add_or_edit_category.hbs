@@ -30,7 +30,7 @@
             </div>
 
             <div class="form-group">
-                <label>Hình ảnh: </label>
+                <label>Hình ảnh (Dung lượng nhỏ hơn 1.5 MB): </label>
                 <img id="imageId" src="" width="100" height="100">
                 <input class="btn btn-outline-primary" type="file" name="file" id="uploadImage">
                 <button class="btn btn-outline-warning" id="showModalUploadId">Cập nhật ảnh</button>
@@ -89,17 +89,26 @@
 
 
         luu.onclick = () => {
-            var formData = new FormData();
-            formData.append('image', uploadImage.files[0]);
-            formData.append('title', titleId.value);
-            formData.append('note', noteId.value);
-
-            createCategoryAPI(sessionStorage.getItem('token'), formData)
-                .then(result => {
-                    messageSuccess(result);
-                    setTimeout(() => {
-                        window.location = Dia_chi_Dich_vu + '/admin/category';
-                    }, 1500);
+            getBase64(uploadImage.files[0])
+                .then(base64Image => {
+                    var infoCategoryCreate = {
+                        title: titleId.value,
+                        image: base64Image,
+                        note: noteId.value
+                    }
+                    createCategoryAPI(sessionStorage.getItem('token'), infoCategoryCreate)
+                        .then(result => {
+                            messageSuccess(result);
+                            setTimeout(() => {
+                                window.location = Dia_chi_Dich_vu + '/admin/category';
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            if(JSON.parse(err).error.message != undefined)
+                                messageError(JSON.parse(err).error.message);
+                            else
+                                messageError(err);
+                        });
                 })
                 .catch(err => {
                     messageError(err);
@@ -152,20 +161,29 @@
 
 
         btnUpload.onclick = () => {
-            var formData = new FormData();
-            formData.append('image', uploadId.files[0]);
-
-            updateImageCategoryAPI(sessionStorage.getItem('token'), idCategory, formData)
-                .then(result => {
-                    messageSuccess(result);
-                    btnCloseModalUpload.click();
-                    setTimeout(() => {
-                        window.location = `${Dia_chi_Dich_vu}/category/${idCategory}`;
-                    }, 1500);
+            getBase64(uploadId.files[0])
+                .then(base64Image => {
+                    var image = {
+                        image: base64Image
+                    }
+                    updateImageCategoryAPI(sessionStorage.getItem('token'), idCategory, image)
+                        .then(result => {
+                            messageSuccess(result);
+                            setTimeout(() => {
+                                window.location = `${Dia_chi_Dich_vu}/category/${idCategory}`;
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            if (JSON.parse(err).error.message !== undefined)
+                                messageError(JSON.parse(err).error.message);
+                            else
+                                messageError(JSON.parse(err).error);
+                        });
                 })
                 .catch(err => {
                     messageError(err);
                 });
+            btnCloseModalUpload.click();
         }
     }   // End update
 

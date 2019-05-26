@@ -2,54 +2,32 @@ function messageError(err) {
     if (err == 'Unauthorized') {
         sessionStorage.removeItem('token');
         TH_dropdown.innerHTML = ``;
-
-        modelTitleThongBao.innerHTML = `Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại`
-        modelTitleThongBao.classList.remove('text-success');
-        modelTitleThongBao.classList.add('text-danger');
-        modal_ThongBao.click();
+        toastError(`Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại`);
         setTimeout(() => {
             window.location = Dia_chi_Dich_vu;
         }, 1500);
     } else if (err == 'Not Found') {
-        modelTitleThongBao.innerHTML = `Cập nhật hình ảnh thất bại !`
-        modelTitleThongBao.classList.remove('text-success');
-        modelTitleThongBao.classList.add('text-danger');
-        modal_ThongBao.click();
-        setTimeout(() => {
-            Tat_Thong_bao.click();
-        }, 1500);
-    } else if (err == 'Internal Server Error') {
-        modelTitleThongBao.innerHTML = `Tạo mới thất bại !`
-        modelTitleThongBao.classList.remove('text-success');
-        modelTitleThongBao.classList.add('text-danger');
-        modal_ThongBao.click();
-        setTimeout(() => {
-            Tat_Thong_bao.click();
-        }, 1500);
+        toastError(`Cập nhật hình ảnh thất bại !`);
+    } else if (err == 'Not Found Image') {
+        toastError(`Xin vui lòng chọn hình ảnh !`);
+    }else if (err == 'Internal Server Error') {
+        toastError(`Tạo mới thất bại !`);
     } else if (err == 'This category have still contains classify') {
-        modelTitleThongBao.innerHTML = `Chuyên mục này vẫn còn chứa thể loại bên trong !`
-        modelTitleThongBao.classList.remove('text-success');
-        modelTitleThongBao.classList.add('text-danger');
-        modal_ThongBao.click();
-        setTimeout(() => {
-            Tat_Thong_bao.click();
-        }, 2000);
+        toastError(`Chuyên mục này vẫn còn chứa thể loại bên trong !`);
     } else if (err == 'This category have still contains producer') {
-        modelTitleThongBao.innerHTML = `Chuyên mục này vẫn còn chứa nhà sản xuất bên trong !`
-        modelTitleThongBao.classList.remove('text-success');
-        modelTitleThongBao.classList.add('text-danger');
-        modal_ThongBao.click();
-        setTimeout(() => {
-            Tat_Thong_bao.click();
-        }, 2000);
+        toastError(`Chuyên mục này vẫn còn chứa nhà sản xuất bên trong !`);
     } else if (err == 'This classify have still contains producer') {
-        modelTitleThongBao.innerHTML = `Thể loại này vẫn còn chứa nhà sản xuất bên trong !`
-        modelTitleThongBao.classList.remove('text-success');
-        modelTitleThongBao.classList.add('text-danger');
-        modal_ThongBao.click();
-        setTimeout(() => {
-            Tat_Thong_bao.click();
-        }, 2000);
+        toastError(`Thể loại này vẫn còn chứa nhà sản xuất bên trong !`);
+    } else if (err == 'Wrong file format') {
+        toastError(`Sai định dạng hình ảnh !`);
+    } else if (err == 'request entity too large') {
+        toastError(`Dung lượng ảnh vượt mức quy định !`);
+    } else if (err == 'Category validation failed: title: Path `title` is required.') {
+        toastError(`Tiêu đề không được trống !`);
+    } else if (err == 'Category validation failed: title: title too short') {
+        toastError(`Tiêu đề ít nhất 5 ký tự !`);
+    } else if (err == 'Category validation failed: title: title too long') {
+        toastError(`Tiêu đề tối đa 100 ký tự !`);
     }
 }
 
@@ -85,4 +63,14 @@ function messageSuccess(result) {
     setTimeout(() => {
         Tat_Thong_bao.click();
     }, 1500);
+}
+
+function toastError(toastDisplayError) {
+    modelTitleThongBao.innerHTML = toastDisplayError;
+    modelTitleThongBao.classList.remove('text-success');
+    modelTitleThongBao.classList.add('text-danger');
+    modal_ThongBao.click();
+    setTimeout(() => {
+        Tat_Thong_bao.click();
+    }, 2000);
 }
