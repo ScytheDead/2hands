@@ -4,7 +4,7 @@ mongoose.set('useCreateIndex', true);
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     phoneNumber: { type: String, required: [true, 'User phone number required'], unique: true, match: /(07|08|09|01[2|6|8|9])+([0-9]{8})\b/ },
-    password: { type: String, min: 6, max: 20, required: true },
+    password: { type: String, minlength: 6, required: true },
     name: {type: String, trim: true},
     address: {type: String, trim: true },
     avatar: {type: String },
