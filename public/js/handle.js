@@ -138,3 +138,20 @@ function getDateFormat(dateISO) {
     var date = new Date(dateISO);
     return `${date.getDate()}-${(date.getMonth()+1)}-${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 }
+
+function getBase64(file) {
+    return new Promise((resolve, reject) => {
+        if (file !== undefined) {
+            var reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async () => {
+                resolve(reader.result);
+            };
+            reader.onerror = async (error) => {
+                reject(error);
+            };
+        } else {
+            reject('Not Found Image');
+        }
+    });
+}

@@ -44,40 +44,51 @@ exports.categories_create_category = async (req, res) => {
         });
     }
 
-    const CheckImage = req.file === undefined ? null : req.file.path;
-    const category = new Category({
-        _id: new mongoose.Types.ObjectId(),
-        title: req.body.title,
-        image: CheckImage,
-        note: req.body.note
-    });
-    category.save()
-        .then(result => {
-            res.status(201).json({
-                message: 'Created category successful',
-                createdCategory: {
-                    id: result._id,
-                    title: result.title,
-                    image: result.image,
-                    note: result.note,
-                    createdAt: result.created_at,
-                    request: {
-                        type: 'GET',
-                        url: `${config.API_ADDRESS}/api/categories/` + result._id
-                    }
-                }
-            })
-        })
-        .catch(err => {
-            if (req.file !== undefined) {
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
+    if (req.body.image !== undefined && req.body.image !== null) {
+        saveImage(req.body.image)
+            .then(infoImage => {
+                const category = new Category({
+                    _id: new mongoose.Types.ObjectId(),
+                    title: req.body.title,
+                    image: 'uploads/categories/' + infoImage.fileName + '.' + infoImage.typeImage,
+                    note: req.body.note
                 });
-            }
-            res.status(500).json({
-                error: err
+                category.save()
+                    .then(result => {
+                        res.status(201).json({
+                            message: 'Created category successful',
+                            createdCategory: {
+                                id: result._id,
+                                title: result.title,
+                                image: result.image,
+                                note: result.note,
+                                createdAt: result.created_at,
+                                request: {
+                                    type: 'GET',
+                                    url: `${config.API_ADDRESS}/api/categories/` + result._id
+                                }
+                            }
+                        });
+                    })
+                    .catch(err => {
+                        fs.unlink('./uploads/categories/' + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                            if (err) throw err;
+                        });
+                        res.status(500).json({
+                            error: err
+                        });
+                    });
             })
+            .catch(err => {
+                res.status(422).json({
+                    error: err
+                });
+            });
+    } else {
+        res.status(404).json({
+            error: 'Not found image'
         });
+    }
 }
 
 exports.categories_get_category = async (req, res) => {
@@ -227,6 +238,7 @@ exports.categories_update_category = async (req, res) => {
         });
 }
 
+
 exports.categories_update_image = async (req, res) => {
     if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
         return res.status(401).json({
@@ -234,47 +246,62 @@ exports.categories_update_image = async (req, res) => {
         });
     }
 
-    const id = req.params.categoryId;
-    Category.findById(id)
-        .select('image')
-        .exec()
-        .then(result => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(result.image, (err) => {
-                    if (err) throw err;
-                    Category.updateOne({
-                            _id: id
-                        }, {
-                            $set: {
-                                "image": req.file.path
-                            }
-                        })
-                        .exec()
-                        .then(result => {
-                            res.status(200).json({
-                                message: 'Category image updated',
-                                Category: `${config.API_ADDRESS}/api/categories/` + id
-                            })
-                        })
-                });
-            } else {
-                res.status(404).json({
-                    error: 'Not found image'
-                });
-            }
-        })
-        .catch(err => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                });
-            }
+    if (req.body.image !== undefined && req.body.image !== null) {
+        saveImage(req.body.image)
+            .then(infoImage => {
+                console.log(infoImage.typeImage);
+                const id = req.params.categoryId;
+                Category.findById(id)
+                    .select('image')
+                    .exec()
+                    .then(result => {
+                        fs.unlink(result.image, (err) => {
+                            if (err) throw err;
 
-            res.status(500).json({
-                message: 'No valid entry found for provided ID',
-                error: err
-            });
+                            Category.updateOne({
+                                    _id: id
+                                }, {
+                                    $set: {
+                                        "image": 'uploads/categories/' + infoImage.fileName + '.' + infoImage.typeImage
+                                    }
+                                })
+                                .exec()
+                                .then(result => {
+                                    res.status(200).json({
+                                        message: 'Category image updated',
+                                        Category: `${config.API_ADDRESS}/api/categories/` + id
+                                    })
+                                })
+                                .catch(err => {
+                                    res.status(500).json({
+                                        error: err
+                                    });
+                                });
+                        });
+                    })
+                    .catch(err => {
+                        if (req.file !== undefined && req.file !== null) {
+                            fs.unlink(req.file.path, (err) => {
+                                if (err) throw err;
+                            });
+                        }
+
+                        res.status(500).json({
+                            message: 'No valid entry found for provided ID',
+                            error: err
+                        });
+                    });
+            })
+            .catch(err => {
+                res.status(422).json({
+                    error: err
+                });
+            })
+    } else {
+        res.status(404).json({
+            error: 'Not found image'
         });
+    }
 }
 
 function checkPermission(tokenEncoded) {
@@ -284,6 +311,32 @@ function checkPermission(tokenEncoded) {
             resolve(1);
         } else {
             resolve(0);
+        }
+    })
+}
+
+function saveImage(base64String) {
+    return new Promise((resolve, reject) => {
+        let arrayBase64Image = base64String.split(';base64,');
+        let typeFile = arrayBase64Image[0].split('/')[0];
+
+        if (typeFile === 'data:image') {
+            let typeImage = arrayBase64Image[0].split('/')[1];
+            let base64Image = arrayBase64Image[1];
+            let fileName = Date.now();
+
+            fs.writeFile('uploads/categories/' + fileName + '.' + typeImage, base64Image, {
+                encoding: 'base64'
+            }, function (err) {
+                if (err) reject(err);
+                var infoImageArray = [];
+                infoImageArray['typeImage'] = typeImage;
+                infoImageArray['fileName'] = fileName;
+                resolve(infoImageArray);
+
+            });
+        } else {
+            reject('Wrong file format');
         }
     })
 }

@@ -38,7 +38,7 @@ app.use('/', routes);
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '2mb', type: 'application/json'}));
 
 // Handling CORS
 app.use((req, res, next) => {
