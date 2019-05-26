@@ -44,13 +44,14 @@ exports.categories_create_category = async (req, res) => {
         });
     }
 
+    const pathImage = 'uploads/categories/';
     if (req.body.image !== undefined && req.body.image !== null) {
-        saveImage(req.body.image)
+        saveImage(pathImage, req.body.image)
             .then(infoImage => {
                 const category = new Category({
                     _id: new mongoose.Types.ObjectId(),
                     title: req.body.title,
-                    image: 'uploads/categories/' + infoImage.fileName + '.' + infoImage.typeImage,
+                    image: pathImage + infoImage.fileName + '.' + infoImage.typeImage,
                     note: req.body.note
                 });
                 category.save()
@@ -71,12 +72,20 @@ exports.categories_create_category = async (req, res) => {
                         });
                     })
                     .catch(err => {
-                        fs.unlink('./uploads/categories/' + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                        fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
                             if (err) throw err;
                         });
-                        res.status(500).json({
-                            error: err
-                        });
+
+                        if (err.name == "MongoError") {
+                            res.status(500).json({
+                                message: 'The title already exists',
+                                error: err
+                            });
+                        } else {
+                            res.status(500).json({
+                                error: err
+                            });
+                        }
                     });
             })
             .catch(err => {
@@ -246,10 +255,10 @@ exports.categories_update_image = async (req, res) => {
         });
     }
 
+    const pathImage = 'uploads/categories/';
     if (req.body.image !== undefined && req.body.image !== null) {
-        saveImage(req.body.image)
+        saveImage(pathImage, req.body.image)
             .then(infoImage => {
-                console.log(infoImage.typeImage);
                 const id = req.params.categoryId;
                 Category.findById(id)
                     .select('image')
@@ -262,7 +271,7 @@ exports.categories_update_image = async (req, res) => {
                                     _id: id
                                 }, {
                                     $set: {
-                                        "image": 'uploads/categories/' + infoImage.fileName + '.' + infoImage.typeImage
+                                        "image": pathImage + infoImage.fileName + '.' + infoImage.typeImage
                                     }
                                 })
                                 .exec()
@@ -270,7 +279,7 @@ exports.categories_update_image = async (req, res) => {
                                     res.status(200).json({
                                         message: 'Category image updated',
                                         Category: `${config.API_ADDRESS}/api/categories/` + id
-                                    })
+                                    });
                                 })
                                 .catch(err => {
                                     res.status(500).json({
@@ -280,11 +289,9 @@ exports.categories_update_image = async (req, res) => {
                         });
                     })
                     .catch(err => {
-                        if (req.file !== undefined && req.file !== null) {
-                            fs.unlink(req.file.path, (err) => {
-                                if (err) throw err;
-                            });
-                        }
+                        fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                            if (err) throw err;
+                        });
 
                         res.status(500).json({
                             message: 'No valid entry found for provided ID',
@@ -315,7 +322,7 @@ function checkPermission(tokenEncoded) {
     })
 }
 
-function saveImage(base64String) {
+function saveImage(pathImage, base64String) {
     return new Promise((resolve, reject) => {
         let arrayBase64Image = base64String.split(';base64,');
         let typeFile = arrayBase64Image[0].split('/')[0];
@@ -325,7 +332,7 @@ function saveImage(base64String) {
             let base64Image = arrayBase64Image[1];
             let fileName = Date.now();
 
-            fs.writeFile('uploads/categories/' + fileName + '.' + typeImage, base64Image, {
+            fs.writeFile(pathImage + fileName + '.' + typeImage, base64Image, {
                 encoding: 'base64'
             }, function (err) {
                 if (err) reject(err);

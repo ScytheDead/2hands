@@ -28,6 +28,8 @@ function messageError(err) {
         toastError(`Tiêu đề ít nhất 5 ký tự !`);
     } else if (err == 'Category validation failed: title: title too long') {
         toastError(`Tiêu đề tối đa 100 ký tự !`);
+    } else if (err == 'The title already exists') {
+        toastError(`Tiêu đề này đã được sử dụng. Xin vui lòng chọn tiêu đề khác !`);
     }
 }
 

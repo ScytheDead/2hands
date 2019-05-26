@@ -104,9 +104,12 @@
                             }, 1500);
                         })
                         .catch(err => {
+                            //console.log(JSON.parse(err).message);
                             if(JSON.parse(err).error.message != undefined)
                                 messageError(JSON.parse(err).error.message);
-                            else
+                            else if (JSON.parse(err).message != undefined)
+                                messageError(JSON.parse(err).message);
+                            else 
                                 messageError(err);
                         });
                 })
