@@ -91,92 +91,106 @@ exports.producers_create_producer = async (req, res) => {
         });
     }
 
-    Category.findById(req.body.category)
-        .then(category => {
-            Classify.findById(req.body.classify)
-                .then(classify => {
-                    if (classify.category._id.toString() === category._id.toString()) {
-                        const CheckImage = req.file === undefined ? null : req.file.path;
-                        const producer = new Producer({
-                            _id: mongoose.Types.ObjectId(),
-                            category: req.body.category,
-                            classify: req.body.classify,
-                            title: req.body.title,
-                            image: CheckImage,
-                            note: req.body.note
-                        });
-                        producer.save()
-                            .then(result => {
-                                res.status(201).json({
-                                    message: 'Created producer successful',
-                                    createdProducer: {
-                                        id: result._id,
-                                        category: {
-                                            _id: result.category,
-                                            title: category.title
-                                        },
-                                        classify: {
-                                            _id: result.classify,
-                                            title: classify.title
-                                        },
-                                        title: result.title,
-                                        image: result.image,
-                                        note: result.note,
-                                        createdAt: result.created_at,
-                                        request: {
-                                            type: 'GET',
-                                            createdProducerURL: `${config.API_ADDRESS}/api/producers/` + result._id
-                                        }
-                                    }
-                                });
-                            })
-                            .catch(err => {
-                                if (req.file !== undefined && req.file !== null) {
-                                    fs.unlink(req.file.path, (err) => {
+    const pathImage = 'uploads/producers/';
+    if (req.body.image !== undefined && req.body.image !== null) {
+        saveImage(pathImage, req.body.image)
+            .then(infoImage => {
+                Category.findById(req.body.category)
+                    .then(category => {
+                        Classify.findById(req.body.classify)
+                            .then(classify => {
+                                if (classify.category._id.toString() === category._id.toString()) {
+                                    const producer = new Producer({
+                                        _id: new mongoose.Types.ObjectId(),
+                                        category: req.body.category,
+                                        classify: req.body.classify,
+                                        title: req.body.title,
+                                        image: pathImage + infoImage.fileName + '.' + infoImage.typeImage,
+                                        note: req.body.note
+                                    });
+                                    producer.save()
+                                        .then(result => {
+                                            res.status(201).json({
+                                                message: 'Created producer successful',
+                                                createdProducer: {
+                                                    id: result._id,
+                                                    category: {
+                                                        _id: result.category,
+                                                        title: category.title
+                                                    },
+                                                    classify: {
+                                                        _id: result.classify,
+                                                        title: classify.title
+                                                    },
+                                                    title: result.title,
+                                                    image: result.image,
+                                                    note: result.note,
+                                                    createdAt: result.created_at,
+                                                    request: {
+                                                        type: 'GET',
+                                                        createdProducerURL: `${config.API_ADDRESS}/api/producers/` + result._id
+                                                    }
+                                                }
+                                            });
+                                        })
+                                        .catch(err => {
+                                            fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                                                if (err) throw err;
+                                            });
+
+                                            if (err.name == "MongoError") {
+                                                res.status(500).json({
+                                                    message: 'The title already exists',
+                                                    error: err
+                                                });
+                                            } else {
+                                                res.status(500).json({
+                                                    error: err
+                                                });
+                                            }
+                                        });
+                                } else {
+                                    fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
                                         if (err) throw err;
                                     });
+
+                                    res.status(500).json({
+                                        message: 'classify not of category'
+                                    });
                                 }
+                            })
+                            .catch(err => {
+                                fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                                    if (err) throw err;
+                                });
+
                                 res.status(500).json({
+                                    message: 'Classify not found',
                                     error: err
                                 });
                             });
-                    } else {
-                        if (req.file !== undefined && req.file !== null) {
-                            fs.unlink(req.file.path, (err) => {
-                                if (err) throw err;
-                            });
-                        }
-                        res.status(500).json({
-                            message: 'classify not of category'
-                        });
-                    }
-                })
-                .catch(err => {
-                    if (req.file !== undefined && req.file !== null) {
-                        fs.unlink(req.file.path, (err) => {
+                    })
+                    .catch(err => {
+                        fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
                             if (err) throw err;
                         });
-                    }
 
-                    res.status(500).json({
-                        message: 'Classify not found',
-                        error: err
+                        res.status(500).json({
+                            message: 'Category not found',
+                            error: err
+                        });
                     });
+            })
+            .catch(err => {
+                res.status(422).json({
+                    error: err
                 });
-        })
-        .catch(err => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                });
-            }
-
-            res.status(500).json({
-                message: 'Category not found',
-                error: err
             });
+    } else {
+        res.status(404).json({
+            error: 'Not found image'
         });
-
+    }
 }
 
 exports.producers_get_producer_by_category = async (req, res) => {
@@ -274,13 +288,13 @@ exports.producers_update_producer = async (req, res) => {
         await delete updateOps.image;
     }
 
-    if (updateOps.classify !== undefined) {
-        await delete updateOps.classify;
-    }
+    // if (updateOps.classify !== undefined) {
+    //     await delete updateOps.classify;
+    // }
 
-    if (updateOps.category !== undefined) {
-        await delete updateOps.category;
-    }
+    // if (updateOps.category !== undefined) {
+    //     await delete updateOps.category;
+    // }
 
     Producer.updateOne({
             _id: id
@@ -344,54 +358,60 @@ exports.producers_update_image = async (req, res) => {
         });
     }
 
-    const id = req.params.producerId;
-    Producer.findById(id)
-        .select('image')
-        .exec()
-        .then(result => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(result.image, (err) => {
-                    if (err) throw err;
-                    Producer.updateOne({
-                            _id: id
-                        }, {
-                            $set: {
-                                "image": req.file.path
-                            }
-                        })
-                        .exec()
-                        .then(result => {
-                            res.status(200).json({
-                                message: 'Producer image updated',
-                                Category: `${config.API_ADDRESS}/api/producers/` + id
-                            })
-                        })
-                });
-            } else {
-                res.status(404).json({
-                    error: err
-                });
-            }
-        })
-        .catch(err => {
-            if (req.file !== undefined && req.file !== null) {
-                fs.unlink(req.file.path, (err) => {
-                    if (err) throw err;
-                });
-            }
+    const pathImage = 'uploads/producers/';
+    if (req.body.image !== undefined && req.body.image !== null) {
+        saveImage(pathImage, req.body.image)
+            .then(infoImage => {
+                const id = req.params.producerId;
+                Producer.findById(id)
+                    .select('image')
+                    .exec()
+                    .then(result => {
+                        fs.unlink(result.image, (err) => {
+                            if (err) throw err;
+                            Producer.updateOne({
+                                    _id: id
+                                }, {
+                                    $set: {
+                                        "image": pathImage + infoImage.fileName + '.' + infoImage.typeImage
+                                    }
+                                })
+                                .exec()
+                                .then(result => {
+                                    res.status(200).json({
+                                        message: 'Producer image updated',
+                                        Category: `${config.API_ADDRESS}/api/producers/` + id
+                                    });
+                                })
+                                .catch(err => {
+                                    res.status(500).json({
+                                        message: 'No valid entry found for provided ID',
+                                        error: err
+                                    });
+                                });
+                        });
+                    })
+                    .catch(err => {
+                        fs.unlink(req.file.path, (err) => {
+                            if (err) throw err;
+                        });
 
-            if (err.kind == 'ObjectId') {
-                res.status(500).json({
-                    message: 'No valid entry found for provided ID',
+                        res.status(500).json({
+                            message: 'No valid entry found for provided ID',
+                            error: err
+                        });
+                    });
+            })
+            .catch(err => {
+                res.status(422).json({
                     error: err
                 });
-            } else {
-                res.status(404).json({
-                    message: 'Not found image',
-                    error: err
-                });
-            }
+            });
+    } else {
+        res.status(404).json({
+            message: 'Not found image',
         });
+    }
 }
 
 function checkPermission(tokenEncoded) {
@@ -401,6 +421,32 @@ function checkPermission(tokenEncoded) {
             resolve(1);
         } else {
             resolve(0);
+        }
+    })
+}
+
+function saveImage(pathImage, base64String) {
+    return new Promise((resolve, reject) => {
+        let arrayBase64Image = base64String.split(';base64,');
+        let typeFile = arrayBase64Image[0].split('/')[0];
+
+        if (typeFile === 'data:image') {
+            let typeImage = arrayBase64Image[0].split('/')[1];
+            let base64Image = arrayBase64Image[1];
+            let fileName = Date.now();
+
+            fs.writeFile(pathImage + fileName + '.' + typeImage, base64Image, {
+                encoding: 'base64'
+            }, function (err) {
+                if (err) reject(err);
+                var infoImageArray = [];
+                infoImageArray['typeImage'] = typeImage;
+                infoImageArray['fileName'] = fileName;
+                resolve(infoImageArray);
+
+            });
+        } else {
+            reject('Wrong file format');
         }
     })
 }

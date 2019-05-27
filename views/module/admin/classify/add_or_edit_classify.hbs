@@ -37,7 +37,7 @@
             </div>
 
             <div class="form-group">
-                <label>Hình ảnh <i class="fab fa-whmcs text-danger"></i>: </label>
+                <label>Hình ảnh (Dung lượng nhỏ hơn 1.5 MB) <i class="fab fa-whmcs text-danger"></i>: </label>
                 <img id="imageId" src="" width="100" height="100">
                 <input class="btn btn-outline-primary" type="file" name="file" id="uploadImage">
                 <button class="btn btn-outline-warning" id="showModalUploadId">Cập nhật ảnh</button>
@@ -193,9 +193,7 @@
                     updateImageClassifyAPI(sessionStorage.getItem('token'), idClassify, image)
                         .then(result => {
                             messageSuccess(result);
-                            setTimeout(() => {
-                                window.location = `${Dia_chi_Dich_vu}/classify/${idClassify}`;
-                            }, 1500);
+                            imageId.src = base64Image;
                         })
                         .catch(err => {
                             if (JSON.parse(err).error.message !== undefined)

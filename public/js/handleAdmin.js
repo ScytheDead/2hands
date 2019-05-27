@@ -59,8 +59,16 @@ function messageSuccess(result) {
         modelTitleThongBao.innerHTML = `Cập nhật hình ảnh thành công`;
     } else if (result.message == 'Classify updated') {
         modelTitleThongBao.innerHTML = `Cập nhật thể loại thành công`;
-    }
-
+    } else if (result.message == 'Created producer successful') {
+        modelTitleThongBao.innerHTML = `Tạo mới nhà sản xuất thành công`;
+    } else if (result.message == 'Producer deleted') {
+        modelTitleThongBao.innerHTML = `Xóa nhà sản xuất thành công`;
+    } else if (result.message == 'Producer image updated') {
+        modelTitleThongBao.innerHTML = `Cập nhật hình ảnh thành công`;
+    } else if (result.message == 'Producer updated') {
+        modelTitleThongBao.innerHTML = `Cập nhật nhà sản xuất thành công`;
+    } 
+ 
     modal_ThongBao.click();
     setTimeout(() => {
         Tat_Thong_bao.click();
