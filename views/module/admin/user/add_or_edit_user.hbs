@@ -140,7 +140,7 @@
     TH_avatar.src = '../images/login_icon2.png';
 
     btnShowModalUploadAvatar.onclick = () => {
-        imageModalId.src = `${Dia_chi_Dich_vu}/${linkAvatar}`;
+        imageModalId.src = imageId.src;
         modalUploadAvatarId.click();
     }
 
@@ -153,9 +153,7 @@
                 updateAvatarUserAPI(sessionStorage.getItem('token'), idUser, avatar)
                     .then(result => {
                         messageSuccess(result);
-                        setTimeout(() => {
-                            window.location = `${Dia_chi_Dich_vu}/user/${idUser}0301${sessionStorage.getItem('token')}`;
-                        }, 1500);
+                        imageId.src = base64Image;
                     })
                     .catch(err => {
                         if (JSON.parse(err).error.message !== undefined)

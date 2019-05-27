@@ -282,6 +282,10 @@ exports.categories_update_image = async (req, res) => {
                                     });
                                 })
                                 .catch(err => {
+                                    fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                                        if (err) throw err;
+                                    });
+                                    
                                     res.status(500).json({
                                         error: err
                                     });

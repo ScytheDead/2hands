@@ -37,9 +37,9 @@ router.get('/classify/:classifyId', ProducerController.producers_get_producer_by
 
 router.get('/:producerId', checkAuth, ProducerController.producers_get_producer);
 
-router.post('/', checkAuth, upload.single('image'), ProducerController.producers_create_producer);
+router.post('/', checkAuth, ProducerController.producers_create_producer);
 
-router.patch('/image/:producerId', checkAuth, upload.single('image'), ProducerController.producers_update_image);
+router.patch('/image/:producerId', checkAuth, ProducerController.producers_update_image);
 
 router.patch('/:producerId', checkAuth, ProducerController.producers_update_producer);
 
