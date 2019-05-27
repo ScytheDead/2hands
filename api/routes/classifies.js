@@ -33,13 +33,9 @@ router.get('/', ClassifyController.classifies_get_all);
 
 router.get('/category/:categoryId', ClassifyController.classifies_get_classify_by_category);
 
-router.post('/', checkAuth, 
-// upload.single('image'), 
-ClassifyController.classifies_create_classify);
+router.post('/', checkAuth, ClassifyController.classifies_create_classify);
 
-router.patch('/image/:classifyId', checkAuth, 
-// upload.single('image'), 
-ClassifyController.classifies_update_image);
+router.patch('/image/:classifyId', checkAuth, ClassifyController.classifies_update_image);
 
 router.get('/:classifyId', checkAuth, ClassifyController.classifies_get_classify);
 

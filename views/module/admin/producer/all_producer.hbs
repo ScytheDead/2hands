@@ -48,6 +48,7 @@
                         <th>Hình</th>
                         <th>Tiêu đề</th>
                         <th>Chuyên mục</th>
+                        <th>Thể loại</th>
                         <th>Ngày tạo</th>
                         <th>Lần cập nhật gần nhất</th>
                         <th>Ghi chú</th>
@@ -106,7 +107,7 @@
 
     filterCategoryId.onchange = () => {
         if (filterCategoryId.value != 'all') {
-            getProducersByCategory(filterCategoryId.value)
+            showProducersByCategory(filterCategoryId.value)
         }
         else {
             toastMessageId.innerHTML = ``;
@@ -123,7 +124,7 @@
                 <td scope="row"><img src="${Dia_chi_Dich_vu}/${producer.image}" width="70" height="70"></td>
                 <td>${producer.title}</td>
                 <td>${producer.category.title}</td>
-                <td></td>
+                <td>${producer.classify.title}</td>
                 <td>${getDateFormat(producer.createdAt)}</td>
                 <td>${getDateFormat(producer.updatedAt)}</td>
                 <td>${producer.note == null ? "" : producer.note}</td>
@@ -140,7 +141,7 @@
             .then(result => {
                 messageSuccess(result);
                 if (filterCategoryId.value != 'all')
-                    getProducersByCategory(filterCategoryId.value)
+                    showProducersByCategory(filterCategoryId.value)
                 else
                     showAllProducers();
             })
@@ -154,7 +155,7 @@
         window.location = Dia_chi_Dich_vu + '/producer';
     }
 
-    function getProducersByCategory(CategoryId) {
+    function showProducersByCategory(CategoryId) {
         getCategoryAPI(sessionStorage.getItem('token'), CategoryId)
             .then(category => {
                 getClassifiesByCategoryAPI(CategoryId)
@@ -163,7 +164,7 @@
 
                             // group btn
                             groupBTNClassifies.classList.remove('d-none');
-                            var chuoi_HTML_button_classifies = ``;
+                            var chuoi_HTML_button_classifies = `<button class="btn btn-outline-secondary ml-3" onclick="showProducersByCategory('${CategoryId}')">Tất cả ${category.category.title}</button>`;
                             listClassifies.classifies.forEach(classify => {
                                 chuoi_HTML_button_classifies += `<button class="btn btn-outline-secondary ml-3" onclick="getProducersByClassify('${classify.id}')">${classify.title}</button>`
                             });
@@ -190,6 +191,8 @@
                                 console.log(err);
                                 messageError(err);
                             });
+
+
                     }).catch(err => {
                         console.log(err);
                     });
@@ -201,30 +204,37 @@
     }
 
     function getProducersByClassify(ClassifyId) {
-        getClassifyAPI(sessionStorage.getItem('token'), ClassifyId)
-            .then(classify => {
+        if (ClassifyId !== 'all') {
+            getClassifyAPI(sessionStorage.getItem('token'), ClassifyId)
+                .then(classify => {
 
-                getProducerByClassifyAPI(ClassifyId)
-                    .then(listProducers => {
-                        if (listProducers.count > 0) {
-                            toastMessageId.innerHTML = ``;
-                            tableProducersId.classList.remove('d-none');
-                            listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
-                            showTableProducers(listProducers.producers);
-                        } else {
-                            listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
-                            toastMessageId.innerHTML = `Thể loại này không có nhà sản xuất nào`;
-                            tableProducersId.classList.add('d-none');
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        messageError(err);
-                    });
-            })
-            .catch(err => {
-                console.log(err);
-                messageError(err);
-            })
+                    getProducerByClassifyAPI(ClassifyId)
+                        .then(listProducers => {
+                            if (listProducers.count > 0) {
+                                toastMessageId.innerHTML = ``;
+                                tableProducersId.classList.remove('d-none');
+                                listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
+                                showTableProducers(listProducers.producers);
+                            } else {
+                                listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
+                                toastMessageId.innerHTML = `Thể loại này không có nhà sản xuất nào`;
+                                tableProducersId.classList.add('d-none');
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            messageError(err);
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                    messageError(err);
+                })
+        }
+        else {
+
+        }
+
     }
+
 </script>

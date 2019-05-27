@@ -82,7 +82,7 @@ exports.classifies_create_classify = async (req, res) => {
                                 });
                             })
                             .catch(err => {
-                                fs.unlink(req.file.path, (err) => {
+                                fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
                                     if (err) throw err;
                                 });
 
@@ -99,7 +99,7 @@ exports.classifies_create_classify = async (req, res) => {
                             });
                     })
                     .catch(err => {
-                        fs.unlink(req.file.path, (err) => {
+                        fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
                             if (err) throw err;
                         });
 
@@ -317,14 +317,19 @@ exports.classifies_update_image = async (req, res) => {
                                     });
                                 })
                                 .catch(err => {
+                                    fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
+                                        if (err) throw err;
+                                    });
+                                    
                                     res.status(500).json({
+                                        message: 'No valid entry found for provided ID',
                                         error: err
                                     });
                                 });
                         });
                     })
                     .catch(err => {
-                        fs.unlink(req.file.path, (err) => {
+                        fs.unlink(pathImage + infoImage.fileName + '.' + infoImage.typeImage, (err) => {
                             if (err) throw err;
                         });
 
