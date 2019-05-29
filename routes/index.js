@@ -4,6 +4,7 @@ const controllerAdmin = require('../controllers/admin');
 const controllerCategory = require('../controllers/categories');
 const controllerClassify = require('../controllers/classify');
 const controllerProducer = require('../controllers/producer');
+const controllerPost = require('../controllers/post');
 
 // index
 router.get('/', controllerCategory.categories_get_all_index);
@@ -29,5 +30,8 @@ router.get('/classify', controllerClassify.create_classify);
 router.get('/admin/producer', controllerProducer.producer_get_all);
 router.get('/producer/:producerId', controllerProducer.get_producer);
 router.get('/producer', controllerProducer.create_producer);
+
+// post
+router.get('/admin/post-waiting', controllerPost.post_waiting);
 
 module.exports = router;

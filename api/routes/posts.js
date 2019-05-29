@@ -1,40 +1,26 @@
-// const express = require('express');
-// const router = express.Router();
-// const multer = require('multer');
-// const checkAuth = require('../middleware/check-auth');
-// const PostController = require('../controllers/posts');
+const express = require('express');
+const router = express.Router();
+const checkAuth = require('../middleware/check-auth');
+const PostController = require('../controllers/posts');
 
-// const storage = multer.diskStorage({
-//     destination: function(req, file, cb){
-//         cb(null, './uploads/');
-//     },
-//     filename: function(req, file, cb){
-//         cb(null, Date.now() + file.originalname);
-//     }
-// });
+router.get('/', PostController.posts_get_all);
 
-// const fileFilter = (req, file, cb) => {
-//     //reject a file
-//     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
-//         cb(null, true);
-//     else
-//         cb(new Error('Error: Wrong file format'), false);
-// }
-// const upload = multer({storage: storage, 
-//     limits: {
-//         fileSize: 1024 * 1024 * 5
-//     },
-//     fileFilter: fileFilter
-// });
+router.post('/', checkAuth, PostController.posts_create_post);
 
-// router.get('/', PostController.posts_get_all);
+router.get('/:postId', PostController.posts_get_post);
 
-// router.post('/', checkAuth, upload.single('images'), PostController.posts_create_post);
+router.patch('/:postId', checkAuth, PostController.posts_update_post);
 
-// router.get('/:postId', PostController.posts_get_post);
+router.delete('/:postId', checkAuth, PostController.posts_delete_post);
 
-// router.patch('/:postId', checkAuth, PostController.posts_update_post);
+// Filter
 
-// router.delete('/:postId', checkAuth, PostController.posts_delete_post);
+router.get('/user/:userId', checkAuth, PostController.posts_get_post_by_user);
 
-// module.exports = router;
+router.get('/category/:categoryId', PostController.posts_get_post_by_category);
+
+router.get('/classify/:classifyId', PostController.posts_get_post_by_classify);
+
+router.get('/producer/:producerId', PostController.posts_get_post_by_producer);
+
+module.exports = router;

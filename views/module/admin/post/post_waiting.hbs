@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+
+<script>
+    if (sessionStorage.getItem('token') != null) {
+        var user = decodedJWT(sessionStorage.getItem('token'));
+        if (user.isAdmin || user.isEmployee) {
+
+        } else {
+            window.location.href = Dia_chi_Dich_vu
+        }
+    } else {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+
+        <div class="col-md-3">
+            {{> admin/content-left}}
+        </div>
+
+        <div id="controlAdmin" class="col-md-9">
+
+            <h3 id="listCountId" class="text-primary mt-2"></h3>
+            <button onclick="goCreateProducer()" class="btn btn-primary">Thêm nhà sản xuất</button>
+            <div class="form-group">
+                <label for="">Lọc theo chuyên mục</label>
+                <select id="filterCategoryId" class="btn btn-outline-success">
+
+                </select>
+
+
+
+            </div>
+            <div id="groupBTNClassifies" class="form-group">
+
+            </div>
+
+            <div id="toastMessageId"></div>
+            <table id="tableProducersId" class="table mt-3" style="">
+                <thead>
+                    <tr>
+                        <th>Hình</th>
+                        <th>Tiêu đề</th>
+                        <th>Chuyên mục</th>
+                        <th>Thể loại</th>
+                        <th>Ngày tạo</th>
+                        <th>Lần cập nhật gần nhất</th>
+                        <th>Ghi chú</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBodyId">
+
+                </tbody>
+            </table>
+
+
+        </div>
+
+    </div>
+</div>
+
+<button id="send">Send test</button>
+
+
+<script>
+    btnPostWaiting.classList.add('active');
+    var socket = io(Dia_chi_Dich_vu);
+
+    send.onclick = () => {
+        var chuoi_gui = `fuck`;
+        socket.emit('client-send-data', chuoi_gui);
+    }
+
+    socket.on('server-send-data', data => {
+        console.log(data);
+    })
+
+</script>
