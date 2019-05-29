@@ -305,7 +305,7 @@ exports.producers_update_producer = async (req, res) => {
         .then(result => {
             res.status(200).json({
                 message: 'Producer updated',
-                ClassifyURL: `${config.API_ADDRESS}/api/producers/` + id
+                ProducerURL: `${config.API_ADDRESS}/api/producers/` + id
             });
         })
         .catch(err => {
