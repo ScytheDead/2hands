@@ -4,10 +4,27 @@ if (sessionStorage.getItem('token') != null) {
     btnLogin.classList.add(`d-none`);
 }
 
+btnCreatePost.onclick = () => {
+    if (sessionStorage.getItem('token') == null) {
+        modelTitleThongBao.innerHTML = `Cần đăng nhập trước khi đăng tin`
+        modelTitleThongBao.classList.remove('text-success');
+        modelTitleThongBao.classList.add('text-danger');
+        modal_ThongBao.click();
+        setTimeout(() => {
+            Tat_Thong_bao.click();
+            modalLogin.click();
+        }, 1500);
+
+    } else {
+        window.location = Dia_chi_Dich_vu + '/create-post'
+    }
+}
+
 btnLogin.onclick = () => {
     modalLogin.click();
     changedFormLogin('login');
 }
+
 
 function changedFormLogin(status) {
     if (status === 'login') {
@@ -90,6 +107,8 @@ function XL_Login(result) {
         TH_close_modal_login.click();
 
         // Notification success
+        modelTitleThongBao.classList.remove('text-danger')
+        modelTitleThongBao.classList.add('text-success')
         modelTitleThongBao.innerHTML = `Đăng nhập thành công`
         modal_ThongBao.click();
         setTimeout(() => {
