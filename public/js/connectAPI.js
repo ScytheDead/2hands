@@ -499,7 +499,7 @@ function getProducerByCategoryAPI(CategoryId){
     });
 }
 
-function getProducerByClassifyAPI(classifyId){
+function getProducersByClassifyAPI(classifyId){
     return new Promise((resolve, reject) => {
         var Xu_ly_HTTP = new XMLHttpRequest();
         var Tham_so = `/api/producers/classify`;
