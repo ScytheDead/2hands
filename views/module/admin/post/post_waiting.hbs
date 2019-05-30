@@ -2,7 +2,7 @@
 <script src="../js/connectAPI.js"></script>
 <script src="../js/handle.js"></script>
 <script src="../js/handleAdmin.js"></script>
-<script src="/socket.io/socket.io.js"></script>
+<script id="importSocket" src="/socket.io/socket.io.js"></script>
 
 
 <script>
@@ -28,7 +28,7 @@
         <div id="controlAdmin" class="col-md-9">
 
             <h3 id="listCountId" class="text-primary mt-2"></h3>
-            <button onclick="goCreateProducer()" class="btn btn-primary">Thêm nhà sản xuất</button>
+            <button onclick="goCreatePost()" class="btn btn-primary">Đăng tin</button>
             <div class="form-group">
                 <label for="">Lọc theo chuyên mục</label>
                 <select id="filterCategoryId" class="btn btn-outline-success">
@@ -47,9 +47,12 @@
                 <thead>
                     <tr>
                         <th>Hình</th>
-                        <th>Tiêu đề</th>
                         <th>Chuyên mục</th>
                         <th>Thể loại</th>
+                        <th>Nhà sản xuất</th>
+                        <th>Tiêu đề</th>
+                        <th>Giá</th>
+                        <th>Loại tin</th>
                         <th>Ngày tạo</th>
                         <th>Lần cập nhật gần nhất</th>
                         <th>Ghi chú</th>
@@ -71,16 +74,44 @@
 
 
 <script>
+    // importSocket.src = "/socket.io/socket.io.js"
+
     btnPostWaiting.classList.add('active');
     var socket = io(Dia_chi_Dich_vu);
+    //const socket = io('http://localhost:3000');
 
     send.onclick = () => {
-        var chuoi_gui = `fuck`;
+       var chuoi_gui = `fuck`;
         socket.emit('client-send-data', chuoi_gui);
     }
 
-    socket.on('server-send-data', data => {
-        console.log(data);
+    socket.on('server-send-list-post-waiting', listPostsWaiting => {
+        showTablePostsWaiting(listPostsWaiting);
     })
+
+
+    function showTablePostsWaiting(listPostsWaiting) {
+        chuoi_HTML = ``;
+        console.log(listPostsWaiting);
+        listPostsWaiting.forEach(post => {
+            chuoi_HTML += `<tr>
+                <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="50" height="50"></td>
+                <td>${post.category.title}</td>
+                <td>${post.classify.title}</td>
+                <td>${post.producer.title}</td>
+                <td>${post.title}</td>
+                <td>${post.price}</td>
+                <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
+                <td>${getDateFormat(post.created_at)}</td>
+                <td>${getDateFormat(post.updated_at)}</td>
+                <td>${post.note == null ? "" : post.note}</td>
+                <td><button class="btn btn-outline-warning" onclick="window.location='${Dia_chi_Dich_vu}/producer/${post.id}'">Chi tiết</button>
+                    <button class="btn btn-outline-success" onclick="deleteProducer('${sessionStorage.getItem('token')}', '${post.id}')">Duyệt</button>
+                    <button class="btn btn-outline-danger" onclick="deleteProducer('${sessionStorage.getItem('token')}', '${post.id}')">Từ chối</button>
+                </td>
+            </tr>`;
+        });
+        tableBodyId.innerHTML = chuoi_HTML;
+    }
 
 </script>

@@ -66,89 +66,101 @@ exports.posts_create_post = (req, res) => {
                                             if (producer.classify._id.toString() === classify._id.toString()) { //check producer in classify
                                                 var arrayImage = [];
                                                 if (req.body.images !== undefined && req.body.images !== null) {
-                                                    const pathImage = 'uploads/posts/';
-                                                    await saveArrayImage(pathImage, req.body.images)
-                                                        .then(arrayNameImage => {
-                                                            arrayImage = arrayNameImage;
-                                                            arrayImage.forEach((image, index) => {
-                                                                arrayImage[index] = pathImage + image;
+                                                    if (req.body.images.length >= 1 && req.body.images.length <= 6) {
+                                                        const pathImage = 'uploads/posts/';
+                                                        await saveArrayImage(pathImage, req.body.images)
+                                                            .then(arrayNameImage => {
+                                                                arrayImage = arrayNameImage;
+                                                                arrayImage.forEach((image, index) => {
+                                                                    arrayImage[index] = pathImage + image;
+                                                                })
                                                             })
-                                                        })
-                                                        .catch(err => {
-                                                            res.status(422).json({
-                                                                error: err
-                                                            });
-                                                        })
-                                                }
+                                                            .catch(err => {
+                                                                res.status(422).json({
+                                                                    error: err
+                                                                });
+                                                            })
 
-                                                // user category classify producer title content price images seller note
-                                                const post = new Post({
-                                                    _id: new mongoose.Types.ObjectId(),
-                                                    user: req.body.user,
-                                                    category: req.body.category,
-                                                    classify: req.body.classify,
-                                                    producer: req.body.producer,
-                                                    title: req.body.title,
-                                                    content: req.body.content,
-                                                    price: req.body.price,
-                                                    images: arrayImage,
-                                                    seller: req.body.seller,
-                                                    note: req.body.note
-                                                });
-                                                post.save()
-                                                    .then(result => {
-                                                        res.status(201).json({
-                                                            message: 'Created post successful',
-                                                            createdPost: {
-                                                                id: result._id,
-                                                                user: {
-                                                                    _id: result.user,
-                                                                    name: user.name
-                                                                },
-                                                                category: {
-                                                                    _id: result.category,
-                                                                    title: category.title
-                                                                },
-                                                                classify: {
-                                                                    _id: result.classify,
-                                                                    title: classify.title
-                                                                },
-                                                                producer: {
-                                                                    _id: result.producer,
-                                                                    title: producer.title
-                                                                },
-                                                                title: result.title,
-                                                                content: result.content,
-                                                                price: result.price,
-                                                                images: result.images,
-                                                                seller: result.seller,
-                                                                priority: result.priority,
-                                                                status: result.status,
-                                                                note: result.note,
-                                                                createdAt: result.created_at,
-                                                                request: {
-                                                                    type: 'GET',
-                                                                    createdPostURL: `${config.API_ADDRESS}/api/posts/` + result._id
-                                                                }
-                                                            }
+
+                                                        // user category classify producer title content price images seller note
+                                                        const post = new Post({
+                                                            _id: new mongoose.Types.ObjectId(),
+                                                            user: req.body.user,
+                                                            category: req.body.category,
+                                                            classify: req.body.classify,
+                                                            producer: req.body.producer,
+                                                            title: req.body.title,
+                                                            content: req.body.content,
+                                                            price: req.body.price,
+                                                            images: arrayImage,
+                                                            seller: req.body.seller,
+                                                            note: req.body.note
                                                         });
-                                                    })
-                                                    .catch(err => {
-                                                        if (req.body.images !== undefined && req.body.images !== null) {
-                                                            arrayImage.forEach(pathImage => deleteImage(pathImage));
-                                                        }
+                                                        post.save()
+                                                            .then(result => {
+                                                                res.status(201).json({
+                                                                    message: 'Created post successful',
+                                                                    createdPost: {
+                                                                        id: result._id,
+                                                                        user: {
+                                                                            _id: result.user,
+                                                                            name: user.name
+                                                                        },
+                                                                        category: {
+                                                                            _id: result.category,
+                                                                            title: category.title
+                                                                        },
+                                                                        classify: {
+                                                                            _id: result.classify,
+                                                                            title: classify.title
+                                                                        },
+                                                                        producer: {
+                                                                            _id: result.producer,
+                                                                            title: producer.title
+                                                                        },
+                                                                        title: result.title,
+                                                                        content: result.content,
+                                                                        price: result.price,
+                                                                        images: result.images,
+                                                                        seller: result.seller,
+                                                                        priority: result.priority,
+                                                                        status: result.status,
+                                                                        note: result.note,
+                                                                        createdAt: result.created_at,
+                                                                        request: {
+                                                                            type: 'GET',
+                                                                            createdPostURL: `${config.API_ADDRESS}/api/posts/` + result._id
+                                                                        }
+                                                                    }
+                                                                });
+                                                            })
+                                                            .catch(err => {
+                                                                if (req.body.images !== undefined && req.body.images !== null) {
+                                                                    arrayImage.forEach(pathImage => deleteImage(pathImage));
+                                                                }
 
-                                                        if (err.name == "MongoError") {
-                                                            res.status(500).json({
-                                                                message: 'The title already exists',
-                                                                error: err
+                                                                if (err.name == "MongoError") {
+                                                                    res.status(500).json({
+                                                                        message: 'The title already exists',
+                                                                        error: err
+                                                                    });
+                                                                } else {
+                                                                    res.status(500).json({
+                                                                        error: err
+                                                                    });
+                                                                }
                                                             });
-                                                        } else {
-                                                            res.status(500).json({
-                                                                error: err
-                                                            });
-                                                        }
+                                                    } else {
+                                                        res.status(500).json({
+                                                            message: 'pictures too much or too little',
+                                                            error: "pictures >= 1 and <= 6"
+                                                        });
+                                                    }
+                                                } else {
+                                                    res.status(404).json({
+                                                        message: 'Not found images'
                                                     });
+                                                }
                                             } else {
                                                 res.status(500).json({
                                                     message: 'Producer not of classify'

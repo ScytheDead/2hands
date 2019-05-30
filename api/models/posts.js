@@ -10,7 +10,7 @@ const postSchema = mongoose.Schema({
     title: { type: String, required: true, trim: true, unique: true, minlength: [5, 'title too short'] , maxlength: [255, 'title too long'] },
     content: { type: String, required: true, minlength: [20, 'content too short'], maxlength: [5000, 'content too long'] },
     price: { type: Number, required: true },
-    images: [{ type: String }],
+    images: [{ type: String, required: true }],
     seller: { type: Boolean, required: true},   //1: seller, 0: buyer
     priority: { type: Boolean, default: false },    //1: tin được ưu tiên, 0: không được ưu tiên
     status: { type: Number, default: 0, min: -1, max: 1 },  //0: pending, 1: show, -1: reject
