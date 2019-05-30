@@ -6,15 +6,10 @@ if (sessionStorage.getItem('token') != null) {
 
 btnCreatePost.onclick = () => {
     if (sessionStorage.getItem('token') == null) {
-        modelTitleThongBao.innerHTML = `Cần đăng nhập trước khi đăng tin`
-        modelTitleThongBao.classList.remove('text-success');
-        modelTitleThongBao.classList.add('text-danger');
-        modal_ThongBao.click();
+        modalNotificationError(`Cần đăng nhập trước khi đăng tin`);
         setTimeout(() => {
-            Tat_Thong_bao.click();
-            modalLogin.click();
+            btnLogin.click();
         }, 1500);
-
     } else {
         window.location = Dia_chi_Dich_vu + '/create-post'
     }
@@ -23,23 +18,6 @@ btnCreatePost.onclick = () => {
 btnLogin.onclick = () => {
     modalLogin.click();
     changedFormLogin('login');
-}
-
-
-function changedFormLogin(status) {
-    if (status === 'login') {
-        modalTitle.innerHTML = 'Đăng nhập';
-        showModalRegister.innerHTML = 'Đăng ký tài khoản';
-        submitLogin.innerHTML = 'Đăng nhập';
-        TH_errorMessage.className = ``;
-        TH_errorMessage.innerHTML = ``;
-    } else if (status === 'register') {
-        modalTitle.innerHTML = 'Đăng ký';
-        showModalRegister.innerHTML = 'Đăng nhập';
-        submitLogin.innerHTML = 'Đăng ký';
-        TH_errorMessage.className = ``;
-        TH_errorMessage.innerHTML = ``
-    }
 }
 
 showModalRegister.onclick = () => {
@@ -107,13 +85,7 @@ function XL_Login(result) {
         TH_close_modal_login.click();
 
         // Notification success
-        modelTitleThongBao.classList.remove('text-danger')
-        modelTitleThongBao.classList.add('text-success')
-        modelTitleThongBao.innerHTML = `Đăng nhập thành công`
-        modal_ThongBao.click();
-        setTimeout(() => {
-            Tat_Thong_bao.click();
-        }, 1500);
+        modalNotificationSuccess(`Đăng nhập thành công`)
     }
 }
 
@@ -146,6 +118,42 @@ function showDropDown(info) {
    <i class="fal fa-sign-out-alt fa-2x float-left"></i>&nbsp;<h6 id="TH_txt_logout"> Đăng xuất</h6>
 </button>`
     TH_dropdown.innerHTML = chuoi_HTMLConDropDown;
+}
+
+function changedFormLogin(status) {
+    if (status === 'login') {
+        modalTitle.innerHTML = 'Đăng nhập';
+        showModalRegister.innerHTML = 'Đăng ký tài khoản';
+        submitLogin.innerHTML = 'Đăng nhập';
+        TH_errorMessage.className = ``;
+        TH_errorMessage.innerHTML = ``;
+    } else if (status === 'register') {
+        modalTitle.innerHTML = 'Đăng ký';
+        showModalRegister.innerHTML = 'Đăng nhập';
+        submitLogin.innerHTML = 'Đăng ký';
+        TH_errorMessage.className = ``;
+        TH_errorMessage.innerHTML = ``
+    }
+}
+
+function modalNotificationError(message) {
+    modelTitleThongBao.innerHTML = message;
+    modelTitleThongBao.classList.remove('text-success');
+    modelTitleThongBao.classList.add('text-danger');
+    modal_ThongBao.click();
+    setTimeout(() => {
+        Tat_Thong_bao.click();
+    }, 1500);
+}
+
+function modalNotificationSuccess(message) {
+    modelTitleThongBao.classList.remove('text-danger')
+    modelTitleThongBao.classList.add('text-success')
+    modelTitleThongBao.innerHTML = message;
+    modal_ThongBao.click();
+    setTimeout(() => {
+        Tat_Thong_bao.click();
+    }, 1500);
 }
 
 function decodedJWT(tokenEncoded) {
