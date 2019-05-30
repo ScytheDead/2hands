@@ -1,10 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const controllerAdmin = require('../controllers/admin');
+
+// ------------------------------ Admin -------------------------------
+const controllerAdmin = require('../controllers/admin/admin');
+const controllerCategoryAdmin = require('../controllers//admin/categories');
+const controllerClassifyAdmin = require('../controllers/admin/classify');
+const controllerProducerAdmin = require('../controllers/admin/producer');
+const controllerPostAdmin = require('../controllers/admin/post');
+
+// --------------------------------------------------------------------
+
+// ------------------------------ User -------------------------------
+const controllerPost = require('../controllers/posts');
 const controllerCategory = require('../controllers/categories');
-const controllerClassify = require('../controllers/classify');
-const controllerProducer = require('../controllers/producer');
-const controllerPost = require('../controllers/post');
 
 // index
 router.get('/', controllerCategory.categories_get_all_index);
@@ -12,26 +20,30 @@ router.get('/', controllerCategory.categories_get_all_index);
 // index admin
 router.get('/admin', controllerAdmin.show_page_admin);
 
-// user
+// user admin
 router.get('/admin/user', controllerAdmin.get_all_users);
 router.get('/user/:param', controllerAdmin.get_user);
 
-// category
-router.get('/admin/category', controllerCategory.categories_get_all);
-router.get('/category/:categoryId', controllerCategory.get_category);
-router.get('/category', controllerCategory.create_category);
+// category admin
+router.get('/admin/category', controllerCategoryAdmin.categories_get_all);
+router.get('/category/:categoryId', controllerCategoryAdmin.get_category);
+router.get('/category', controllerCategoryAdmin.create_category);
 
-// classify
-router.get('/admin/classify', controllerClassify.classify_get_all);
-router.get('/classify/:classifyId', controllerClassify.get_classify);
-router.get('/classify', controllerClassify.create_classify);
+// classify admin
+router.get('/admin/classify', controllerClassifyAdmin.classify_get_all);
+router.get('/classify/:classifyId', controllerClassifyAdmin.get_classify);
+router.get('/classify', controllerClassifyAdmin.create_classify);
 
-// producer
-router.get('/admin/producer', controllerProducer.producer_get_all);
-router.get('/producer/:producerId', controllerProducer.get_producer);
-router.get('/producer', controllerProducer.create_producer);
+// producer admin
+router.get('/admin/producer', controllerProducerAdmin.producer_get_all);
+router.get('/producer/:producerId', controllerProducerAdmin.get_producer);
+router.get('/producer', controllerProducerAdmin.create_producer);
 
-// post
-router.get('/admin/post-waiting', controllerPost.post_waiting);
+// post admin
+router.get('/admin/post-waiting', controllerPostAdmin.post_waiting);
+
+
+// --------------------------------------------------------------------------------
+router.get('/create-post', controllerPost.create_post);
 
 module.exports = router;

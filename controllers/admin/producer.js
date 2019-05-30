@@ -2,7 +2,7 @@ var request = require('request');
 const express = require('express');
 const hbs = require('express-handlebars');
 const app = express();
-const config = require('../config');
+const config = require('../../config');
 
 // View engine setup
 app.set('view engine', 'hbs');
