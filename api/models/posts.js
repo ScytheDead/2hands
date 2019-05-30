@@ -12,7 +12,7 @@ const postSchema = mongoose.Schema({
     price: { type: Number, required: true },
     images: [{ type: String }],
     seller: { type: Boolean, required: true},   //1: seller, 0: buyer
-    priority: { type: Boolean, default: false },
+    priority: { type: Boolean, default: false },    //1: tin được ưu tiên, 0: không được ưu tiên
     status: { type: Number, default: 0, min: -1, max: 1 },  //0: pending, 1: show, -1: reject
     note: { type: String },
 },{ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });

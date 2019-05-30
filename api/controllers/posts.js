@@ -67,7 +67,7 @@ exports.posts_create_post = (req, res) => {
                                                 var arrayImage = [];
                                                 if (req.body.images !== undefined && req.body.images !== null) {
                                                     const pathImage = 'uploads/posts/';
-                                                    await getArrayImageName(pathImage, req.body.images)
+                                                    await saveArrayImage(pathImage, req.body.images)
                                                         .then(arrayNameImage => {
                                                             arrayImage = arrayNameImage;
                                                             arrayImage.forEach((image, index) => {
@@ -239,26 +239,17 @@ exports.posts_update_post = async (req, res) => {
         await delete updateOps.category;
     }
 
-    if (updateOps.priority !== undefined) {
+    if (updateOps.priority !== undefined || updateOps.status !== undefined) {
         if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
             return res.status(401).json({
                 message: 'You don\'t have permission'
             });
         }
     }
-
-    if (updateOps.status !== undefined) {
-        if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
-            return res.status(401).json({
-                message: 'You don\'t have permission'
-            });
-        }
-    }
-
 
     if (updateOps.images !== undefined && updateOps.images !== null) {
         const pathImage = 'uploads/posts/';
-        await getArrayImageName(pathImage, updateOps.images)
+        await saveArrayImage(pathImage, updateOps.images)
             .then(arrayNameImage => {
                 arrayNameImage.forEach(image => {
                     arrayImage.push(pathImage + image);
@@ -281,7 +272,7 @@ exports.posts_update_post = async (req, res) => {
                 if (err == 'Wrong file format') {
                     // delete images not in DB
                     var listImageNameDifferent = [];
-                    var listImagesInDB = await getAllImagesInDB();
+                    var listImagesInDB = await getAllImagesNameInDB();
                     fs.readdir('uploads/posts/', async (err, filenames) => {
                         filenames.forEach(fileName => {
                             if (listImagesInDB.indexOf(pathImage + fileName) < 0)
@@ -546,7 +537,7 @@ function checkPermission(tokenEncoded) {
     })
 }
 
-function getAllImagesInDB() {
+function getAllImagesNameInDB() {
     return new Promise((resolve, reject) => {
         var imageHaving = [];
         Post.find()
@@ -608,6 +599,6 @@ async function asyncSaveImage(pathImage, image) {
     return await saveImage(pathImage, image)
 }
 
-async function getArrayImageName(pathImage, arrayBase64) {
+async function saveArrayImage(pathImage, arrayBase64) {
     return await Promise.all(arrayBase64.map(image => asyncSaveImage(pathImage, image)))
 }
