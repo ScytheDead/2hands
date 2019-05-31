@@ -182,3 +182,11 @@ function getBase64(file) {
         }
     });
 }
+
+async function asyncGetBase64(image){
+    return await getBase64(image);
+}
+
+async function getListBase64(listImage){
+    return await Promise.all(listImage.map(image => asyncGetBase64(image)));
+}

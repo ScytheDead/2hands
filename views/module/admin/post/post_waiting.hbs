@@ -74,20 +74,40 @@
 
 
 <script>
-    // importSocket.src = "/socket.io/socket.io.js"
 
     btnPostWaiting.classList.add('active');
-    var socket = io(Dia_chi_Dich_vu);
-    //const socket = io('http://localhost:3000');
+    const socket = io(Dia_chi_Dich_vu);
 
-    send.onclick = () => {
-       var chuoi_gui = `client send to server`;
-        socket.emit('client-send-data', chuoi_gui);
-    }
+    socket.emit('admin-join-room');
 
     socket.on('server-send-list-post-waiting', listPostsWaiting => {
         showTablePostsWaiting(listPostsWaiting);
-    })
+    });
+
+    socket.on('server-send-create-post', post => {
+        chuoi_HTML = `<tr>
+                <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="50" height="50"></td>
+                <td>${post.category.title}</td>
+                <td>${post.classify.title}</td>
+                <td>${post.producer.title}</td>
+                <td>${post.title}</td>
+                <td>${post.price}</td>
+                <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
+                <td>${getDateFormat(post.createdAt)}</td>
+                <td>${getDateFormat(post.updatedAt)}</td>
+                <td>${post.note == null ? "" : post.note}</td>
+                <td><button class="btn btn-outline-warning" onclick="window.location='${Dia_chi_Dich_vu}/producer/${post.id}'">Chi tiết</button>
+                    <button class="btn btn-outline-success" onclick="deleteProducer('${sessionStorage.getItem('token')}', '${post.id}')">Duyệt</button>
+                    <button class="btn btn-outline-danger" onclick="deleteProducer('${sessionStorage.getItem('token')}', '${post.id}')">Từ chối</button>
+                </td>
+            </tr>`;
+            tableBodyId.innerHTML += chuoi_HTML;
+    });
+
+    send.onclick = () => {
+        var chuoi_gui = `client send to server`;
+        socket.emit('client-send-data', chuoi_gui);
+    }
 
 
     function showTablePostsWaiting(listPostsWaiting) {
