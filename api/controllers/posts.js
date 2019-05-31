@@ -297,6 +297,11 @@ exports.posts_update_post = async (req, res) => {
                     error: err
                 });
             });
+    } else {
+        flagUpdate = 0;
+        res.status(404).json({
+            message: 'Not found images'
+        });
     }
 
     if (flagUpdate) {
