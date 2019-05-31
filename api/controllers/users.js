@@ -87,7 +87,7 @@ exports.user_login = (req, res, next) => {
                         },
                         // config.JWT_KEY, {
                         config.JWT_KEY, {
-                            expiresIn: '4h'
+                            expiresIn: config.TIME_EXPIRES
                         }
                     );
                     return res.status(200).json({
