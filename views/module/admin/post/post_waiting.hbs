@@ -84,7 +84,7 @@
         showTablePostsWaiting(listPostsWaiting);
     });
 
-    socket.on('server-send-create-post', post => {
+    socket.on('server-send-create-post', post => { console.log(post);
         chuoi_HTML = `<tr>
                 <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="50" height="50"></td>
                 <td>${post.category.title}</td>
