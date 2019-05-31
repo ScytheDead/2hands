@@ -15,6 +15,8 @@
             <h1 id="formTitleId" class="text-info"></h1>
         </div>
 
+        <div id="errorMessageId"></div>
+
         <div class="col-md-9">
 
             <div class="form-group">
@@ -52,21 +54,38 @@
             </div>
 
             <div class="form-group">
+                Loại tin:
+                <label class="form-check-label ml-5">
+                    <input type="radio" id="rdoSellerId" class="form-check-input" value="1" checked name="optradio">Cần
+                    bán
+                </label>
+                <label class="form-check-label ml-5">
+                    <input type="radio" id="rdoBuyerId" class="form-check-input" value="0" name="optradio">Cần mua
+                </label>
+            </div>
+
+            <div class="form-group">
                 <label>Miêu tả chi tiết: </label>
                 <textarea class="form-control" rows="5" cols="50" id="contentId"></textarea>
             </div>
 
             <div class="form-group">
+                <label for="priceId">Giá: </label>
+                <input type="text" class="form-control" maxlength="11" required="required" id="priceId"
+                    aria-describedby="helpId" placeholder="Nhập giá bán">
+            </div>
+
+            <div class="form-group">
                 <label>Hình ảnh (Dung lượng nhỏ hơn 1.5 MB mỗi hình) <i class="fab fa-whmcs text-danger"></i>: </label>
-                <div class="row">
+                <div class="row" style="margin-left: 0">
                     <div id="ImagesId">
                         <button id="addImageId" class="btn btn-outline-warning btn-lg">
                             <i class="fa fa-camera fa-4x"></i>
-                            <i style="position: absolute; right: 750px; top: 530px;">+</i>
+                            <i style="position: absolute; right: 733px; top: 623px;">+</i>
                         </button>
                     </div>
 
-                    <div style="position: absolute; right: 520px; top: 537px;">
+                    <div style="position: absolute; right: 508px; top: 629px;">
                         <i class="far fa-hand-point-left"></i>
                         <em>Bạn cần đăng ít nhất 1 hình</em>
                     </div>
@@ -128,6 +147,8 @@
     </div>
 </div>
 <script>
+    var socket = io(Dia_chi_Dich_vu);
+
     TH_avatar.src = '../images/login_icon2.png';
     var listImageSelected = [];
 
@@ -165,112 +186,96 @@
     }
 
     if (1) {  // Create
-        formTitleId.innerHTML = `TẠO MỚI NHÀ SẢN XUẤT`;
+        formTitleId.innerHTML = `ĐĂNG TIN MỚI`;
         createdAtId.innerHTML = 'Ngày tạo: ' + getDateFormat(new Date());
+        updatedAtId.classList.add('d-none')
 
         loadAllData();
         async function loadAllData() {
-            await getAllCategory();
-            await getClassifiesByCategory(filterCategoryId.value);
-            getProducersByClassify(filterClassifyId.value);
+            await getAllCategory();     //load all Categories
+            await getClassifiesByCategory(filterCategoryId.value); // load Classifies by category
+            getProducersByClassify(filterClassifyId.value);     //load producer by classify
         }
 
         luu.onclick = () => {
-            getBase64(uploadImage.files[0])
-                .then(base64Image => {
-                    var infoProducerCreate = {
-                        title: titleId.value,
-                        image: base64Image,
+            hiddenMessageError();
+            getListBase64(listImageSelected)
+                .then(listBase64 => {
+                    var token = sessionStorage.getItem('token');
+                    var infoPostCreate = {
+                        user: decodedJWT(token).id,
                         category: filterCategoryId.value,
                         classify: filterClassifyId.value,
-                        note: noteId.value
+                        producer: filterProducerId.value,
+                        title: titleId.value,
+                        content: contentId.value,
+                        price: priceId.value,
+                        images: listBase64,
+                        seller: rdoSellerId.checked == true ? true : false
                     }
-
-                    createProducerAPI(sessionStorage.getItem('token'), infoProducerCreate)
+                    createPostAPI(token, infoPostCreate)
                         .then(result => {
-                            messageSuccess(result);
-                            setTimeout(() => {
-                                window.location = Dia_chi_Dich_vu + '/admin/producer';
-                            }, 1500);
+                            showMessageSuccess(`Đăng tin mới thành công.<br>Tin của bạn đang được kiểm duyệt`)
+                            console.log(result);
+                            socket.emit('client-create-post', result.createdPost)
                         })
                         .catch(err => {
-                            console.log(err);
-                            if (JSON.parse(err).error.message != undefined)
-                                messageError(JSON.parse(err).error.message);
-                            else if (JSON.parse(err).message != undefined)
-                                messageError(JSON.parse(err).message);
-                            else
-                                messageError(err);
+                            var chuoi_error = ``;
+                            console.log(JSON.parse(err));
+                            if (JSON.parse(err).message != undefined) {
+                                if (JSON.parse(err).message == `The title already exists`) {
+                                    chuoi_error = `Tiêu đề này đã tồn tại.<br>Xin chọn tiêu đề khác.`
+                                } else if (JSON.parse(err).message == `pictures too much or too little`) {
+                                    chuoi_error = `Phải chọn ít nhất 1 ảnh và tối đa 6 ảnh.`
+                                }
+
+                            } else {
+                                if (JSON.parse(err).error.errors.title != undefined) {
+                                    if (JSON.parse(err).error.errors.title.message == 'title too short') {
+                                        chuoi_error += 'Tiêu đề quá ngắn. (Tiêu đề từ 5 đến 255 ký tự) <br>';
+                                    } else if (JSON.parse(err).error.errors.title.message == 'title too long') {
+                                        chuoi_error += 'Tiêu đề quá dài. (Tiêu đề từ 5 đến 255 ký tự)<br>';
+                                    } else if (JSON.parse(err).error.errors.title.message == 'Path `title` is required.') {
+                                        chuoi_error += 'Tiêu đề không được để trống.<br>';
+                                    }
+                                }
+
+                                if (JSON.parse(err).error.errors.content != undefined) {
+                                    if (JSON.parse(err).error.errors.content.message == 'content too short') {
+                                        chuoi_error += 'Mô tả chi tiết quá ngắn. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                    } else if (JSON.parse(err).error.errors.content.message == 'content too long') {
+                                        chuoi_error += 'Mô tả chi tiết quá dài. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                    } else if (JSON.parse(err).error.errors.content.message == 'Path `content` is required.') {
+                                        chuoi_error += 'Mô tả chi tiết không được để trống.<br>';
+                                    }
+                                }
+
+                                if (JSON.parse(err).error.errors.price != undefined) {
+                                    if (JSON.parse(err).error.errors.price.message == 'Path `price` is required.') {
+                                        chuoi_error += 'Giá không được để trống.<br>';
+                                    } else if (JSON.parse(err).error.errors.price.message == `Cast to Number failed for value "${priceId.value}" at path "price"`) {
+                                        chuoi_error += 'Giá phải là một con số.<br>';
+                                    }
+                                }
+                            }
+
+                            showMessageError(chuoi_error);
                         });
                 })
                 .catch(err => {
-                    messageError(err);
-                })
+                    console.log(err);
+                    if (JSON.parse(err).error.message != undefined)
+                        messageError(JSON.parse(err).error.message);
+                    else if (JSON.parse(err).message != undefined)
+                        messageError(JSON.parse(err).message);
+                    else
+                        messageError(err);
+                });
         }
 
     }  // End Create
     else {    // Update
-        uploadImage.classList.add('d-none');
-        formTitleId.innerHTML = `CHỈNH SỬA NHÀ SẢN XUẤT`;
 
-        loadAllData();
-        async function loadAllData() {
-            await getAllCategory();
-            var producer = await showProducerUpdate(idProducer)
-            await getClassifiesByCategory(producer.producer.category._id);
-            filterClassifyId.value = producer.producer.classify._id;
-        }
-
-
-        // idProducer
-        luu.onclick = () => {
-            var producerUpdate = [
-                { "propName": "title", "value": titleId.value },
-                { "propName": "category", "value": filterCategoryId.value },
-                { "propName": "classify", "value": filterClassifyId.value },
-                { "propName": "note", "value": noteId.value }
-            ]
-
-            updateProducerAPI(sessionStorage.getItem('token'), idProducer, producerUpdate)
-                .then(result => {
-                    messageSuccess(result);
-                    setTimeout(() => {
-                        window.location = Dia_chi_Dich_vu + '/admin/producer';
-                    }, 1500);
-                })
-                .catch(err => {
-                    messageError(err);
-                });
-        }
-
-        showModalUploadId.onclick = () => {
-            modalUploadId.click();
-        }
-
-        btnUpload.onclick = () => {
-            getBase64(uploadId.files[0])
-                .then(base64Image => {
-                    var image = {
-                        image: base64Image
-                    }
-                    updateImageProducerAPI(sessionStorage.getItem('token'), idProducer, image)
-                        .then(result => {
-                            messageSuccess(result);
-                            imageId.src = base64Image;
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            if (JSON.parse(err).error.message !== undefined)
-                                messageError(JSON.parse(err).error.message);
-                            else
-                                messageError(JSON.parse(err).error);
-                        });
-                })
-                .catch(err => {
-                    messageError(err);
-                });
-            btnCloseModalUpload.click();
-        }
     }   // End update
 
     huy.onclick = () => {
@@ -298,6 +303,26 @@
         });
 
     }
+
+    function showMessageError(message) {
+        errorMessageId.innerHTML = message;
+        errorMessageId.classList.add('errorMessage');
+        errorMessageId.classList.remove('successMessage');
+    }
+
+    function showMessageSuccess(message) {
+        errorMessageId.innerHTML = message;
+        errorMessageId.classList.add('successMessage');
+        errorMessageId.classList.remove('errorMessage');
+    }
+
+    function hiddenMessageError() {
+        errorMessageId.innerHTML = ``;
+        errorMessageId.classList.remove('errorMessage');
+        errorMessageId.classList.remove('successMessage');
+    }
+
+
 
     function getAllCategory() {
         return new Promise((resolve, reject) => {
@@ -372,7 +397,6 @@
     }
 
     async function showImageSelect(listImage) {
-        console.log(listImage);
         showImageSelectedId.innerHTML = ``;
         var chuoi_HTML = `<div>`;
         for (var i = 0; i < listImage.length; i++) {
@@ -390,4 +414,11 @@
         listImageSelected.splice(posImage, 1)
         showImageSelect(listImageSelected)
     }
+
+    $(document).ready(function () {
+        $('#luu').click(function () {
+            $("html, body").animate({ scrollTop: 0 }, 600);
+            return false;
+        });
+    });
 </script>
