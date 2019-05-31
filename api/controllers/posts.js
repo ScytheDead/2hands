@@ -127,6 +127,7 @@ exports.posts_create_post = (req, res) => {
                                                                         status: result.status,
                                                                         note: result.note,
                                                                         createdAt: result.created_at,
+                                                                        updatedAt: result.updated_at,
                                                                         request: {
                                                                             type: 'GET',
                                                                             createdPostURL: `${config.API_ADDRESS}/api/posts/` + result._id
@@ -306,6 +307,7 @@ exports.posts_update_post = async (req, res) => {
 
     if (flagUpdate) {
         updateOps.images = arrayImage;
+        updateOps.status = 0;
         Post.updateOne({
                 _id: id
             }, {
