@@ -100,22 +100,22 @@ function XL_Logout() {
 function showDropDown(info) {
     TH_dropdown_all.classList.remove('d-none');
     var chuoi_HTMLConDropDown = `<button id="TH_profile" class="dropdown-item" href="#">
-    <i class="fal fa-user-circle fa-2x float-left"></i>&nbsp;<h5 id="TH_name">${info.name == null ? info.phoneNumber : (info.name == "" ? info.phoneNumber : info.name)}</h5> <h6 id="TH_txt_QLTK"> Quản lý tài khoản</h6>
+    <i class="fa fa-user-circle fa-2x float-left"></i></i>&nbsp;<h5 id="TH_name">${info.name == null ? info.phoneNumber : (info.name == "" ? info.phoneNumber : info.name)}</h5> <h6 id="TH_txt_QLTK"> Quản lý tài khoản</h6>
 </button>
 <div class="dropdown-divider"></div>
 <button id="TH_save_posts" class="dropdown-item" href="#">
-    <h6><i class="fal fa-heart fa-2x"></i>&nbsp; Các tin đã lưu</h6>
+    <h6><i class="fa fa-heart-o fa-2x"></i>&nbsp; Các tin đã lưu</h6>
 </button>`
     if (info.isAdmin || info.isEmployee) {
         chuoi_HTMLConDropDown += `<div class="dropdown-divider"></div>
         <button id="TH_admin" class="dropdown-item" onclick="window.location.href = '${Dia_chi_Dich_vu}/admin'">
-            <i class="fal fa-user-secret fa-2x float-left"></i>&nbsp;<h6 id="TH_txt_QT"> Quản trị</h6>
+        <i class="fa fa-user-secret fa-2x float-left"></i>&nbsp;<h6 id="TH_txt_QT"> Quản trị</h6>
         </button>`
     }
 
     chuoi_HTMLConDropDown += `<div class="dropdown-divider"></div>
 <button id="TH_logout" onclick="XL_Logout()" class="dropdown-item" href="#">
-   <i class="fal fa-sign-out-alt fa-2x float-left"></i>&nbsp;<h6 id="TH_txt_logout"> Đăng xuất</h6>
+<i class="fa fa-sign-out fa-2x float-left"></i>&nbsp;<h6 id="TH_txt_logout"> Đăng xuất</h6>
 </button>`
     TH_dropdown.innerHTML = chuoi_HTMLConDropDown;
 }
