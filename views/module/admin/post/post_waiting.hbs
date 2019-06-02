@@ -52,6 +52,7 @@
                         <th>Nhà sản xuất</th>
                         <th>Tiêu đề</th>
                         <th>Giá</th>
+                        <th>Địa chỉ</th>
                         <th>Loại tin</th>
                         <th>Ngày tạo</th>
                         <th>Lần cập nhật gần nhất</th>
@@ -92,6 +93,7 @@
                 <td>${post.producer.title}</td>
                 <td>${post.title}</td>
                 <td>${post.price}</td>
+                <td>${post.address}</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
                 <td>${getDateFormat(post.createdAt)}</td>
                 <td>${getDateFormat(post.updatedAt)}</td>
@@ -112,7 +114,6 @@
 
     function showTablePostsWaiting(listPostsWaiting) {
         chuoi_HTML = ``;
-        console.log(listPostsWaiting);
         listPostsWaiting.forEach(post => {
             chuoi_HTML += `<tr>
                 <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="50" height="50"></td>
@@ -121,6 +122,7 @@
                 <td>${post.producer.title}</td>
                 <td>${post.title}</td>
                 <td>${post.price}</td>
+                <td>${post.address}</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
                 <td>${getDateFormat(post.created_at)}</td>
                 <td>${getDateFormat(post.updated_at)}</td>
