@@ -77,17 +77,24 @@
             </div>
 
             <div class="form-group">
-                <label>Hình ảnh (Dung lượng nhỏ hơn 1.5 MB mỗi hình) <i class="fa fa-empire text-danger" aria-hidden="true"></i>: </label>
+                <label for="addressId">Địa chỉ <i class="fa fa-empire text-danger" aria-hidden="true"></i>: </label>
+                <input type="text" class="form-control" required="required" id="addressId" aria-describedby="helpId"
+                    placeholder="Địa chỉ của bạn">
+            </div>
+
+            <div class="form-group">
+                <label>Hình ảnh (Dung lượng nhỏ hơn 1.5 MB mỗi hình) <i class="fa fa-empire text-danger"
+                        aria-hidden="true"></i>: </label>
                 <div class="row" style="margin-left: 0">
                     <div id="ImagesId">
                         <button id="addImageId" class="btn btn-outline-warning btn-lg">
                             <i class="fa fa-camera fa-4x"></i>
-                            <i style="position: absolute; right: 733px; top: 623px;">+</i>
+                            <i style="position: absolute; right: 733px; top: 708px;">+</i>
                         </button>
                     </div>
 
-                    <div style="position: absolute; right: 508px; top: 629px;">
-                        <i class="far fa-hand-point-left"></i>
+                    <div style="position: absolute; right: 500px; top: 713px;">
+                        <i class="fa fa-hand-o-left"></i>
                         <em>Bạn cần đăng ít nhất 1 hình</em>
                     </div>
                 </div>
@@ -207,6 +214,7 @@
                         title: titleId.value,
                         content: contentId.value,
                         price: priceId.value,
+                        address: addressId.value,
                         images: listBase64,
                         seller: rdoSellerId.checked == true ? true : false
                     }
@@ -226,7 +234,7 @@
                                     chuoi_error = `Phải chọn ít nhất 1 ảnh và tối đa 6 ảnh.`
                                 }
 
-                            } else {
+                            } else if (JSON.parse(err).error.errors != undefined) {
                                 if (JSON.parse(err).error.errors.title != undefined) {
                                     if (JSON.parse(err).error.errors.title.message == 'title too short') {
                                         chuoi_error += 'Tiêu đề quá ngắn. (Tiêu đề từ 5 đến 255 ký tự) <br>';
@@ -247,6 +255,16 @@
                                     }
                                 }
 
+                                if (JSON.parse(err).error.errors.address != undefined) {
+                                    if (JSON.parse(err).error.errors.address.message == 'address too short') {
+                                        chuoi_error += 'Địa chỉ quá ngắn. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                    } else if (JSON.parse(err).error.errors.address.message == 'address too long') {
+                                        chuoi_error += 'Địa chỉ quá dài. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                    } else if (JSON.parse(err).error.errors.address.message == 'Path `address` is required.') {
+                                        chuoi_error += 'Địa chỉ không được để trống.<br>';
+                                    }
+                                }
+
                                 if (JSON.parse(err).error.errors.price != undefined) {
                                     if (JSON.parse(err).error.errors.price.message == 'Path `price` is required.') {
                                         chuoi_error += 'Giá không được để trống.<br>';
@@ -254,6 +272,9 @@
                                         chuoi_error += 'Giá phải là một con số.<br>';
                                     }
                                 }
+                            } else {
+                                if (JSON.parse(err).error == 'Wrong file format')
+                                    chuoi_error += 'Sai định dạng hình ảnh.<br>';
                             }
 
                             showMessageError(chuoi_error);
