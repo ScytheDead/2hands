@@ -11,7 +11,7 @@ const config = require('../../config');
 
 exports.posts_get_all = (req, res) => {
     Post.find()
-        .select('_id user producer classify category title content price images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -29,6 +29,7 @@ exports.posts_get_all = (req, res) => {
                         title: doc.title,
                         content: doc.content,
                         price: doc.price,
+                        address: doc.address,
                         images: doc.images,
                         seller: doc.seller,
                         priority: doc.priority,
@@ -53,6 +54,7 @@ exports.posts_get_all = (req, res) => {
 }
 
 exports.posts_create_post = (req, res) => {
+    var flagCreate = 1;
     User.findById(req.body.user) //check User available
         .then(user => {
             Category.findById(req.body.category) //check Category available
@@ -76,81 +78,85 @@ exports.posts_create_post = (req, res) => {
                                                                 })
                                                             })
                                                             .catch(err => {
+                                                                flagCreate = 0;
                                                                 res.status(422).json({
                                                                     error: err
                                                                 });
                                                             })
 
-
-                                                        // user category classify producer title content price images seller note
-                                                        const post = new Post({
-                                                            _id: new mongoose.Types.ObjectId(),
-                                                            user: req.body.user,
-                                                            category: req.body.category,
-                                                            classify: req.body.classify,
-                                                            producer: req.body.producer,
-                                                            title: req.body.title,
-                                                            content: req.body.content,
-                                                            price: req.body.price,
-                                                            images: arrayImage,
-                                                            seller: req.body.seller,
-                                                            note: req.body.note
-                                                        });
-                                                        post.save()
-                                                            .then(result => {
-                                                                res.status(201).json({
-                                                                    message: 'Created post successful',
-                                                                    createdPost: {
-                                                                        id: result._id,
-                                                                        user: {
-                                                                            _id: result.user,
-                                                                            name: user.name
-                                                                        },
-                                                                        category: {
-                                                                            _id: result.category,
-                                                                            title: category.title
-                                                                        },
-                                                                        classify: {
-                                                                            _id: result.classify,
-                                                                            title: classify.title
-                                                                        },
-                                                                        producer: {
-                                                                            _id: result.producer,
-                                                                            title: producer.title
-                                                                        },
-                                                                        title: result.title,
-                                                                        content: result.content,
-                                                                        price: result.price,
-                                                                        images: result.images,
-                                                                        seller: result.seller,
-                                                                        priority: result.priority,
-                                                                        status: result.status,
-                                                                        note: result.note,
-                                                                        createdAt: result.created_at,
-                                                                        updatedAt: result.updated_at,
-                                                                        request: {
-                                                                            type: 'GET',
-                                                                            createdPostURL: `${config.API_ADDRESS}/api/posts/` + result._id
+                                                        if (flagCreate) {
+                                                            // user category classify producer title content price images seller note
+                                                            const post = new Post({
+                                                                _id: new mongoose.Types.ObjectId(),
+                                                                user: req.body.user,
+                                                                category: req.body.category,
+                                                                classify: req.body.classify,
+                                                                producer: req.body.producer,
+                                                                title: req.body.title,
+                                                                content: req.body.content,
+                                                                price: req.body.price,
+                                                                address: req.body.address,
+                                                                images: arrayImage,
+                                                                seller: req.body.seller,
+                                                                note: req.body.note
+                                                            });
+                                                            post.save()
+                                                                .then(result => {
+                                                                    res.status(201).json({
+                                                                        message: 'Created post successful',
+                                                                        createdPost: {
+                                                                            id: result._id,
+                                                                            user: {
+                                                                                _id: result.user,
+                                                                                name: user.name
+                                                                            },
+                                                                            category: {
+                                                                                _id: result.category,
+                                                                                title: category.title
+                                                                            },
+                                                                            classify: {
+                                                                                _id: result.classify,
+                                                                                title: classify.title
+                                                                            },
+                                                                            producer: {
+                                                                                _id: result.producer,
+                                                                                title: producer.title
+                                                                            },
+                                                                            title: result.title,
+                                                                            content: result.content,
+                                                                            price: result.price,
+                                                                            address: result.address,
+                                                                            images: result.images,
+                                                                            seller: result.seller,
+                                                                            priority: result.priority,
+                                                                            status: result.status,
+                                                                            note: result.note,
+                                                                            createdAt: result.created_at,
+                                                                            updatedAt: result.updated_at,
+                                                                            request: {
+                                                                                type: 'GET',
+                                                                                createdPostURL: `${config.API_ADDRESS}/api/posts/` + result._id
+                                                                            }
                                                                         }
+                                                                    });
+                                                                })
+                                                                .catch(err => {
+                                                                    if (req.body.images !== undefined && req.body.images !== null) {
+                                                                        arrayImage.forEach(pathImage => deleteImage(pathImage));
+                                                                    }
+
+                                                                    if (err.name == "MongoError") {
+                                                                        res.status(500).json({
+                                                                            message: 'The title already exists',
+                                                                            error: err
+                                                                        });
+                                                                    } else {
+                                                                        res.status(500).json({
+                                                                            error: err
+                                                                        });
                                                                     }
                                                                 });
-                                                            })
-                                                            .catch(err => {
-                                                                if (req.body.images !== undefined && req.body.images !== null) {
-                                                                    arrayImage.forEach(pathImage => deleteImage(pathImage));
-                                                                }
-
-                                                                if (err.name == "MongoError") {
-                                                                    res.status(500).json({
-                                                                        message: 'The title already exists',
-                                                                        error: err
-                                                                    });
-                                                                } else {
-                                                                    res.status(500).json({
-                                                                        error: err
-                                                                    });
-                                                                }
-                                                            });
+                                                        }
                                                     } else {
                                                         res.status(500).json({
                                                             message: 'pictures too much or too little',
@@ -210,7 +216,7 @@ exports.posts_create_post = (req, res) => {
 exports.posts_get_post = (req, res) => {
     const id = req.params.postId;
     Post.findById(id)
-        .select('_id user producer classify category title content price images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -261,43 +267,51 @@ exports.posts_update_post = async (req, res) => {
     }
 
     if (updateOps.images !== undefined && updateOps.images !== null) {
-        const pathImage = 'uploads/posts/';
-        await saveArrayImage(pathImage, updateOps.images)
-            .then(arrayNameImage => {
-                arrayNameImage.forEach(image => {
-                    arrayImage.push(pathImage + image);
-                });
+        if (updateOps.images.length >= 1 && updateOps.images.length <= 6) {
+            const pathImage = 'uploads/posts/';
+            await saveArrayImage(pathImage, updateOps.images)
+                .then(arrayNameImage => {
+                    arrayNameImage.forEach(image => {
+                        arrayImage.push(pathImage + image);
+                    });
 
-                Post.findById(id)
-                    .select('images')
-                    .exec()
-                    .then(async result => {
-                        if (result.images !== undefined && result.images !== null) {
-                            await deleteArrayImage(result.images);
-                        }
-                    })
-                    .catch(async err => {
-                        await deleteArrayImage(updateOps.images);
-                    });
-            })
-            .catch(async err => {
-                flagUpdate = 0;
-                if (err == 'Wrong file format') {
-                    // delete images not in DB
-                    var listImageNameDifferent = [];
-                    var listImagesInDB = await getAllImagesNameInDB();
-                    fs.readdir('uploads/posts/', async (err, filenames) => {
-                        filenames.forEach(fileName => {
-                            if (listImagesInDB.indexOf(pathImage + fileName) < 0)
-                                listImageNameDifferent.push(pathImage + fileName);
+                    Post.findById(id)
+                        .select('images')
+                        .exec()
+                        .then(async result => {
+                            if (result.images !== undefined && result.images !== null) {
+                                await deleteArrayImage(result.images);
+                            }
+                        })
+                        .catch(async err => {
+                            await deleteArrayImage(updateOps.images);
                         });
-                        await deleteArrayImage(listImageNameDifferent);
+                })
+                .catch(async err => {
+                    flagUpdate = 0;
+                    if (err == 'Wrong file format') {
+                        // delete images not in DB
+                        var listImageNameDifferent = [];
+                        var listImagesInDB = await getAllImagesNameInDB();
+                        fs.readdir('uploads/posts/', async (err, filenames) => {
+                            filenames.forEach(fileName => {
+                                if (listImagesInDB.indexOf(pathImage + fileName) < 0)
+                                    listImageNameDifferent.push(pathImage + fileName);
+                            });
+                            await deleteArrayImage(listImageNameDifferent);
+                        });
+                    }
+                    res.status(422).json({
+                        error: err
                     });
-                }
-                res.status(422).json({
-                    error: err
                 });
+        } else {
+            flagUpdate = 0;
+            res.status(500).json({
+                message: 'pictures too much or too little',
+                error: "pictures >= 1 and <= 6"
             });
+        }
     } else {
         flagUpdate = 0;
         res.status(404).json({
@@ -362,7 +376,7 @@ exports.posts_get_post_by_user = (req, res) => {
     Post.find({
             user: userId
         })
-        .select('_id user producer classify category title content price images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -380,6 +394,7 @@ exports.posts_get_post_by_user = (req, res) => {
                         title: doc.title,
                         content: doc.content,
                         price: doc.price,
+                        address: doc.address,
                         images: doc.images,
                         seller: doc.seller,
                         priority: doc.priority,
@@ -409,7 +424,7 @@ exports.posts_get_post_by_category = (req, res) => {
     Post.find({
             category: categoryId
         })
-        .select('_id user producer classify category title content price images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -427,6 +442,7 @@ exports.posts_get_post_by_category = (req, res) => {
                         title: doc.title,
                         content: doc.content,
                         price: doc.price,
+                        address: doc.address,
                         images: doc.images,
                         seller: doc.seller,
                         priority: doc.priority,
@@ -456,7 +472,7 @@ exports.posts_get_post_by_classify = (req, res) => {
     Post.find({
             classify: classifyId
         })
-        .select('_id user producer classify category title content price images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -474,6 +490,7 @@ exports.posts_get_post_by_classify = (req, res) => {
                         title: doc.title,
                         content: doc.content,
                         price: doc.price,
+                        address: doc.address,
                         images: doc.images,
                         seller: doc.seller,
                         priority: doc.priority,
@@ -503,7 +520,7 @@ exports.posts_get_post_by_producer = (req, res) => {
     Post.find({
             producer: producerId
         })
-        .select('_id user producer classify category title content price images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -521,6 +538,7 @@ exports.posts_get_post_by_producer = (req, res) => {
                         title: doc.title,
                         content: doc.content,
                         price: doc.price,
+                        address: doc.address,
                         images: doc.images,
                         seller: doc.seller,
                         priority: doc.priority,
