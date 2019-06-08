@@ -207,8 +207,7 @@
         if (ClassifyId !== 'all') {
             getClassifyAPI(sessionStorage.getItem('token'), ClassifyId)
                 .then(classify => {
-
-                    getProducerByClassifyAPI(ClassifyId)
+                    getProducersByClassifyAPI(ClassifyId)
                         .then(listProducers => {
                             if (listProducers.count > 0) {
                                 toastMessageId.innerHTML = ``;
@@ -216,7 +215,7 @@
                                 listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
                                 showTableProducers(listProducers.producers);
                             } else {
-                                listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
+                                listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
                                 toastMessageId.innerHTML = `Thể loại này không có nhà sản xuất nào`;
                                 tableProducersId.classList.add('d-none');
                             }

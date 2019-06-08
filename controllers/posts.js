@@ -17,4 +17,9 @@ exports.create_post = (req, res) => {
     res.render('module/post/create_or_edit_post', {layout: 'default'});
 }
 
+exports.view_posts_by_category = (req, res) => {
+    let categoryId = req.params.categoryId;
+    res.render('module/post/posts', {layout: 'template', categoryId: categoryId });
+}
+
 

@@ -10,13 +10,6 @@ const controllerPostAdmin = require('../controllers/admin/post');
 
 // --------------------------------------------------------------------
 
-// ------------------------------ User -------------------------------
-const controllerPost = require('../controllers/posts');
-const controllerCategory = require('../controllers/categories');
-
-// index
-router.get('/', controllerCategory.categories_get_all_index);
-
 // index admin
 router.get('/admin', controllerAdmin.show_page_admin);
 
@@ -43,7 +36,21 @@ router.get('/producer', controllerProducerAdmin.create_producer);
 router.get('/admin/post-waiting', controllerPostAdmin.post_waiting);
 
 
-// --------------------------------------------------------------------------------
+// ------------------------------ User -------------------------------
+const controllerIndex = require('../controllers/index');
+const controllerPost = require('../controllers/posts');
+const controllerLogin = require('../controllers/login');
+// --------------------------------------------------------------------
+
+// index
+router.get('/', controllerIndex.index);
+
+// login
+router.get('/login', controllerLogin.login);
+router.get('/signup', controllerLogin.signup);
+
+// post
+router.get('/:categoryId', controllerPost.view_posts_by_category);
 router.get('/create-post', controllerPost.create_post);
 
 module.exports = router;

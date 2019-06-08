@@ -21,7 +21,7 @@ io.on('connection', socket => {
         Post.find({
                 status: 0
             })
-            .select('_id user producer classify category title content price images seller priority status note created_at updated_at')
+            .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
             .populate('producer', 'title')
             .populate('classify', 'title')
             .populate('category', 'title')
