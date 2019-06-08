@@ -1,0 +1,43 @@
+<div class="agile-its-header">
+    <div class="logo">
+        <h1><a href="/"><span>2</span>Hands</a></h1>
+    </div>
+    <div class="agileits_search">
+        <form action="#" method="post">
+            <input name="Search" type="text" placeholder="Nhập sản phẩm bạn cần tìm kiếm" required="" />
+            <select id="agileinfo_search" name="agileinfo_search" required="">
+                <option value="">Tất cả chuyên mục</option>
+                <option value="Mobiles">Mobiles</option>
+                <option value="Electronics & Appliances">Electronics & Appliances</option>
+                <option value="Cars">Cars</option>
+                <option value="Bikes">Bikes</option>
+                <option value="Furnitures">Furnitures</option>
+                <option value="Books, Sports & Hobbies">Books, Sports & Hobbies</option>
+                <option value="Fashion">Fashion</option>
+                <option value="Kids">Kids</option>
+                <option value="Services">Services</option>
+                <option value="Jobs">Jobs</option>
+                <option value="Real Estates">Real Estates</option>
+            </select>
+            <button type="submit" class="btn btn-default" aria-label="Left Align">
+                <i class="fa fa-search" aria-hidden="true"> </i>
+            </button>
+        </form>
+        <a class="post-w3layouts-ad" href="post-ad.html">Đăng tin miễn phí</a>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+<script>
+    getAllCategoriesAPI()
+        .then(listCategories => {
+            let chuoi_HTML = `<option value="">Tất cả chuyên mục</option>`;
+            listCategories.categories.forEach(category => {
+                chuoi_HTML += `<option value="${category.id}">${category.title}</option>`
+            });
+            agileinfo_search.innerHTML = chuoi_HTML;
+        })
+        .catch(err => {
+            console.log(err);
+        })
+</script>

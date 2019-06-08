@@ -4,7 +4,7 @@ mongoose.set('useCreateIndex', true);
 const postSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    producer: { type: mongoose.Schema.Types.ObjectId, ref: 'Producer', required: true },
+    producer: { type: mongoose.Schema.Types.ObjectId, ref: 'Producer' },
     classify: { type: mongoose.Schema.Types.ObjectId, ref: 'Classify', required: true },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     title: { type: String, required: true, trim: true, unique: true, minlength: [5, 'title too short'] , maxlength: [255, 'title too long'] },

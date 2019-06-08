@@ -1,0 +1,51 @@
+<body>
+	<!-- sign up form -->
+	<section>
+		<div id="agileits-sign-in-page" class="sign-in-wrapper">
+			<div class="agileinfo_signin">
+				<h3>Đăng ký thành viên</h3>
+				<div id="TH_errorMessage" style="margin-bottom: 10px"></div>
+				{{!-- <form action="#" method="post"> --}}
+					<input type="tel" id="TH_phoneNumber" name="tel" placeholder="Nhập số điện thoại cần đăng ký" required="">
+					<input type="password" id="TH_password" name="Password" placeholder="Mật khẩu" required="">
+					<div class="signin-rit">
+						<span class="agree-checkbox">
+							<label class="checkbox"><input type="checkbox" name="checkbox">Tôi đồng ý với các <a
+									class="w3layouts-t" href="terms.html" target="_blank">Điều khoản sử dụng</a> và <a
+									class="w3layouts-t" href="privacy.html" target="_blank">Chính sách bảo
+									mật</a></label>
+						</span>
+					</div>
+					<input type="submit" id="TH_register" value="Đăng ký">
+				{{!-- </form> --}}
+			</div>
+		</div>
+	</section>
+	<!-- //sign up form -->
+</body>
+
+<script>
+	TH_register.onclick = async () => {
+		var info = {
+			phoneNumber: TH_phoneNumber.value,
+			password: TH_password.value
+		}
+
+		await signupAPI(info)
+			.then(result => {
+				if (result.message == 'User created') {
+					TH_errorMessage.className = `successMessage`;
+					TH_errorMessage.innerHTML = `Đăng ký thành công.`
+				}
+			})
+			.catch(err => {
+				if (err == 'Conflict') {
+					TH_errorMessage.className = `errorMessage`;
+					TH_errorMessage.innerHTML = `Số điện thoại này đã tồn tại.`
+				} else if (err == 'Internal Server Error') {
+					TH_errorMessage.className = `errorMessage`;
+					TH_errorMessage.innerHTML = `Số điện thoại này không hợp lệ.`
+				}
+			});
+	}
+</script>
