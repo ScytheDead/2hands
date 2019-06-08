@@ -12,6 +12,7 @@ const config = require('../../config');
 exports.posts_get_all = (req, res) => {
     Post.find()
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -217,6 +218,7 @@ exports.posts_get_post = (req, res) => {
     const id = req.params.postId;
     Post.findById(id)
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -377,6 +379,7 @@ exports.posts_get_post_by_user = (req, res) => {
             user: userId
         })
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -425,6 +428,7 @@ exports.posts_get_post_by_category = (req, res) => {
             category: categoryId
         })
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -473,6 +477,7 @@ exports.posts_get_post_by_classify = (req, res) => {
             classify: classifyId
         })
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
@@ -521,6 +526,7 @@ exports.posts_get_post_by_producer = (req, res) => {
             producer: producerId
         })
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
