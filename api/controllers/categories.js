@@ -101,12 +101,6 @@ exports.categories_create_category = async (req, res) => {
 }
 
 exports.categories_get_category = async (req, res) => {
-    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
-        return res.status(401).json({
-            message: 'You don\'t have permission'
-        });
-    }
-
     const id = req.params.categoryId;
     Category.findById(id)
         .select('_id title image note created_at updated_at')

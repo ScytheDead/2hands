@@ -50,7 +50,7 @@ router.get('/login', controllerLogin.login);
 router.get('/signup', controllerLogin.signup);
 
 // post
+router.get('/dang-tin', controllerPost.create_post);
 router.get('/:categoryId', controllerPost.view_posts_by_category);
-router.get('/create-post', controllerPost.create_post);
 
 module.exports = router;

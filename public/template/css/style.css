@@ -247,6 +247,25 @@ header {
 .agileits_search input[type="text"] {
     width: 66%;
 }
+
+/* button.post-w3layouts-ad {
+	text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    background-color: #0099e5;
+    padding: 10px 10px;
+    float: left;
+	border-radius:3px;
+	-webkit-border-radius:3px;
+	-o-border-radius:3px;
+	-ms-border-radius:3px;
+	-moz-border-radius:3px;
+}
+
+button.post-w3layouts-ad:hover {
+	background:#000;
+} */
+
 a.post-w3layouts-ad {
     text-decoration: none;
     color: #fff;
