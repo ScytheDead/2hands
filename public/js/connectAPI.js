@@ -187,14 +187,13 @@ function deleteCategoryAPI(token, id){
     });
 }
 
-function getCategoryAPI(token, id){
+function getCategoryAPI(id){
     return new Promise((resolve, reject) => {
         var Xu_ly_HTTP = new XMLHttpRequest();
         var Tham_so = `/api/categories`;
         var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
         Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
         Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
-        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
         Xu_ly_HTTP.onload = () => {
             if (Xu_ly_HTTP.readyState === 4)
                 if (Xu_ly_HTTP.status === 200)
@@ -301,14 +300,13 @@ function getAllClassifyAPI(){
     });
 }
 
-function getClassifyAPI(token, id){
+function getClassifyAPI(id){
     return new Promise((resolve, reject) => {
         var Xu_ly_HTTP = new XMLHttpRequest();
         var Tham_so = `/api/classifies`;
         var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
         Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
         Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
-        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
         Xu_ly_HTTP.onload = () => {
             if (Xu_ly_HTTP.readyState === 4)
                 if (Xu_ly_HTTP.status === 200)

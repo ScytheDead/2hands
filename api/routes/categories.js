@@ -10,7 +10,7 @@ router.post('/', checkAuth, CategoryController.categories_create_category);
 
 router.patch('/image/:categoryId', checkAuth, CategoryController.categories_update_image);
 
-router.get('/:categoryId', checkAuth, CategoryController.categories_get_category);
+router.get('/:categoryId', CategoryController.categories_get_category);
 
 router.patch('/:categoryId', checkAuth, CategoryController.categories_update_category);
 

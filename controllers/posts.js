@@ -14,7 +14,7 @@ app.engine('hbs', hbs({
 }));
 
 exports.create_post = (req, res) => {
-    res.render('module/post/create_or_edit_post', {layout: 'default'});
+    res.render('module/post/create_post', {layout: 'template'});
 }
 
 exports.view_posts_by_category = (req, res) => {

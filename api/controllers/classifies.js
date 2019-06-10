@@ -122,12 +122,6 @@ exports.classifies_create_classify = async (req, res) => {
 }
 
 exports.classifies_get_classify = async (req, res) => {
-    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
-        return res.status(401).json({
-            message: 'You don\'t have permission'
-        });
-    }
-
     const id = req.params.classifyId;
     Classify.findById(id)
         .select('_id category title image note created_at updated_at')
