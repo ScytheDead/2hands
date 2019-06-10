@@ -37,7 +37,7 @@ router.post('/', checkAuth, ClassifyController.classifies_create_classify);
 
 router.patch('/image/:classifyId', checkAuth, ClassifyController.classifies_update_image);
 
-router.get('/:classifyId', checkAuth, ClassifyController.classifies_get_classify);
+router.get('/:classifyId', ClassifyController.classifies_get_classify);
 
 router.patch('/:classifyId', checkAuth, ClassifyController.classifies_update_classify);
 
