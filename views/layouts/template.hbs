@@ -67,10 +67,20 @@ rao vat hang dau Viet nam, mua ban dien thoai Nokia, Samsung, LG, Sony Ericsson,
     <script src="template/js/jquery.uls.languagefilter.js"></script>
     <script src="template/js/jquery.uls.regionfilter.js"></script>
     <script src="template/js/jquery.uls.core.js"></script>
-    
+
 </head>
 
-<body id="bodyId">
+<body>
+    {{!-- animation loader --}}
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+    </div>
+    {{!-- end animation loader --}}
+
+
 
     <!-- Navigation -->
     <div class="agiletopbar">
@@ -116,7 +126,7 @@ rao vat hang dau Viet nam, mua ban dien thoai Nokia, Samsung, LG, Sony Ericsson,
     <link rel="stylesheet" href="css/animationLoader.css">
     <link rel="stylesheet" href="css/style.css">
     {{!-- //animation loader --}}
-    
+
     <script>
         $(document).ready(function () {
             var mySelect = $('#first-disabled2');
@@ -137,7 +147,7 @@ rao vat hang dau Viet nam, mua ban dien thoai Nokia, Samsung, LG, Sony Ericsson,
             });
         });
     </script>
-    
+
 
 
 
