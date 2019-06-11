@@ -56,7 +56,9 @@ exports.posts_get_all = (req, res) => {
 
 exports.posts_create_post = (req, res) => {
     var flagCreate = 1;
-    User.findById(req.body.user) //check User available
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.verify(token, config.JWT_KEY);
+    User.findById(user.id) //check User available
         .then(user => {
             Category.findById(req.body.category) //check Category available
                 .then(category => {
@@ -89,7 +91,7 @@ exports.posts_create_post = (req, res) => {
                                                             // user category classify producer title content price images seller note
                                                             const post = new Post({
                                                                 _id: new mongoose.Types.ObjectId(),
-                                                                user: req.body.user,
+                                                                user: user.id,
                                                                 category: req.body.category,
                                                                 classify: req.body.classify,
                                                                 producer: req.body.producer,
@@ -109,7 +111,12 @@ exports.posts_create_post = (req, res) => {
                                                                             id: result._id,
                                                                             user: {
                                                                                 _id: result.user,
-                                                                                name: user.name
+                                                                                name: user.name,
+                                                                                phoneNumber: user.phoneNumber,
+                                                                                address: user.address,
+                                                                                isAdmin: user.isAdmin,
+                                                                                isEmployee: user.isEmployee,
+                                                                                isUser: user.isUser
                                                                             },
                                                                             category: {
                                                                                 _id: result.category,
