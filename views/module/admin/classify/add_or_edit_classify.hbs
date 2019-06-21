@@ -147,7 +147,7 @@
         uploadImage.classList.add('d-none');
         formTitleId.innerHTML = `CHỈNH SỬA THỂ LOẠI`;
 
-        getClassifyAPI(sessionStorage.getItem('token'), idClassify)
+        getClassifyAPI(idClassify)
             .then(result => {
                 titleId.value = result.classify.title;
                 filterCategoryId.value = result.classify.category._id;

@@ -83,6 +83,8 @@
 
     var idCategory = `{{categoryId}}`;
 
+    console.log(idCategory)
+
     if (idCategory == ``) {  // Create
         showModalUploadId.classList.add('d-none');
         imageId.classList.add('d-none');
@@ -127,7 +129,7 @@
         uploadImage.classList.add('d-none');
         formTitleId.innerHTML = `CHỈNH SỬA CHUYÊN MỤC TIN`;
 
-        getCategoryAPI(sessionStorage.getItem('token'), idCategory)
+        getCategoryAPI(idCategory)
             .then(result => {
                 console.log(result.category)
                 titleId.value = result.category.title;
