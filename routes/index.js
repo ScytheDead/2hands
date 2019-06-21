@@ -3,7 +3,7 @@ const router = express.Router();
 
 // ------------------------------ Admin -------------------------------
 const controllerAdmin = require('../controllers/admin/admin');
-const controllerCategoryAdmin = require('../controllers//admin/categories');
+const controllerCategoryAdmin = require('../controllers/admin/categories');
 const controllerClassifyAdmin = require('../controllers/admin/classify');
 const controllerProducerAdmin = require('../controllers/admin/producer');
 const controllerPostAdmin = require('../controllers/admin/post');

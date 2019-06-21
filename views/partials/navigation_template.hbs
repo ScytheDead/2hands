@@ -31,7 +31,7 @@
         .then(listCategories => {
             let chuoi_HTML = ``;
             listCategories.categories.forEach(category => {
-                chuoi_HTML += ` <a href="#"><img src="${Dia_chi_Dich_vu}/${category.image}" width="30" height="30" alt="${category.title}"><span>${category.title}</span></a>`
+                chuoi_HTML += ` <a href="/${category.id}"><img src="${Dia_chi_Dich_vu}/${category.image}" width="30" height="30" alt="${category.title}"><span>${category.title}</span></a>`
             });
             navListCategoriesId.innerHTML = chuoi_HTML;
         })

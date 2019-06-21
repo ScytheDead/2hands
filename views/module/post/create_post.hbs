@@ -191,9 +191,9 @@
                     }
                     createPostAPI(token, infoPostCreate)
                         .then(result => {
-                            showMessageSuccess(`Đăng tin mới thành công.<br>Tin của bạn đang được kiểm duyệt`)
+                            showMessageSuccess(`Đăng tin mới thành công.<br>Tin của bạn đang được kiểm duyệt`);
                             console.log(result);
-                            socket.emit('client-create-post', result.createdPost)
+                            socket.emit('client-create-post', result.createdPost);
                         })
                         .catch(err => {
                             var chuoi_error = ``;

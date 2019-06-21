@@ -219,9 +219,8 @@
     }
 
     function getProducersByClassify(ClassifyId) {
-        getClassifyAPI(sessionStorage.getItem('token'), ClassifyId)
+        getClassifyAPI(ClassifyId)
             .then(classify => {
-
                 getProducerByClassifyAPI(ClassifyId)
                     .then(listProducers => {
                         if (listProducers.count > 0) {
