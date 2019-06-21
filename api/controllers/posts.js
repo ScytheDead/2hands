@@ -168,7 +168,7 @@ exports.posts_create_post = (req, res) => {
                                                     } else {
                                                         res.status(500).json({
                                                             message: 'pictures too much or too little',
-                                                            error: "pictures >= 1 and <= 6"
+                                                            error: "pictures must >= 1 and <= 6"
                                                         });
                                                     }
                                                 } else {
@@ -318,7 +318,7 @@ exports.posts_update_post = async (req, res) => {
             flagUpdate = 0;
             res.status(500).json({
                 message: 'pictures too much or too little',
-                error: "pictures >= 1 and <= 6"
+                error: "pictures must >= 1 and <= 6"
             });
         }
     } else {
