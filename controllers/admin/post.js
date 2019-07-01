@@ -17,6 +17,11 @@ exports.post_waiting = (req, res) => {
     res.render('module/admin/post/post_waiting', { layout: 'default' });
 }
 
+exports.get_detail_post_waiting = (req, res) => {
+    const idPost = req.params.postId;
+    res.render('module/admin/post/detail_post', { layout: 'default', postId: idPost });
+}
+
 // exports.get_producer = (req, res) => {
 //     var idProducer = req.params.producerId;
 //     res.render('module/admin/producer/add_or_edit_producer', { layout: 'default', producerId: idProducer });

@@ -3,9 +3,9 @@ mongoose.set('useCreateIndex', true);
 
 const messageSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    userSellId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    userBuyId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+    userSell: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    userBuy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
     contentChatUserBuy: [{
         content: { type: String },
         time: { type : Date, default: Date.now }
