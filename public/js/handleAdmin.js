@@ -30,7 +30,7 @@ function messageError(err) {
         toastError(`Tiêu đề tối đa 100 ký tự !`);
     } else if (err == 'The title already exists') {
         toastError(`Tiêu đề này đã được sử dụng. Xin vui lòng chọn tiêu đề khác !`);
-    }
+    } 
 }
 
 function messageSuccess(result) {
@@ -67,6 +67,10 @@ function messageSuccess(result) {
         modelTitleThongBao.innerHTML = `Cập nhật hình ảnh thành công`;
     } else if (result.message == 'Producer updated') {
         modelTitleThongBao.innerHTML = `Cập nhật nhà sản xuất thành công`;
+    } else if (result.message == 'Post accepted') {
+        modelTitleThongBao.innerHTML = `Tin đã được duyệt thành công`;
+    } else if (result.message == 'Post rejected') {
+        modelTitleThongBao.innerHTML = `Tin đã được từ chối thành công`;
     } 
  
     modal_ThongBao.click();

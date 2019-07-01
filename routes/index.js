@@ -34,7 +34,7 @@ router.get('/producer', controllerProducerAdmin.create_producer);
 
 // post admin
 router.get('/admin/post-waiting', controllerPostAdmin.post_waiting);
-
+router.get('/admin/post-waiting/:postId', controllerPostAdmin.get_detail_post_waiting);
 
 // ------------------------------ User -------------------------------
 const controllerIndex = require('../controllers/index');

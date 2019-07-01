@@ -64,7 +64,7 @@
                         <label><input type="radio" id="rdoBuyerId" value="0" name="optradio">Cần mua</label>
                     </div>
                     <div class="clearfix"></div>
-                    
+
                     <label>Giá <span>*</span></label>
                     <input type="text" class="phone" id="priceId" placeholder="">
                     <div class="clearfix"></div>
@@ -175,92 +175,97 @@
 
         // xử lý sự kiện click
         getListBase64(listImageSelected)
-                .then(listBase64 => {
-                    var token = sessionStorage.getItem('token');
-                    var infoPostCreate = {
-                        user: decodedJWT(token).id,
-                        category: listCategoriesId.value,
-                        classify: listClassifiesId.value,
-                        producer: listProducersId.value,
-                        title: titleId.value,
-                        content: contentId.value,
-                        price: priceId.value,
-                        address: addressId.value,
-                        images: listBase64,
-                        seller: rdoSellerId.checked
-                    }
-                    createPostAPI(token, infoPostCreate)
-                        .then(result => {
-                            showMessageSuccess(`Đăng tin mới thành công.<br>Tin của bạn đang được kiểm duyệt`);
-                            console.log(result);
-                            socket.emit('client-create-post', result.createdPost);
-                        })
-                        .catch(err => {
-                            var chuoi_error = ``;
-                            console.log(JSON.parse(err));
-                            if (JSON.parse(err).message != undefined) {
-                                if (JSON.parse(err).message == `The title already exists`) {
-                                    chuoi_error = `Tiêu đề này đã tồn tại.<br>Xin chọn tiêu đề khác.`
-                                } else if (JSON.parse(err).message == `pictures too much or too little`) {
-                                    chuoi_error = `Phải chọn ít nhất 1 ảnh và tối đa 6 ảnh.`
-                                }
-
-                            } else if (JSON.parse(err).error.errors != undefined) {
-                                if (JSON.parse(err).error.errors.title != undefined) {
-                                    if (JSON.parse(err).error.errors.title.message == 'title too short') {
-                                        chuoi_error += 'Tiêu đề quá ngắn. (Tiêu đề từ 5 đến 255 ký tự) <br>';
-                                    } else if (JSON.parse(err).error.errors.title.message == 'title too long') {
-                                        chuoi_error += 'Tiêu đề quá dài. (Tiêu đề từ 5 đến 255 ký tự)<br>';
-                                    } else if (JSON.parse(err).error.errors.title.message == 'Path `title` is required.') {
-                                        chuoi_error += 'Tiêu đề không được để trống.<br>';
-                                    }
-                                }
-
-                                if (JSON.parse(err).error.errors.content != undefined) {
-                                    if (JSON.parse(err).error.errors.content.message == 'content too short') {
-                                        chuoi_error += 'Mô tả chi tiết quá ngắn. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
-                                    } else if (JSON.parse(err).error.errors.content.message == 'content too long') {
-                                        chuoi_error += 'Mô tả chi tiết quá dài. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
-                                    } else if (JSON.parse(err).error.errors.content.message == 'Path `content` is required.') {
-                                        chuoi_error += 'Mô tả chi tiết không được để trống.<br>';
-                                    }
-                                }
-
-                                if (JSON.parse(err).error.errors.address != undefined) {
-                                    if (JSON.parse(err).error.errors.address.message == 'address too short') {
-                                        chuoi_error += 'Địa chỉ quá ngắn. (Địa chỉ từ 20 đến 255 ký tự)<br>';
-                                    } else if (JSON.parse(err).error.errors.address.message == 'address too long') {
-                                        chuoi_error += 'Địa chỉ quá dài. (Địa chỉ từ 20 đến 255 ký tự)<br>';
-                                    } else if (JSON.parse(err).error.errors.address.message == 'Path `address` is required.') {
-                                        chuoi_error += 'Địa chỉ không được để trống.<br>';
-                                    }
-                                }
-
-                                if (JSON.parse(err).error.errors.price != undefined) {
-                                    if (JSON.parse(err).error.errors.price.message == 'Path `price` is required.') {
-                                        chuoi_error += 'Giá không được để trống.<br>';
-                                    } else if (JSON.parse(err).error.errors.price.message == `Cast to Number failed for value "${priceId.value}" at path "price"`) {
-                                        chuoi_error += 'Giá phải là một con số.<br>';
-                                    }
-                                }
-                            } else {
-                                if (JSON.parse(err).error == 'Wrong file format')
-                                    chuoi_error += 'Sai định dạng hình ảnh.<br>';
+            .then(listBase64 => {
+                var token = sessionStorage.getItem('token');
+                var infoPostCreate = {
+                    user: decodedJWT(token).id,
+                    category: listCategoriesId.value,
+                    classify: listClassifiesId.value,
+                    producer: listProducersId.value,
+                    title: titleId.value,
+                    content: contentId.value,
+                    price: priceId.value,
+                    address: addressId.value,
+                    images: listBase64,
+                    seller: rdoSellerId.checked
+                }
+                createPostAPI(token, infoPostCreate)
+                    .then(result => {
+                        showMessageSuccess(`Đăng tin mới thành công.<br>Tin của bạn đang được kiểm duyệt`);
+                        console.log(result);
+                        socket.emit('client-create-post', result.createdPost);
+                    })
+                    .catch(err => {
+                        var chuoi_error = ``;
+                        console.log(JSON.parse(err));
+                        if (JSON.parse(err).message != undefined) {
+                            if (JSON.parse(err).message == `The title already exists`) {
+                                chuoi_error = `Tiêu đề này đã tồn tại.<br>Xin chọn tiêu đề khác.`
+                            } else if (JSON.parse(err).message == `pictures too much or too little`) {
+                                chuoi_error = `Phải chọn ít nhất 1 ảnh và tối đa 6 ảnh.`
+                            } else if (JSON.parse(err).message == `Auth failed`) {
+                                sessionStorage.removeItem('token');
+                                setTimeout(() => {
+                                    window.location = Dia_chi_Dich_vu;
+                                }, 1500);
                             }
 
-                            showMessageError(chuoi_error);
-                        });
-                })
-                .catch(err => {
-                    console.log(err);
-                    if (JSON.parse(err).error.message != undefined)
-                        messageError(JSON.parse(err).error.message);
-                    else if (JSON.parse(err).message != undefined)
-                        messageError(JSON.parse(err).message);
-                    else
-                        messageError(err);
-                });
-                // 
+                        } else if (JSON.parse(err).error.errors != undefined) {
+                            if (JSON.parse(err).error.errors.title != undefined) {
+                                if (JSON.parse(err).error.errors.title.message == 'title too short') {
+                                    chuoi_error += 'Tiêu đề quá ngắn. (Tiêu đề từ 5 đến 255 ký tự) <br>';
+                                } else if (JSON.parse(err).error.errors.title.message == 'title too long') {
+                                    chuoi_error += 'Tiêu đề quá dài. (Tiêu đề từ 5 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.title.message == 'Path `title` is required.') {
+                                    chuoi_error += 'Tiêu đề không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.content != undefined) {
+                                if (JSON.parse(err).error.errors.content.message == 'content too short') {
+                                    chuoi_error += 'Mô tả chi tiết quá ngắn. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.content.message == 'content too long') {
+                                    chuoi_error += 'Mô tả chi tiết quá dài. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.content.message == 'Path `content` is required.') {
+                                    chuoi_error += 'Mô tả chi tiết không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.address != undefined) {
+                                if (JSON.parse(err).error.errors.address.message == 'address too short') {
+                                    chuoi_error += 'Địa chỉ quá ngắn. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.address.message == 'address too long') {
+                                    chuoi_error += 'Địa chỉ quá dài. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.address.message == 'Path `address` is required.') {
+                                    chuoi_error += 'Địa chỉ không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.price != undefined) {
+                                if (JSON.parse(err).error.errors.price.message == 'Path `price` is required.') {
+                                    chuoi_error += 'Giá không được để trống.<br>';
+                                } else if (JSON.parse(err).error.errors.price.message == `Cast to Number failed for value "${priceId.value}" at path "price"`) {
+                                    chuoi_error += 'Giá phải là một con số.<br>';
+                                }
+                            }
+                        } else {
+                            if (JSON.parse(err).error == 'Wrong file format')
+                                chuoi_error += 'Sai định dạng hình ảnh.<br>';
+                        }
+
+                        showMessageError(chuoi_error);
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                if (JSON.parse(err).error.message != undefined)
+                    messageError(JSON.parse(err).error.message);
+                else if (JSON.parse(err).message != undefined)
+                    messageError(JSON.parse(err).message);
+                else
+                    messageError(err);
+            });
+        // 
 
 
         $(document).ready(function () {
