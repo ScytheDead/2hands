@@ -18,17 +18,17 @@ io.on('connection', socket => {
         socket.join('Admin');
         socket.room = 'Admin';
 
-        Post.find({
-                status: 0
-            })
-            .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
-            .populate('producer', 'title')
-            .populate('classify', 'title')
-            .populate('category', 'title')
-            .exec()
-            .then(posts => {
-                socket.emit("server-send-list-post-waiting", posts);
-            })
+        // Post.find({
+        //         status: 0
+        //     })
+        //     .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        //     .populate('producer', 'title')
+        //     .populate('classify', 'title')
+        //     .populate('category', 'title')
+        //     .exec()
+        //     .then(posts => {
+        //         socket.emit("server-send-list-post-waiting", posts);
+        //     })
     });
 
     socket.on('client-create-post', post => {

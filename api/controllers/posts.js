@@ -21,28 +21,7 @@ exports.posts_get_all = (req, res) => {
             const response = {
                 count: posts.length,
                 posts: posts.map(doc => {
-                    return {
-                        id: doc._id,
-                        user: doc.user,
-                        producer: doc.producer,
-                        classify: doc.classify,
-                        category: doc.category,
-                        title: doc.title,
-                        content: doc.content,
-                        price: doc.price,
-                        address: doc.address,
-                        images: doc.images,
-                        seller: doc.seller,
-                        priority: doc.priority,
-                        status: doc.status,
-                        note: doc.note,
-                        createdAt: doc.created_at,
-                        updatedAt: doc.updated_at,
-                        request: {
-                            type: 'GET',
-                            PostURL: `${config.API_ADDRESS}/api/posts/${doc._id}`
-                        }
-                    }
+                    return returnValueGet(doc);
                 })
             };
             res.status(200).json(response);
@@ -321,29 +300,44 @@ exports.posts_update_post = async (req, res) => {
                 error: "pictures must >= 1 and <= 6"
             });
         }
-    } else {
-        flagUpdate = 0;
-        res.status(404).json({
-            message: 'Not found images'
-        });
     }
 
     if (flagUpdate) {
-        updateOps.images = arrayImage;
-        updateOps.status = 0;
-        Post.updateOne({
-                _id: id
-            }, {
-                $set: updateOps
-            })
+        if (arrayImage.length > 0) {
+            updateOps.images = arrayImage;
+        }
+
+        Post.findById(id)
+            .select('status')
             .exec()
-            .then(result => {
-                res.status(200).json({
-                    message: 'Post updated',
-                    PostURL: `${config.API_ADDRESS}/api/posts/` + id
-                });
+            .then(async result => {
+                if (result.status != 0) {
+                    updateOps.status = 0;
+                    Post.updateOne({
+                            _id: id
+                        }, {
+                            $set: updateOps
+                        })
+                        .exec()
+                        .then(result => {
+                            res.status(200).json({
+                                message: 'Post updated',
+                                PostURL: `${config.API_ADDRESS}/api/posts/` + id
+                            });
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                message: 'No valid entry found for provided ID',
+                                error: err
+                            });
+                        });
+                } else {
+                    res.status(500).json({
+                        message: 'Post waiting for approval'
+                    });
+                }
             })
-            .catch(err => {
+            .catch(async err => {
                 res.status(500).json({
                     message: 'No valid entry found for provided ID',
                     error: err
@@ -395,28 +389,7 @@ exports.posts_get_post_by_user = (req, res) => {
             const response = {
                 count: posts.length,
                 posts: posts.map(doc => {
-                    return {
-                        id: doc._id,
-                        user: doc.user,
-                        producer: doc.producer,
-                        classify: doc.classify,
-                        category: doc.category,
-                        title: doc.title,
-                        content: doc.content,
-                        price: doc.price,
-                        address: doc.address,
-                        images: doc.images,
-                        seller: doc.seller,
-                        priority: doc.priority,
-                        status: doc.status,
-                        note: doc.note,
-                        createdAt: doc.created_at,
-                        updatedAt: doc.updated_at,
-                        request: {
-                            type: 'GET',
-                            postURL: `${config.API_ADDRESS}/api/posts/${doc._id}`
-                        }
-                    }
+                    return returnValueGet(doc);
                 })
             };
             res.status(200).json(response);
@@ -444,28 +417,7 @@ exports.posts_get_post_by_category = (req, res) => {
             const response = {
                 count: posts.length,
                 posts: posts.map(doc => {
-                    return {
-                        id: doc._id,
-                        user: doc.user,
-                        producer: doc.producer,
-                        classify: doc.classify,
-                        category: doc.category,
-                        title: doc.title,
-                        content: doc.content,
-                        price: doc.price,
-                        address: doc.address,
-                        images: doc.images,
-                        seller: doc.seller,
-                        priority: doc.priority,
-                        status: doc.status,
-                        note: doc.note,
-                        createdAt: doc.created_at,
-                        updatedAt: doc.updated_at,
-                        request: {
-                            type: 'GET',
-                            postURL: `${config.API_ADDRESS}/api/posts/${doc._id}`
-                        }
-                    }
+                    return returnValueGet(doc);
                 })
             };
             res.status(200).json(response);
@@ -493,28 +445,7 @@ exports.posts_get_post_by_classify = (req, res) => {
             const response = {
                 count: posts.length,
                 posts: posts.map(doc => {
-                    return {
-                        id: doc._id,
-                        user: doc.user,
-                        producer: doc.producer,
-                        classify: doc.classify,
-                        category: doc.category,
-                        title: doc.title,
-                        content: doc.content,
-                        price: doc.price,
-                        address: doc.address,
-                        images: doc.images,
-                        seller: doc.seller,
-                        priority: doc.priority,
-                        status: doc.status,
-                        note: doc.note,
-                        createdAt: doc.created_at,
-                        updatedAt: doc.updated_at,
-                        request: {
-                            type: 'GET',
-                            postURL: `${config.API_ADDRESS}/api/posts/${doc._id}`
-                        }
-                    }
+                    return returnValueGet(doc);
                 })
             };
             res.status(200).json(response);
@@ -542,28 +473,7 @@ exports.posts_get_post_by_producer = (req, res) => {
             const response = {
                 count: posts.length,
                 posts: posts.map(doc => {
-                    return {
-                        id: doc._id,
-                        user: doc.user,
-                        producer: doc.producer,
-                        classify: doc.classify,
-                        category: doc.category,
-                        title: doc.title,
-                        content: doc.content,
-                        price: doc.price,
-                        address: doc.address,
-                        images: doc.images,
-                        seller: doc.seller,
-                        priority: doc.priority,
-                        status: doc.status,
-                        note: doc.note,
-                        createdAt: doc.created_at,
-                        updatedAt: doc.updated_at,
-                        request: {
-                            type: 'GET',
-                            postURL: `${config.API_ADDRESS}/api/posts/${doc._id}`
-                        }
-                    }
+                    return returnValueGet(doc);
                 })
             };
             res.status(200).json(response);
@@ -571,6 +481,160 @@ exports.posts_get_post_by_producer = (req, res) => {
         .catch(err => {
             res.status(404).json({
                 message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.accept_post = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    const id = req.params.postId;
+    Post.updateOne({
+            _id: id
+        }, {
+            $set: {
+                status: 1
+            }
+        })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'Post accepted',
+                PostURL: `${config.API_ADDRESS}/api/posts/` + id
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.reject_post = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    const id = req.params.postId;
+    Post.updateOne({
+            _id: id
+        }, {
+            $set: {
+                status: -1
+            }
+        })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'Post rejected',
+                PostURL: `${config.API_ADDRESS}/api/posts/` + id
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.posts_get_post_accept = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    Post.find({
+            status: 1
+        })
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
+}
+exports.posts_get_post_reject = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    Post.find({
+            status: -1
+        })
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
+}
+exports.posts_get_post_waiting = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    Post.find({
+            status: 0
+        })
+        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(500).json({
                 error: err
             });
         });
@@ -651,4 +715,29 @@ async function asyncSaveImage(pathImage, image) {
 
 async function saveArrayImage(pathImage, arrayBase64) {
     return await Promise.all(arrayBase64.map(image => asyncSaveImage(pathImage, image)))
+}
+
+function returnValueGet(doc){
+    return {
+        id: doc._id,
+        user: doc.user,
+        producer: doc.producer,
+        classify: doc.classify,
+        category: doc.category,
+        title: doc.title,
+        content: doc.content,
+        price: doc.price,
+        address: doc.address,
+        images: doc.images,
+        seller: doc.seller,
+        priority: doc.priority,
+        status: doc.status,
+        note: doc.note,
+        createdAt: doc.created_at,
+        updatedAt: doc.updated_at,
+        request: {
+            type: 'GET',
+            PostURL: `${config.API_ADDRESS}/api/posts/${doc._id}`
+        }
+    }
 }

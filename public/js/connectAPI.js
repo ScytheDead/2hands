@@ -530,7 +530,7 @@ function createProducerAPI(token, infoClassify) {
                 if (Xu_ly_HTTP.status === 201)
                     resolve(JSON.parse(Xu_ly_HTTP.responseText));
                 else 
-                    reject(Xu_ly_HTTP.statusText);     
+                    reject(Xu_ly_HTTP.responseText);     
         }
         Xu_ly_HTTP.onerror = () => {
             reject(Xu_ly_HTTP.statusText);
@@ -606,11 +606,74 @@ function updateProducerAPI(token, id, updateProducer){
 }
 
 
-// ----------------Producer-------------------
+// ----------------Post-------------------
 // -------------------------------------------
 // -------------------------------------------
 // -------------------------------------------
 // -------------------------------------------
+
+function getPostsWaiting(token){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/posts/waiting`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function getPostsAccept(token){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/posts/accept`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function getPostsReject(token){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/posts/reject`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else
+                    reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
 
 function createPostAPI(token, infoPostCreate){
     return new Promise((resolve, reject) => {
@@ -631,5 +694,70 @@ function createPostAPI(token, infoPostCreate){
             reject(Xu_ly_HTTP.statusText);
         }
         Xu_ly_HTTP.send(JSON.stringify(infoPostCreate));
+    });
+}
+
+function acceptPostAPI(token, id) {
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/posts/accept`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
+        Xu_ly_HTTP.open(`PATCH`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else 
+                    reject(Xu_ly_HTTP.responseText);     
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function rejectPostAPI(token, id) {
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/posts/reject`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
+        Xu_ly_HTTP.open(`PATCH`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
+        Xu_ly_HTTP.setRequestHeader('Authorization', `huydeptrai ${token}`);
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else 
+                    reject(Xu_ly_HTTP.responseText);     
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
+    });
+}
+
+function getDetailPostAPI(id){
+    return new Promise((resolve, reject) => {
+        var Xu_ly_HTTP = new XMLHttpRequest();
+        var Tham_so = `/api/posts`;
+        var Dia_chi_Xu_ly = `${Dia_chi_Dich_vu}${Tham_so}/${id}`;
+        Xu_ly_HTTP.open(`GET`, Dia_chi_Xu_ly, true);
+        Xu_ly_HTTP.setRequestHeader('Content-Type', 'application/json');
+        Xu_ly_HTTP.onload = () => {
+            if (Xu_ly_HTTP.readyState === 4)
+                if (Xu_ly_HTTP.status === 200)
+                    resolve(JSON.parse(Xu_ly_HTTP.responseText));
+                else 
+                    reject(Xu_ly_HTTP.responseText);     
+        }
+        Xu_ly_HTTP.onerror = () => {
+            reject(Xu_ly_HTTP.statusText);
+        }
+        Xu_ly_HTTP.send(``);
     });
 }

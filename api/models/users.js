@@ -15,9 +15,11 @@ const userSchema = mongoose.Schema({
     isEmployee: { type: Boolean, default: 0},
     isUser: { type: Boolean, default: 1},
     status: { type: Boolean, default: 1},  //1: active, 0: non active
-    subscribes: [{ type: String }],
-    messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message', required: true }],
+    subscribes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+    messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
     note: {type: String }
 },{ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 module.exports = mongoose.model('User', userSchema);
+
+//category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },

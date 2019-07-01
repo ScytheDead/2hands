@@ -36,7 +36,6 @@
                 </select>
 
 
-
             </div>
             <div id="groupBTNClassifies" class="form-group">
 
@@ -52,11 +51,9 @@
                         <th>Nhà sản xuất</th>
                         <th>Tiêu đề</th>
                         <th>Giá</th>
-                        <th>Địa chỉ</th>
                         <th>Loại tin</th>
                         <th>Ngày tạo</th>
                         <th>Lần cập nhật gần nhất</th>
-                        <th>Ghi chú</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -81,9 +78,11 @@
 
     socket.emit('admin-join-room');
 
-    socket.on('server-send-list-post-waiting', listPostsWaiting => {
-        showTablePostsWaiting(listPostsWaiting);
-    });
+    //socket.on('server-send-list-post-waiting', listPostsWaiting => {
+    //    showTablePostsWaiting(listPostsWaiting);
+    //});
+
+    showTablePost();
 
     socket.on('server-send-create-post', post => {
         console.log(post);
@@ -94,11 +93,9 @@
                 <td>${post.producer.title}</td>
                 <td>${post.title}</td>
                 <td>${post.price}</td>
-                <td>${post.address}</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
                 <td>${getDateFormat(post.createdAt)}</td>
                 <td>${getDateFormat(post.updatedAt)}</td>
-                <td>${post.note == null ? "" : post.note}</td>
                 <td><button class="btn btn-outline-warning" onclick="window.location='${Dia_chi_Dich_vu}/producer/${post.id}'">Chi tiết</button>
                     <button class="btn btn-outline-success" onclick="">Duyệt</button>
                     <button class="btn btn-outline-danger" onclick="">Từ chối</button>
@@ -123,18 +120,51 @@
                 <td>${post.producer.title}</td>
                 <td>${post.title}</td>
                 <td>${post.price}</td>
-                <td>${post.address}</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
-                <td>${getDateFormat(post.created_at)}</td>
-                <td>${getDateFormat(post.updated_at)}</td>
-                <td>${post.note == null ? "" : post.note}</td>
-                <td><button class="btn btn-outline-warning" onclick="window.location='${Dia_chi_Dich_vu}/producer/${post.id}'">Chi tiết</button>
-                    <button class="btn btn-outline-success" onclick="deleteProducer('${sessionStorage.getItem('token')}', '${post.id}')">Duyệt</button>
-                    <button class="btn btn-outline-danger" onclick="deleteProducer('${sessionStorage.getItem('token')}', '${post.id}')">Từ chối</button>
+                <td>${getDateFormat(post.createdAt)}</td>
+                <td>${getDateFormat(post.updatedAt)}</td>
+                <td><button class="btn btn-outline-warning" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-waiting/${post.id}'">Chi tiết</button>
+                    <button class="btn btn-outline-success" onclick="acceptPost('${post.id}')">Duyệt</button>
+                    <button class="btn btn-outline-danger mt-2" onclick="rejectPost('${post.id}')">Từ chối</button>
                 </td>
             </tr>`;
         });
         tableBodyId.innerHTML = chuoi_HTML;
+    }
+
+    function acceptPost(id) {
+        acceptPostAPI(sessionStorage.getItem('token'), id)
+            .then(result => {
+                messageSuccess(result);
+                showTablePost();
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    function rejectPost(id) {
+        rejectPostAPI(sessionStorage.getItem('token'), id)
+            .then(result => {
+                messageSuccess(result);
+                showTablePost();
+            })
+            .catch(err => {
+                console.log(err);
+                messageError(err);
+            })
+    }
+
+    function showTablePost() {
+        getPostsWaiting(sessionStorage.getItem('token'))
+            .then(listPostsWaiting => {
+                showTablePostsWaiting(listPostsWaiting.posts);
+                console.log(listPostsWaiting)
+            })
+            .catch(err => {
+                console.log(err);
+                messageError(err);
+            })
     }
 
 </script>
