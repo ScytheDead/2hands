@@ -80,9 +80,9 @@
             </div>
 
             <!-- Nút Xác nhận Lưu, Hủy -->
-            <button class="btn btn-success" id="acceptId">Duyệt</button>
-            <button class="btn btn-outline-danger ml-2" id="rejectId">Từ chối</button>
-            <button class="btn btn-outline-warning ml-2" id="huy">Hủy</button><br>
+            <div id="thaotacId">
+
+            </div>
         </div>
 
     </div>
@@ -90,8 +90,12 @@
 
 <script>
     var idPost = `{{postId}}`
+    var kindPost = `{{kindPost}}`
+
+    console.log(kindPost);
 
     showDetailPost();
+    hienThiThaoTac();
 
     function showDetailPost() {
         getDetailPostAPI(idPost)
@@ -124,21 +128,17 @@
         showImageSelectedId.innerHTML += chuoi_HTML;
     }
 
-    huy.onclick = () => {
-        window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
-    }
-
-    acceptId.onclick = () => {
+    function accept() {
         acceptPost(idPost);
         setTimeout(() => {
-            window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
+            goBack();
         }, 1500);
     }
 
-    rejectId.onclick = () => {
+    function reject() {
         rejectPost(idPost);
         setTimeout(() => {
-            window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
+            goBack();
         }, 1500);
     }
 
@@ -162,5 +162,31 @@
                 console.log(err);
                 messageError(err);
             })
+    }
+
+    function goBack() {
+        if (kindPost === 'w') {
+            window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
+        } else if (kindPost === 'a') {
+            window.location = Dia_chi_Dich_vu + '/admin/post-accept'
+        } else if (kindPost === 'r') {
+            window.location = Dia_chi_Dich_vu + '/admin/post-reject'
+        }
+    }
+
+    function hienThiThaoTac() {
+        let chuoi_HTML = ``;
+        if (kindPost === 'w') {
+            chuoi_HTML +=`
+            <button class="btn btn-success" onclick="accept()">Duyệt</button>
+            <button class="btn btn-outline-danger ml-2" onclick="reject()" id="rejectId">Từ chối</button>`
+        } else if (kindPost === 'a') {
+            chuoi_HTML += `<button class="btn btn-outline-danger ml-2" onclick="reject()">Từ chối</button>`
+        } else if (kindPost === 'r') {
+            chuoi_HTML += `<button class="btn btn-success" onclick="accept()">Duyệt</button>`
+        }
+        chuoi_HTML+=`<button class="btn btn-outline-warning ml-2" onclick="goBack()">Hủy</button>`
+
+        thaotacId.innerHTML = chuoi_HTML;
     }
 </script>

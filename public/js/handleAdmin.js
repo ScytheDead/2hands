@@ -1,5 +1,5 @@
 function messageError(err) {
-    if (err == 'Unauthorized') {
+    if (err == 'Unauthorized' || err == 'Auth failed') {
         sessionStorage.removeItem('token');
         TH_dropdown.innerHTML = ``;
         toastError(`Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại`);

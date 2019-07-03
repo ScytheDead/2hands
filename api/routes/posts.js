@@ -33,11 +33,11 @@ router.patch('/reject/:postId', checkAuth, PostController.reject_post);
 
 router.get('/user/:userId', checkAuth, PostController.posts_get_post_by_user);
 
-router.get('/category/:categoryId', PostController.posts_get_post_by_category);
+router.get('/accept/category/:categoryId', PostController.posts_get_post_accept_by_category);
 
-router.get('/classify/:classifyId', PostController.posts_get_post_by_classify);
+router.get('/accept/classify/:classifyId', PostController.posts_get_post_accept_by_classify);
 
-router.get('/producer/:producerId', PostController.posts_get_post_by_producer);
+router.get('/accept/producer/:producerId', PostController.posts_get_post_accept_by_producer);
 
 
 module.exports = router;

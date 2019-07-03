@@ -5,7 +5,7 @@ const postSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     producer: { type: mongoose.Schema.Types.ObjectId, ref: 'Producer' },
-    classify: { type: mongoose.Schema.Types.ObjectId, ref: 'Classify', required: true },
+    classify: { type: mongoose.Schema.Types.ObjectId, ref: 'Classify' },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     title: { type: String, required: true, trim: true, unique: true, minlength: [5, 'title too short'] , maxlength: [255, 'title too long'] },
     content: { type: String, required: true, minlength: [20, 'content too short'], maxlength: [5000, 'content too long'] },
