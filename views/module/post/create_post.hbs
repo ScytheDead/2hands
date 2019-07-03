@@ -149,7 +149,7 @@
         listProducersId.style.visibility = 'visible';
 
         let listClassifies = await getClassifiesByCategory(listCategoriesId.value);
-        console.log(listClassifies)
+
         if (listClassifies > 0) {
             getProducersByClassify(listClassifiesId.value);
         } else {
@@ -278,7 +278,16 @@
     async function loadData() {
         await getAllCategory();     //load all Categories
         await getClassifiesByCategory(listCategoriesId.value); // load Classifies by category
-        getProducersByClassify(listClassifiesId.value);     //load producers by classify
+        getProducersByClassify(listClassifiesId.value)     //load producers by classify
+            .then(listProducers => {
+                if (listProducers < 0) {
+                    txtProducer.style.visibility = 'hidden';
+                    listProducersId.style.visibility = 'hidden';
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     function getAllCategory() {
@@ -339,15 +348,17 @@
                         })
                         resolve(listProducers.count);
                     } else {
-                        listProducersId.innerHTML = `<option value="">Không có nhà sản xuất nào trong thể loại này</option>`
-                        listProducersId.disabled = true;
+                        // listProducersId.innerHTML = `<option value="">Không có nhà sản xuất nào trong thể loại này</option>`
+                        //listProducersId.disabled = true;
+                        txtProducer.style.visibility = 'hidden';
+                        listProducersId.style.visibility = 'hidden';
                         resolve(0);
                     }
                 }).catch(err => {
                     console.log(err);
                     if (err == 'Unauthorized') {
-                        listProducersId.innerHTML = `<option value="">Không có nhà sản xuất nào trong thể loại này</option>`
-                        listProducersId.disabled = true;
+                        sessionStorage.removeItem('token');
+                        window.location = Dia_chi_Dich_vu;
                     }
                     reject(0);
                 });

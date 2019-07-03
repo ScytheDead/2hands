@@ -128,13 +128,15 @@
                             }, 1500);
                         })
                         .catch(err => {
-                            console.log(err);
-                            if (JSON.parse(err).error.message != undefined)
+                            console.log(JSON.parse(err));
+                            if (JSON.parse(err).message != undefined) {
+                                if (JSON.parse(err).message == 'Auth failed')
+                                    messageError(JSON.parse(err).message);
+                            } else if (JSON.parse(err).error.message != undefined) {
                                 messageError(JSON.parse(err).error.message);
-                            else if (JSON.parse(err).message != undefined)
-                                messageError(JSON.parse(err).message);
-                            else
+                            } else {
                                 messageError(err);
+                            }
                         });
                 })
                 .catch(err => {

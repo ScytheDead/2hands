@@ -156,7 +156,7 @@
     }
 
     function showProducersByCategory(CategoryId) {
-        getCategoryAPI(sessionStorage.getItem('token'), CategoryId)
+        getCategoryAPI(CategoryId)
             .then(category => {
                 getClassifiesByCategoryAPI(CategoryId)
                     .then(listClassifies => {
@@ -205,7 +205,7 @@
 
     function getProducersByClassify(ClassifyId) {
         if (ClassifyId !== 'all') {
-            getClassifyAPI(sessionStorage.getItem('token'), ClassifyId)
+            getClassifyAPI(ClassifyId)
                 .then(classify => {
                     getProducersByClassifyAPI(ClassifyId)
                         .then(listProducers => {

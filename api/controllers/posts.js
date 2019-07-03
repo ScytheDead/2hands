@@ -402,9 +402,12 @@ exports.posts_get_post_by_user = (req, res) => {
         });
 }
 
-exports.posts_get_post_by_category = (req, res) => {
+
+
+exports.posts_get_post_accept_by_category = (req, res) => {
     const categoryId = req.params.categoryId;
     Post.find({
+            status: 1,
             category: categoryId
         })
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
@@ -430,9 +433,10 @@ exports.posts_get_post_by_category = (req, res) => {
         });
 }
 
-exports.posts_get_post_by_classify = (req, res) => {
+exports.posts_get_post_accept_by_classify = (req, res) => {
     const classifyId = req.params.classifyId;
     Post.find({
+            status: 1,
             classify: classifyId
         })
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
@@ -458,9 +462,10 @@ exports.posts_get_post_by_classify = (req, res) => {
         });
 }
 
-exports.posts_get_post_by_producer = (req, res) => {
+exports.posts_get_post_accept_by_producer = (req, res) => {
     const producerId = req.params.producerId;
     Post.find({
+            status: 1,
             producer: producerId
         })
         .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')

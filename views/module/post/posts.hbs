@@ -132,18 +132,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="browse-category">
 					<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 					<select class="selectpicker show-tick" data-live-search="true" id="browseClassifyId">
-						<option data-tokens="" value="ddt">Đồ điện tử</option>
-						<option data-tokens="" value="ahihi">Mobiles</option>
-						<option data-tokens="Electronics & Appliances">Electronics & Appliances</option>
-						<option data-tokens="Cars">Cars</option>
-						<option data-tokens="Bikes">Bikes</option>
-						<option data-tokens="Furniture">Furniture</option>
-						<option data-tokens="Pets">Pets</option>
-						<option data-tokens="Books, Sports & Hobbies">Books, Sports & Hobbies</option>
-						<option data-tokens="Kids">Kids</option>
-						<option data-tokens="Services">Services</option>
-						<option data-tokens="Jobs">Jobs</option>
-						<option data-tokens="Real Estate">Real Estate</option>
+						
 					</select>
 				</div>
 				{{!-- Hiển thị nút chọn producer --}}
@@ -154,25 +143,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 			<div class="ads-grid">
 				<div class="side-bar col-md-3">
-					<div class="search-hotel">
-						<h3 class="agileits-sear-head">Name contains</h3>
-						<form>
-							<input type="text" value="Product name..." onfocus="this.value = '';"
-								onblur="if (this.value == '') {this.value = 'Product name...';}" required="">
-							<input type="submit" value=" ">
-						</form>
-					</div>
-
-					<div class="w3-brand-select">
-						<h3 class="agileits-sear-head">Brand name</h3>
-						<select class="selectpicker" data-live-search="">
-							<option data-tokens="All">All</option>
-							<option data-tokens="Men">Men</option>
-							<option data-tokens="Women">Women</option>
-						</select>
-					</div>
 					<div class="w3ls-featured-ads">
-						<h2 class="sear-head fer">Featured Ads</h2>
+						<h2 class="sear-head fer">Tin ưu tiên</h2>
 						<div class="w3l-featured-ad">
 							<a href="single.html">
 								<div class="w3-featured-ad-left">
@@ -218,15 +190,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<li role="presentation" class="active">
 									<a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home"
 										aria-expanded="true">
-										<span class="text">All Ads</span>
+										<span id="postCategoryId" class="text">Tất cả tin</span>
 									</a>
 								</li>
-								<li role="presentation" class="next">
+								{{!-- <li role="presentation" class="next">
 									<a href="#profile" role="tab" id="profile-tab" data-toggle="tab"
 										aria-controls="profile">
 										<span class="text">Ads with Photos</span>
 									</a>
-								</li>
+								</li> --}}
 							</ul>
 							<div id="myTabContent" class="tab-content">
 								<div role="tabpanel" class="tab-pane fade in active" id="home"
@@ -234,18 +206,18 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<div>
 										<div id="container">
 											<div class="view-controls-list" id="viewcontrols">
-												<label>view :</label>
+												<label>Hiển thị :</label>
 												<a class="gridview"><i class="fa fa-th"></i></a>
 												<a class="listview active"><i
 														class="fa fa-th-list"></i></a>
 											</div>
 											<div class="sort">
 												<div class="sort-by">
-													<label>Sort By : </label>
+													<label>Sắp xếp theo : </label>
 													<select>
-														<option value="">Most recent</option>
-														<option value="">Price: Rs Low to High</option>
-														<option value="">Price: Rs High to Low</option>
+														<option value="">Tin mới nhất</option>
+														<option value="">Giá: Thấp đến cao</option>
+														<option value="">Giá: Cao đến thấp</option>
 													</select>
 												</div>
 											</div>
@@ -667,6 +639,17 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			.catch(err => {
 				console.log(err);
 			});
+	}
+
+	getPostsAcceptByCategory();
+	function getPostsAcceptByCategory(){
+		getPostsAcceptByCategoryAPI(categoryId)
+		.then(listPosts => {
+			console.log(listPosts);
+		})
+		.catch(err => {
+			console.log(err);
+		})
 	}
 
 </script>
