@@ -14,6 +14,7 @@ const postsRoutes = require('./api/routes/posts');
 // const messagesRoutes = require('./api/routes/messages');
 const classifiesRoutes = require('./api/routes/classifies');
 const categoriesRoutes = require('./api/routes/categories');
+const cityRoutes = require('./api/routes/cities');
 
 // Connect MongoDB
 // mongoose.connect('mongodb+srv://2hands-huy:' + process.env.MONGO_ATLAS_PW + '@2hands-xqugg.mongodb.net/2hands?retryWrites=true',{ useNewUrlParser: true });
@@ -61,6 +62,7 @@ app.use('/api/posts', postsRoutes);
 // app.use('/api/messages', messagesRoutes);
 app.use('/api/classifies', classifiesRoutes);
 app.use('/api/categories', categoriesRoutes);
+app.use('/api/cities', cityRoutes);
 
 //Custom message error khi lỗi 404
 app.use((req, res, next) => {   

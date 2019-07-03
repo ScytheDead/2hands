@@ -132,7 +132,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				<div class="browse-category">
 					<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 					<select class="selectpicker show-tick" data-live-search="true" id="browseClassifyId">
-						
+
 					</select>
 				</div>
 				{{!-- Hiển thị nút chọn producer --}}
@@ -208,8 +208,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 											<div class="view-controls-list" id="viewcontrols">
 												<label>Hiển thị :</label>
 												<a class="gridview"><i class="fa fa-th"></i></a>
-												<a class="listview active"><i
-														class="fa fa-th-list"></i></a>
+												<a class="listview active"><i class="fa fa-th-list"></i></a>
 											</div>
 											<div class="sort">
 												<div class="sort-by">
@@ -222,14 +221,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 												</div>
 											</div>
 											<div class="clearfix"></div>
-											<ul class="list">
+											<ul class="list" id="listPostsId">
+												{{!-- Post hiển thị ở đây --}}
 												<a href="single.html">
 													<li>
 														<img src="template/images/fa1.jpg" title="" alt="" />
 														<section class="list-left">
 															<h5 class="title">There are many variations of passages of
 																Lorem Ipsum</h5>
-															<span class="adprice">$290</span>
+															<span class="adprice">$29000000000</span>
 															<p class="catpath">Accessories » Men</p>
 														</section>
 														<section class="list-right">
@@ -239,71 +239,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 														<div class="clearfix"></div>
 													</li>
 												</a>
-												<a href="single.html">
-													<li>
-														<img src="template/images/fa10.jpg" title="" alt="" />
-														<section class="list-left">
-															<h5 class="title">There are many variations of passages of
-																Lorem Ipsum</h5>
-															<span class="adprice">$250</span>
-															<p class="catpath">Accessories » Men</p>
-														</section>
-														<section class="list-right">
-															<span class="date">Today, 17:03</span>
-															<span class="cityname">City name</span>
-														</section>
-														<div class="clearfix"></div>
-													</li>
-												</a>
-												<a href="single.html">
-													<li>
-														<img src="template/images/fa11.jpg" title="" alt="" />
-														<section class="list-left">
-															<h5 class="title">who are so beguiled and demoralized by the
-																charms of pleasure of the moment</h5>
-															<span class="adprice">$189</span>
-															<p class="catpath">Accessories » Men</p>
-														</section>
-														<section class="list-right">
-															<span class="date">Today, 17:03</span>
-															<span class="cityname">City name</span>
-														</section>
-														<div class="clearfix"></div>
-													</li>
-												</a>
-												<a href="single.html">
-													<li>
-														<img src="template/images/fa12.jpg" title="" alt="" />
-														<section class="list-left">
-															<h5 class="title">you need to be sure there isn't anything
-																embarrassing hidden</h5>
-															<span class="adprice">$1090</span>
-															<p class="catpath">Accessories » Men</p>
-														</section>
-														<section class="list-right">
-															<span class="date">Today, 17:03</span>
-															<span class="cityname">City name</span>
-														</section>
-														<div class="clearfix"></div>
-													</li>
-												</a>
-												<a href="single.html">
-													<li>
-														<img src="template/images/fa13.jpg" title="" alt="" />
-														<section class="list-left">
-															<h5 class="title">looked up one of the more obscure Latin
-																words</h5>
-															<span class="adprice">$599</span>
-															<p class="catpath">Accessories » Men</p>
-														</section>
-														<section class="list-right">
-															<span class="date">Today, 17:02</span>
-															<span class="cityname">City name</span>
-														</section>
-														<div class="clearfix"></div>
-													</li>
-													<div class="clearfix"></div>
-												</a>
+												{{!--  --}}
+
 											</ul>
 										</div>
 									</div>
@@ -583,7 +520,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	<!-- // Electronic appliances -->
 </body>
 
-
 <script>
 	var categoryId = `{{categoryId}}`
 	showBreadCrumbs(categoryId);
@@ -642,14 +578,42 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	}
 
 	getPostsAcceptByCategory();
-	function getPostsAcceptByCategory(){
+	function getPostsAcceptByCategory() {
 		getPostsAcceptByCategoryAPI(categoryId)
-		.then(listPosts => {
-			console.log(listPosts);
+			.then(listPosts => {
+				console.log(listPosts);
+				showPostsAcceptByCategory(listPosts.posts);
+			})
+			.catch(err => {
+				console.log(err);
+			})
+	}
+
+	function showPostsAcceptByCategory(listPosts) {
+		console.log(listPosts);
+		let today = new Date();
+		let chuoi_HTML = ``;
+		listPosts.forEach(post => {
+			console.log(today - new Date(post.updatedAt));
+			chuoi_HTML += `
+			<a href="single.html">
+				<li>
+					<img src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" />
+					<section class="list-left">
+						<h5 class="title">${post.title}</h5>
+						<span class="adprice">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)} ₫</span>
+						<p class="catpath">${post.classify.title}</p>
+					</section>
+					<section class="list-right">
+						<span class="date">${post.moment}</span>
+						<span class="cityname">${post.city.name}</span>
+					</section>
+					<div class="clearfix"></div>
+				</li>
+			</a>`
 		})
-		.catch(err => {
-			console.log(err);
-		})
+
+		listPostsId.innerHTML = chuoi_HTML;
 	}
 
 </script>

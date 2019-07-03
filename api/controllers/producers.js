@@ -53,12 +53,6 @@ exports.producers_get_all = async (req, res) => {
 }
 
 exports.producers_get_producer = async (req, res) => {
-    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
-        return res.status(401).json({
-            message: 'You don\'t have permission'
-        });
-    }
-
     const id = req.params.producerId;
     Producer.findById(id)
         .select('_id category classify title image note created_at updated_at')
