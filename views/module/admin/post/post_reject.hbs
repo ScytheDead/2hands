@@ -54,6 +54,7 @@
                         <th>Loại tin</th>
                         <th>Ngày tạo</th>
                         <th>Lần cập nhật gần nhất</th>
+                        <th>Cách đây</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -139,13 +140,14 @@
             chuoi_HTML += `<tr>
                 <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="50" height="50"></td>
                 <td>${post.category.title}</td>
-                <td>${post.classify.title}</td>
-                <td>${post.producer.title}</td>
+                <td>${post.classify == undefined ? '' : post.classify.title}</td>
+                <td>${post.producer == undefined ? '' : post.producer.title}</td>
                 <td>${post.title}</td>
                 <td>${post.price}</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
                 <td>${getDateFormat(post.createdAt)}</td>
                 <td>${getDateFormat(post.updatedAt)}</td>
+                <td>${post.moment}</td>
                 <td><button class="btn btn-outline-warning mt-2" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/r_${post.id}'">Chi tiết</button>
                     <button class="btn btn-outline-success mt-2" onclick="acceptPost('${post.id}')">Duyệt</button>
                 </td>

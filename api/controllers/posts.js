@@ -3,19 +3,23 @@ const Classify = require('../models/classifies');
 const Category = require('../models/categories');
 const Post = require('../models/posts');
 const User = require('../models/users');
+const City = require('../models/cities');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const config = require('../../config');
+const moment = require('moment');
+moment.locale('vi');
 
 
 exports.posts_get_all = (req, res) => {
     Post.find()
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -40,150 +44,189 @@ exports.posts_create_post = (req, res) => {
     User.findById(user.id) //check User available
         .then(user => {
             Category.findById(req.body.category) //check Category available
-                .then(category => {
-                    Classify.findById(req.body.classify) //check Classify available
-                        .then(classify => {
-                            if (classify.category._id.toString() === category._id.toString()) { //check classify in category
-                                Producer.findById(req.body.producer) //check Producer available
-                                    .then(async producer => {
-                                        if (producer.category._id.toString() === category._id.toString()) { //check producer in category
-                                            if (producer.classify._id.toString() === classify._id.toString()) { //check producer in classify
-                                                var arrayImage = [];
-                                                if (req.body.images !== undefined && req.body.images !== null) {
-                                                    if (req.body.images.length >= 1 && req.body.images.length <= 6) {
-                                                        const pathImage = 'uploads/posts/';
-                                                        await saveArrayImage(pathImage, req.body.images)
-                                                            .then(arrayNameImage => {
-                                                                arrayImage = arrayNameImage;
-                                                                arrayImage.forEach((image, index) => {
-                                                                    arrayImage[index] = pathImage + image;
-                                                                })
-                                                            })
-                                                            .catch(err => {
-                                                                flagCreate = 0;
-                                                                res.status(422).json({
-                                                                    error: err
-                                                                });
-                                                            })
-
-                                                        if (flagCreate) {
-                                                            // user category classify producer title content price images seller note
-                                                            const post = new Post({
-                                                                _id: new mongoose.Types.ObjectId(),
-                                                                user: user.id,
-                                                                category: req.body.category,
-                                                                classify: req.body.classify,
-                                                                producer: req.body.producer,
-                                                                title: req.body.title,
-                                                                content: req.body.content,
-                                                                price: req.body.price,
-                                                                address: req.body.address,
-                                                                images: arrayImage,
-                                                                seller: req.body.seller,
-                                                                note: req.body.note
-                                                            });
-                                                            post.save()
-                                                                .then(result => {
-                                                                    res.status(201).json({
-                                                                        message: 'Created post successful',
-                                                                        createdPost: {
-                                                                            id: result._id,
-                                                                            user: {
-                                                                                _id: result.user,
-                                                                                name: user.name,
-                                                                                phoneNumber: user.phoneNumber,
-                                                                                address: user.address,
-                                                                                isAdmin: user.isAdmin,
-                                                                                isEmployee: user.isEmployee,
-                                                                                isUser: user.isUser
-                                                                            },
-                                                                            category: {
-                                                                                _id: result.category,
-                                                                                title: category.title
-                                                                            },
-                                                                            classify: {
-                                                                                _id: result.classify,
-                                                                                title: classify.title
-                                                                            },
-                                                                            producer: {
-                                                                                _id: result.producer,
-                                                                                title: producer.title
-                                                                            },
-                                                                            title: result.title,
-                                                                            content: result.content,
-                                                                            price: result.price,
-                                                                            address: result.address,
-                                                                            images: result.images,
-                                                                            seller: result.seller,
-                                                                            priority: result.priority,
-                                                                            status: result.status,
-                                                                            note: result.note,
-                                                                            createdAt: result.created_at,
-                                                                            updatedAt: result.updated_at,
-                                                                            request: {
-                                                                                type: 'GET',
-                                                                                createdPostURL: `${config.API_ADDRESS}/api/posts/` + result._id
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                })
-                                                                .catch(err => {
-                                                                    if (req.body.images !== undefined && req.body.images !== null) {
-                                                                        arrayImage.forEach(pathImage => deleteImage(pathImage));
-                                                                    }
-
-                                                                    if (err.name == "MongoError") {
-                                                                        res.status(500).json({
-                                                                            message: 'The title already exists',
-                                                                            error: err
-                                                                        });
-                                                                    } else {
-                                                                        res.status(500).json({
-                                                                            error: err
-                                                                        });
-                                                                    }
-                                                                });
-                                                        }
+                .then(async category => {
+                    if (req.body.classify != undefined) {
+                        Classify.findById(req.body.classify) //check Classify available
+                            .then(async classify => {
+                                if (classify.category._id.toString() === category._id.toString()) {
+                                    
+                                    if (req.body.producer != undefined && req.body.producer != ``) {
+                                        Producer.findById(req.body.producer) //check Producer available
+                                            .then(async producer => {
+                                                if (producer.category._id.toString() === category._id.toString()) {
+                                                    if (producer.classify.toString() === classify._id.toString()) {
+                                                        
                                                     } else {
+                                                        flagCreate = 0;
                                                         res.status(500).json({
-                                                            message: 'pictures too much or too little',
-                                                            error: "pictures must >= 1 and <= 6"
+                                                            message: 'Producer not of classify'
                                                         });
                                                     }
                                                 } else {
-                                                    res.status(404).json({
-                                                        message: 'Not found images'
+                                                    flagCreate = 0;
+                                                    res.status(500).json({
+                                                        message: 'Producer not of category'
                                                     });
                                                 }
-                                            } else {
+                                            })
+                                            .catch(err => {
+                                                flagCreate = 0;
                                                 res.status(500).json({
-                                                    message: 'Producer not of classify'
+                                                    message: 'Producer not found',
+                                                    error: err
                                                 });
-                                            }
-                                        } else {
-                                            res.status(500).json({
-                                                message: 'Producer not of category'
                                             });
-                                        }
-                                    })
-                                    .catch(err => {
-                                        res.status(500).json({
-                                            message: 'Producer not found',
-                                            error: err
-                                        });
+                                    }
+                                } else {
+                                    flagCreate = 0;
+                                    res.status(500).json({
+                                        message: 'classify not of category'
                                     });
-                            } else {
+                                }
+                            })
+                            .catch(err => {
+                                flagCreate = 0;
+
                                 res.status(500).json({
-                                    message: 'classify not of category'
+                                    message: 'Classify not found',
+                                    error: err
                                 });
-                            }
-                        })
-                        .catch(err => {
-                            res.status(500).json({
-                                message: 'Classify not found',
-                                error: err
                             });
-                        });
+                    }
+                    if (flagCreate) {
+                        City.findById(req.body.city)
+                            .then(async city => {
+                                var arrayImage = [];
+                                if (req.body.images !== undefined && req.body.images !== null) {
+                                    if (req.body.images.length >= 1 && req.body.images.length <= 6) {
+                                        const pathImage = 'uploads/posts/';
+                                        await saveArrayImage(pathImage, req.body.images)
+                                            .then(arrayNameImage => {
+                                                arrayImage = arrayNameImage;
+                                                arrayImage.forEach((image, index) => {
+                                                    arrayImage[index] = pathImage + image;
+                                                })
+                                            })
+                                            .catch(err => {
+                                                flagCreate = 0;
+                                                res.status(422).json({
+                                                    error: err
+                                                });
+                                            })
+
+                                        if (flagCreate) {
+                                            // user category classify producer title content price images seller note
+                                            Post.find({
+                                                    title: req.body.title
+                                                })
+                                                .then(posts => {
+                                                    if (posts.length > 0) {
+                                                        flagCreate = 0;
+                                                        res.status(500).json({
+                                                            message: 'The title already exists'
+                                                        });
+                                                    } else {
+                                                        const post = new Post({
+                                                            _id: new mongoose.Types.ObjectId(),
+                                                            user: user.id,
+                                                            category: req.body.category,
+                                                            classify: req.body.classify,
+                                                            producer: req.body.producer,
+                                                            title: req.body.title,
+                                                            content: req.body.content,
+                                                            city: req.body.city,
+                                                            price: req.body.price,
+                                                            address: req.body.address,
+                                                            images: arrayImage,
+                                                            seller: req.body.seller,
+                                                            note: req.body.note
+                                                        });
+                                                        post.save()
+                                                            .then(result => {
+                                                                res.status(201).json({
+                                                                    message: 'Created post successful',
+                                                                    createdPost: {
+                                                                        id: result._id,
+                                                                        user: {
+                                                                            _id: result.user,
+                                                                            name: user.name,
+                                                                            phoneNumber: user.phoneNumber,
+                                                                            address: user.address,
+                                                                            isAdmin: user.isAdmin,
+                                                                            isEmployee: user.isEmployee,
+                                                                            isUser: user.isUser
+                                                                        },
+                                                                        category: {
+                                                                            _id: result.category,
+                                                                            title: category.title
+                                                                        },
+                                                                        classify: result.classify,
+                                                                        producer: result.producer,
+                                                                        title: result.title,
+                                                                        content: result.content,
+                                                                        price: result.price,
+                                                                        address: result.address,
+                                                                        city: {
+                                                                            _id: result.city,
+                                                                            name: city.name,
+                                                                            location: city.location,
+                                                                            type: city.type
+                                                                        },
+                                                                        images: result.images,
+                                                                        seller: result.seller,
+                                                                        priority: result.priority,
+                                                                        status: result.status,
+                                                                        note: result.note,
+                                                                        createdAt: result.created_at,
+                                                                        updatedAt: result.updated_at,
+                                                                        request: {
+                                                                            type: 'GET',
+                                                                            createdPostURL: `${config.API_ADDRESS}/api/posts/` + result._id
+                                                                        },
+                                                                        moment: moment(result.updated_at, 'YYYYMMDD').fromNow()
+                                                                    }
+                                                                });
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err);
+                                                                if (req.body.images !== undefined && req.body.images !== null) {
+                                                                    arrayImage.forEach(pathImage => deleteImage(pathImage));
+                                                                }
+
+                                                                if (err.name == "MongoError") {
+                                                                    res.status(500).json({
+                                                                        message: 'The title already exists',
+                                                                        error: err
+                                                                    });
+                                                                } else {
+                                                                    res.status(500).json({
+                                                                        error: err
+                                                                    });
+                                                                }
+                                                            });
+                                                    }
+                                                })
+                                        }
+                                    } else {
+                                        res.status(500).json({
+                                            message: 'pictures too much or too little',
+                                            error: "pictures must >= 1 and <= 6"
+                                        });
+                                    }
+                                } else {
+                                    res.status(404).json({
+                                        message: 'Not found images'
+                                    });
+                                }
+
+                            })
+                            .catch(err => {
+                                res.status(500).json({
+                                    message: 'City not found',
+                                    error: err
+                                });
+                            });
+                    }
                 })
                 .catch(err => {
                     res.status(500).json({
@@ -203,16 +246,17 @@ exports.posts_create_post = (req, res) => {
 exports.posts_get_post = (req, res) => {
     const id = req.params.postId;
     Post.findById(id)
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price city address images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(doc => {
             if (doc) {
                 res.status(200).json({
-                    post: doc,
+                    post: returnValueGet(doc),
                     request: {
                         type: 'GET',
                         AllPostsURL: `${config.API_ADDRESS}/api/posts/`
@@ -379,11 +423,12 @@ exports.posts_get_post_by_user = (req, res) => {
     Post.find({
             user: userId
         })
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -410,11 +455,12 @@ exports.posts_get_post_accept_by_category = (req, res) => {
             status: 1,
             category: categoryId
         })
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -439,11 +485,12 @@ exports.posts_get_post_accept_by_classify = (req, res) => {
             status: 1,
             classify: classifyId
         })
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -468,11 +515,12 @@ exports.posts_get_post_accept_by_producer = (req, res) => {
             status: 1,
             producer: producerId
         })
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -561,11 +609,12 @@ exports.posts_get_post_accept = async (req, res) => {
     Post.find({
             status: 1
         })
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -592,11 +641,12 @@ exports.posts_get_post_reject = async (req, res) => {
     Post.find({
             status: -1
         })
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -623,11 +673,12 @@ exports.posts_get_post_waiting = async (req, res) => {
     Post.find({
             status: 0
         })
-        .select('_id user producer classify category title content price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
+        .populate('city', 'name location type')
         .exec()
         .then(posts => {
             const response = {
@@ -722,7 +773,7 @@ async function saveArrayImage(pathImage, arrayBase64) {
     return await Promise.all(arrayBase64.map(image => asyncSaveImage(pathImage, image)))
 }
 
-function returnValueGet(doc){
+function returnValueGet(doc) {
     return {
         id: doc._id,
         user: doc.user,
@@ -733,6 +784,7 @@ function returnValueGet(doc){
         content: doc.content,
         price: doc.price,
         address: doc.address,
+        city: doc.city,
         images: doc.images,
         seller: doc.seller,
         priority: doc.priority,
@@ -743,6 +795,8 @@ function returnValueGet(doc){
         request: {
             type: 'GET',
             PostURL: `${config.API_ADDRESS}/api/posts/${doc._id}`
-        }
+        },
+        //moment: moment().startOf('hour').from(doc.updated_at)
+        moment: moment(doc.updated_at, 'YYYYMMDD').fromNow()
     }
 }
