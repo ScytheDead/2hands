@@ -141,7 +141,7 @@
     }
 
     function getClassifiesByCategory(CategoryId) {
-        getCategoryAPI(sessionStorage.getItem('token'), CategoryId)
+        getCategoryAPI(CategoryId)
             .then(category => {
                 getClassifiesByCategoryAPI(CategoryId)
                     .then(listClassifies => {

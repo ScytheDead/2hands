@@ -1,0 +1,180 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+<script id="importSocket" src="/socket.io/socket.io.js"></script>
+
+
+<script>
+    if (sessionStorage.getItem('token') != null) {
+        var user = decodedJWT(sessionStorage.getItem('token'));
+        if (user.isAdmin || user.isEmployee) {
+
+        } else {
+            window.location.href = Dia_chi_Dich_vu
+        }
+    } else {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+
+        <div class="col-md-3">
+            {{> admin/content-left}}
+        </div>
+
+        <div id="controlAdmin" class="col-md-9">
+
+            <h3 id="listCountId" class="text-success mt-2"></h3>
+
+            <div class="form-group">
+                <label for="">Lọc theo chuyên mục</label>
+                <select id="filterCategoryId" class="btn btn-outline-success">
+
+                </select>
+
+
+            </div>
+            <div id="groupBTNClassifies" class="form-group">
+
+            </div>
+
+            <div id="toastMessageId"></div>
+            <table id="tableProducersId" class="table mt-3" style="">
+                <thead>
+                    <tr>
+                        <th>Hình</th>
+                        <th>Chuyên mục</th>
+                        <th>Thể loại</th>
+                        <th>Nhà sản xuất</th>
+                        <th>Tiêu đề</th>
+                        <th>Giá</th>
+                        <th>Loại tin</th>
+                        <th>Ngày tạo</th>
+                        <th>Lần cập nhật gần nhất</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBodyId">
+
+                </tbody>
+            </table>
+
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    btnPostAccept.classList.add('active');
+
+    var listAllPosts = [];
+    var listPostsByCategory = [];
+
+    showAllTablePost();
+    getAllCategory();
+
+    filterCategoryId.onchange = () => {
+        if (filterCategoryId.value === 'all') {
+            showAllTablePost();
+        } else {
+            let idCategory = filterCategoryId.value;
+            let count = 0;
+            let nameCategory = filterCategoryId.options[filterCategoryId.selectedIndex].text;
+            listPostsByCategory = [];
+
+            listAllPosts.forEach(post => {
+                if (idCategory == post.category._id) {
+                    count++;
+                    listPostsByCategory.push(post);
+                }
+            })
+            showTablePostsAccept(listPostsByCategory);
+            listCountId.innerHTML = `Danh sách tin đã duyệt - ${nameCategory}: ${count}`;
+        }
+    }
+
+    function rejectPost(id) {
+        rejectPostAPI(sessionStorage.getItem('token'), id)
+            .then(result => {
+                messageSuccess(result);
+                if (filterCategoryId.value === 'all') {
+                    showAllTablePost();
+                } else {
+                    let nameCategory = filterCategoryId.options[filterCategoryId.selectedIndex].text;
+
+                    let indexPost = listPostsByCategory.findIndex(post => post.id === id)
+                    listPostsByCategory.splice(indexPost, 1);
+
+                    showTablePostsAccept(listPostsByCategory);
+
+                    listCountId.innerHTML = `Danh sách tin đã duyệt - ${nameCategory}: ${listPostsByCategory.length}`;
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                messageError(err);
+            })
+    }
+
+    function showAllTablePost() {
+        getPostsAcceptAPI(sessionStorage.getItem('token'))
+            .then(listPostsAccept => {
+                listCountId.innerHTML = `Danh sách tin đã duyệt: ${listPostsAccept.count}`;
+                showTablePostsAccept(listPostsAccept.posts);
+                listAllPosts = listPostsAccept.posts;
+            })
+            .catch(err => {
+                console.log(err);
+                messageError(err);
+            })
+    }
+
+    function showTablePostsAccept(listPostsWaiting) {
+        chuoi_HTML = ``;
+        listPostsWaiting.forEach(post => {
+            chuoi_HTML += `<tr>
+                <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="50" height="50"></td>
+                <td>${post.category.title}</td>
+                <td>${post.classify.title}</td>
+                <td>${post.producer.title}</td>
+                <td>${post.title}</td>
+                <td>${post.price}</td>
+                <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
+                <td>${getDateFormat(post.createdAt)}</td>
+                <td>${getDateFormat(post.updatedAt)}</td>
+                <td><button class="btn btn-outline-warning mt-2" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/a_${post.id}'">Chi tiết</button>
+                    <button class="btn btn-outline-danger mt-2" onclick="rejectPost('${post.id}')">Từ chối</button>
+                </td>
+            </tr>`;
+        });
+        tableBodyId.innerHTML = chuoi_HTML;
+    }
+
+    function getAllCategory() {
+        return new Promise((resolve, reject) => {
+            getAllCategoriesAPI()
+                .then(listCategories => {
+                    if (listCategories.count > 0) {
+                        filterCategoryId.innerHTML = `<option value="all">Hiển thị tất cả</option>`
+                        listCategories.categories.forEach(category => {
+                            filterCategoryId.innerHTML += `<option value="${category.id}">${category.title}</option>`
+                        });
+                        resolve(listCategories.count);
+                    } else {
+                        filterCategoryId.innerHTML += `<option value="">Không có chuyên mục nào</option>`
+                        filterCategoryId.disabled = true;
+                        resolve(0);
+                    }
+                })
+                .catch(err => {
+                    reject(0);
+                    messageError(err);
+                });
+        });
+    }
+
+</script>
