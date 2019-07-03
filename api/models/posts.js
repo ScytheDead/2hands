@@ -7,10 +7,11 @@ const postSchema = mongoose.Schema({
     producer: { type: mongoose.Schema.Types.ObjectId, ref: 'Producer' },
     classify: { type: mongoose.Schema.Types.ObjectId, ref: 'Classify' },
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
-    title: { type: String, required: true, trim: true, unique: true, minlength: [5, 'title too short'] , maxlength: [255, 'title too long'] },
+    title: { type: String, unique: true, required: true, trim: true, minlength: [5, 'title too short'], maxlength: [255, 'title too long'] },
     content: { type: String, required: true, minlength: [20, 'content too short'], maxlength: [5000, 'content too long'] },
     price: { type: Number, required: true },
     address: { type: String, required: true, minlength: [5, 'address too short'] , maxlength: [255, 'address too long']},
+    city: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true },
     images: [{ type: String, required: true }],
     seller: { type: Boolean, required: true},   //1: seller, 0: buyer
     priority: { type: Boolean, default: false },    //1: tin được ưu tiên, 0: không được ưu tiên

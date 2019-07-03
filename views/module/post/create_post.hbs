@@ -73,6 +73,12 @@
                     <input type="text" class="address" id="addressId" placeholder="">
                     <div class="clearfix"></div>
 
+                    <label>Thành phố: <span>*</span></label>
+                    <select class="" id="listCitiesId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
                     <div class="upload-ad-photos">
                         <label>Hình ảnh:</label>
                         <div class="photos-upload-view">
@@ -172,20 +178,25 @@
 
     btnDangTin.onclick = () => {
         hiddenMessageError();
-
+        console.log(listProducersId.value == ``);
         // xử lý sự kiện click
         getListBase64(listImageSelected)
             .then(listBase64 => {
                 var token = sessionStorage.getItem('token');
+                let classify = listClassifiesId.value == `` ? undefined : listClassifiesId.value;
+                console.log('classify', classify)
+                let producer = listProducersId.value == `` ? undefined : listProducersId.value;
+                console.log(producer)
                 var infoPostCreate = {
                     user: decodedJWT(token).id,
                     category: listCategoriesId.value,
-                    classify: listClassifiesId.value,
-                    producer: listProducersId.value,
+                    classify: classify,
+                    producer: producer,
                     title: titleId.value,
                     content: contentId.value,
                     price: priceId.value,
                     address: addressId.value,
+                    city: listCitiesId.value,
                     images: listBase64,
                     seller: rdoSellerId.checked
                 }
@@ -287,7 +298,9 @@
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
+
+        showListCity();
     }
 
     function getAllCategory() {
@@ -363,6 +376,19 @@
                     reject(0);
                 });
         });
+    }
+
+    function showListCity() {
+        getAllCityAPI()
+            .then(listCities => {
+                console.log(listCities)
+                listCities.cities.forEach(city => {
+                    listCitiesId.innerHTML += `<option value="${city._id}">${city.name}</option>`
+                });
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     async function showImageSelect(listImage) {

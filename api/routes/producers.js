@@ -35,7 +35,7 @@ router.get('/category/:categoryId', ProducerController.producers_get_producer_by
 
 router.get('/classify/:classifyId', ProducerController.producers_get_producer_by_classify);
 
-router.get('/:producerId', checkAuth, ProducerController.producers_get_producer);
+router.get('/:producerId', ProducerController.producers_get_producer);
 
 router.post('/', checkAuth, ProducerController.producers_create_producer);
 
