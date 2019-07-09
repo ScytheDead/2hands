@@ -22,4 +22,9 @@ exports.view_posts_by_category = (req, res) => {
     res.render('module/post/posts', {layout: 'template', categoryId: categoryId });
 }
 
+exports.post_detail = (req, res) => {
+    let postId = req.params.postId;
+    res.render('module/post/post_detail', {layout: 'template', postId: postId });
+}
+
 

@@ -1,0 +1,280 @@
+<script>
+	if (sessionStorage.getItem('token') == null) {
+		window.location.href = Dia_chi_Dich_vu + '/login'
+	}
+</script>
+
+<head>
+	<title>Resale_v2 a Classified ads Category Flat Bootstrap Responsive Website Template | Single :: w3layouts</title>
+	<link rel="stylesheet" href="../template/css/bootstrap.min.css"><!-- bootstrap-CSS -->
+	<link rel="stylesheet" href="../template/css/bootstrap-select.css"><!-- bootstrap-select-CSS -->
+	<link href="../template/css/style.css" rel="stylesheet" type="text/css" media="all" /><!-- style.css -->
+	<link rel="stylesheet" href="../template/css/font-awesome.min.css" /><!-- fontawesome-CSS -->
+	<link rel="stylesheet" href="../template/css/menu_sideslide.css" type="text/css" media="all"><!-- Navigation-CSS -->
+	<!-- meta tags -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script
+		type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+	<!-- //meta tags -->
+	<!--fonts-->
+	<link href='//fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+	<link
+		href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
+		rel='stylesheet' type='text/css'>
+	<!--//fonts-->
+
+	{{!-- IMPORT MESSAGE CSS --}}
+	<link rel="stylesheet" href="../message/css/style.css">
+	{{!-- // IMPORT MESSAGE CSS --}}
+
+	{{!-- IMPORT MY LIBRARY --}}
+	<!--css-->
+	<link rel="stylesheet" href="../css/style.css">
+	<!-- js -->
+	<script src="../js/connectAPI.js"></script>
+	<script src="../js/handle.js"></script>
+	{{!-- // IMPORT MY LIBRARY --}}
+
+	<script type="text/javascript" src="../template/js/jquery.min.js"></script>
+	<!-- js -->
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="../template/js/bootstrap.js"></script>
+	<script src="../template/js/bootstrap-select.js"></script>
+
+
+	<!-- //language-select -->
+	<link rel="stylesheet" href="../template/css/flexslider.css" media="screen" /><!-- flexslider css -->
+</head>
+
+<body style="padding: 0; background-color: ">
+
+	<div class="wthree-dot">
+		<h1 style="color:black" id="namePostId">Huy</h1>
+		<div class="profile">
+			<div class="wrap">
+				<div class="contact-form" style="padding: 2rem">
+					<form method="post">
+						<div class="w3l-contact-left">
+							<div style="margin-bottom: 1rem">
+								<h2 style="color: white">Cuộc hội thoại gần đây</h2>
+							</div>
+
+							<div id="listMessageId">
+								<div style="border-bottom: 1px solid white" class="styled-input agile-styled-input-top">
+									<label style="color:black">Huy</label>
+									<label style="margin-left: 68%; color:black" id="">3 giờ trước</label>
+									<label style="margin-top: 15%;max-width: 76%; font-weight: bold; color:black">Tiêu
+										đề
+										bài đăng sản
+										phẩm của người đăng</label>
+									<img style="margin: 10% 0 0 72%;" src="../template/images/ss3.jpg" width="25%"
+										height="25%">
+								</div>
+							</div>
+
+							{{!-- <div class="styled-input agile-styled-input-top">
+							<input type="text" name="Name" required="">
+							<label>Name</label>
+							<span></span>
+						</div>
+						<div class="styled-input">
+							<input type="email" name="Email" required=""> 
+							<label>Email</label>
+							<span></span>
+						</div> 
+						<div class="styled-input">
+							<input type="text" name="Phone" required="">
+							<label>Phone</label>
+							<span></span>
+						</div>
+						<div class="styled-input">
+							<input type="text" name="Subject" required="">
+							<label>Subject</label>
+							<span></span>
+						</div> --}}
+							{{!-- bootstrap 4 --}}
+							<link rel="stylesheet"
+								href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+								integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+								crossorigin="anonymous">
+							<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+								integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+								crossorigin="anonymous"></script>
+							{{!-- // bootstrap 4 --}}
+						</div>
+						<div class="w3l-contact-right">
+							<div class="styled-input agileits-input">
+
+								<div style="width: 48rem; height: 10rem; background: #FFE4E1">
+									<img style="float:left" id="imageId" src="../template/images/ss3.jpg" width="18%"
+										height="100%">
+									<label style="font-weight: bold; margin-left: 25%; color:black" id="titleId">Tiêu đề
+										bài đăng
+										sản phẩm của người đăng</label>
+									<label style="margin: 10% 0 0 25%; color:red" id="priceId">9.0000.000 đ</label>
+								</div>
+
+								{{!-- show messages --}}
+								<div id="showMessageId" style="width: 48rem; height: 25rem; margin-top: 1rem;">
+									<div id="listMessagesRightId" class="float-right">
+
+									</div>
+									
+									<div id="listMessagesLeftId">
+
+									</div>
+								</div>
+								{{!-- //show messages --}}
+
+								<textarea id="contentMessageId" style="color:white; min-height: 0; width: 120%" rows="4"
+									placeholder="Viết tin nhắn..." onkeyup="keyCode(event)"></textarea>
+								<button style="margin-left:112%" id="sendId" class="btn btn-success"><i
+										class="fa fa-paper-plane-o"></i></button>
+							</div>
+
+						</div>
+						<div class="clear"> </div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<!-- Navigation-JavaScript -->
+<script src="../template/js/classie.js"></script>
+<script src="../template/js/main.js"></script>
+
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+	const socket = io(Dia_chi_Dich_vu);
+
+	var postId = `{{postId}}`;
+	var token = sessionStorage.getItem('token');
+	var user = decodedJWT(token);
+	console.log(user);
+
+	showDetailPost();
+
+	function showDetailPost() {
+		getDetailPostAPI(postId)
+			.then(post => {
+				console.log(post);
+				namePostId.innerHTML = post.post.user.name;
+				imageId.src = `${Dia_chi_Dich_vu}/${post.post.images[0]}`;
+				titleId.innerHTML = post.post.title;
+				priceId.innerHTML = post.post.price;
+
+				// join room chat with poster
+				let infoMessage = {
+					userSellId: post.post.user._id,
+					userBuyId: user.id,
+					postId: postId
+				}
+				createMessage(infoMessage);
+			})
+			.catch(err => {
+				console.log(err);
+			})
+	}
+
+	function showListMessages(listMessages) {
+		listMessageId.innerHTML = ``;
+
+		listMessages.sort((a, b) => b.localeCompare(a));
+
+		listMessages.map(messageId => {
+			getMessageAPI(sessionStorage.getItem('token'), messageId)
+				.then(message => {
+					listMessageId.innerHTML += `
+						<div style="border-bottom: 1px solid white" class="styled-input agile-styled-input-top">
+							<label style="color:black">${message.message.userSell.name}</label>
+							<label style="margin-left: 68%; color:black" id="">${message.message.post.moment}</label>
+							<label style="margin-top: 15%;max-width: 76%; font-weight: bold; color:black">${message.message.post.title}</label>
+							<img style="margin: 10% 0 0 72%;" src="${Dia_chi_Dich_vu}/${message.message.post.images[0]}" width="25%"height="25%">
+						</div>`
+				})
+				.catch(err => {
+					console.log(err);
+					if (JSON.parse(err).message == `Auth failed`) {
+						authFailed();
+					}
+				})
+		});
+	}
+
+	function createMessage(infoMessage) {
+		createMessageAPI(sessionStorage.getItem('token'), infoMessage)
+			.then(message => {
+				console.log(message)
+				socket.emit('client-join-room-chat', {messageId: message.message._id, userId: user.id});
+				showListMessages(message.message.userBuy.messages);
+			})
+			.catch(err => {
+				console.log(err);
+				if (JSON.parse(err).message == `Auth failed`) {
+					authFailed();
+				}
+			})
+	}
+
+	function authFailed() {
+		sessionStorage.removeItem('token');
+		window.location = Dia_chi_Dich_vu;
+	}
+
+	function keyCode(event) {
+		if (event.keyCode == 13) {
+			sendMessage();
+		}
+	}
+
+	sendId.onclick = () => {
+		sendMessage();
+	}
+
+	function sendMessage() {
+		let contentMessage = event.target.value.replace('\n','');
+		let userAndContentMessage = {
+			messageChat: contentMessage,
+			user: user.id
+		}
+		socket.emit('client-send-message', userAndContentMessage);
+		console.log(userAndContentMessage);
+		contentMessageId.value = ``;
+	}
+
+	socket.on('server-response-client-join-room-chat', data => {
+		let listContentMessages = [];
+		data.messageLeft.map(message => listContentMessages.push(message));
+		data.messageRight.map(message => listContentMessages.push(message));
+		console.log(listContentMessages);
+		listContentMessages.map(message => {
+			let div = document.createElement('div');
+			let index = data.messageLeft.findIndex(messageLeft => messageLeft._id === message._id);
+			if(index == -1) {
+				div.innerHTML = `<p style="font-weight:bold">${data.nameRight}</p>`;
+				listMessagesRightId.appendChild(div);
+			} else {
+				listMessagesLeftId.appendChild(div);
+			}
+			div.innerHTML += message.content;
+		});
+	});
+
+	socket.on('server-send-message', messageChatAndNameUser => {
+		let name = messageChatAndNameUser.name;
+		let messageChat = messageChatAndNameUser.messageChat;
+
+		let div = document.createElement('div');
+		div.innerHTML = `<p style="font-weight:bold">${name}</p>`;
+		div.innerHTML += messageChat;
+
+		listMessagesRightId.appendChild(div);
+	});
+</script>

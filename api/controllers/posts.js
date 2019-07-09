@@ -100,6 +100,9 @@ exports.posts_create_post = (req, res) => {
                                 if (req.body.images !== undefined && req.body.images !== null) {
                                     if (req.body.images.length >= 1 && req.body.images.length <= 6) {
                                         const pathImage = 'uploads/posts/';
+                                        // delete images not in DB
+                                        deleteImagesNotInDB(pathImage);
+                                        // 
                                         await saveArrayImage(pathImage, req.body.images)
                                             .then(arrayNameImage => {
                                                 arrayImage = arrayNameImage;
@@ -771,6 +774,20 @@ async function asyncSaveImage(pathImage, image) {
 
 async function saveArrayImage(pathImage, arrayBase64) {
     return await Promise.all(arrayBase64.map(image => asyncSaveImage(pathImage, image)))
+}
+
+
+async function deleteImagesNotInDB(pathImage){
+    // delete images not in DB
+    let listImageNameDifferent = [];
+    let listImagesInDB = await getAllImagesNameInDB();
+    fs.readdir(pathImage, async (err, filenames) => {
+        filenames.forEach(fileName => {
+            if (listImagesInDB.indexOf(pathImage + fileName) < 0)
+                listImageNameDifferent.push(pathImage + fileName);
+        });
+        await deleteArrayImage(listImageNameDifferent);
+    });
 }
 
 function returnValueGet(doc) {

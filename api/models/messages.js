@@ -8,10 +8,12 @@ const messageSchema = mongoose.Schema({
     post: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
     contentChatUserBuy: [{
         content: { type: String },
+        seen: { type: Boolean, default: 0 }, //1: read, 0: unread
         time: { type : Date, default: Date.now }
     }],
     contentChatUserSell: [{
         content: { type: String },
+        seen: { type: Boolean, default: 0 }, //1: read, 0: unread
         time: { type : Date, default: Date.now }
     }]
 });
