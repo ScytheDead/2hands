@@ -1,0 +1,303 @@
+<head>
+	<title>Resale_v2 a Classified ads Category Flat Bootstrap Responsive Website Template | Single :: w3layouts</title>
+	<link rel="stylesheet" href="../template/css/bootstrap.min.css"><!-- bootstrap-CSS -->
+	<link rel="stylesheet" href="../template/css/bootstrap-select.css"><!-- bootstrap-select-CSS -->
+	<link href="../template/css/style.css" rel="stylesheet" type="text/css" media="all" /><!-- style.css -->
+	<link rel="stylesheet" href="../template/css/font-awesome.min.css" /><!-- fontawesome-CSS -->
+	<link rel="stylesheet" href="../template/css/menu_sideslide.css" type="text/css" media="all"><!-- Navigation-CSS -->
+	<!-- meta tags -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script
+		type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+	<!-- //meta tags -->
+	<!--fonts-->
+	<link href='//fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+	<link
+		href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
+		rel='stylesheet' type='text/css'>
+	<!--//fonts-->
+
+
+	{{!-- IMPORT MY LIBRARY --}}
+	<!--css-->
+	<link rel="stylesheet" href="../css/style.css">
+	<!-- js -->
+	<script src="../js/connectAPI.js"></script>
+	<script src="../js/handle.js"></script>
+	{{!-- // IMPORT MY LIBRARY --}}
+
+
+	<script type="text/javascript" src="../template/js/jquery.min.js"></script>
+	<!-- js -->
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="../template/js/bootstrap.js"></script>
+	<script src="../template/js/bootstrap-select.js"></script>
+	<script>
+		$(document).ready(function () {
+			var mySelect = $('#first-disabled2');
+
+			$('#special').on('click', function () {
+				mySelect.find('option:selected').prop('disabled', true);
+				mySelect.selectpicker('refresh');
+			});
+
+			$('#special2').on('click', function () {
+				mySelect.find('option:disabled').prop('disabled', false);
+				mySelect.selectpicker('refresh');
+			});
+
+			$('#basic2').selectpicker({
+				liveSearch: true,
+				maxOptions: 1
+			});
+		});
+	</script>
+	<!-- language-select -->
+	<script type="text/javascript" src="js/jquery.leanModal.min.js"></script>
+	<link href="css/jquery.uls.css" rel="stylesheet" />
+	<link href="css/jquery.uls.grid.css" rel="stylesheet" />
+	<link href="css/jquery.uls.lcd.css" rel="stylesheet" />
+	<!-- Source -->
+	<script src="../template/js/jquery.uls.data.js"></script>
+	<script src="../template/js/jquery.uls.data.utils.js"></script>
+	<script src="../template/js/jquery.uls.lcd.js"></script>
+	<script src="../template/js/jquery.uls.languagefilter.js"></script>
+	<script src="../template/js/jquery.uls.regionfilter.js"></script>
+	<script src="../template/js/jquery.uls.core.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('.uls-trigger').uls({
+				onSelect: function (language) {
+					var languageName = $.uls.data.getAutonym(language);
+					$('.uls-trigger').text(languageName);
+				},
+				quickList: ['en', 'hi', 'he', 'ml', 'ta', 'fr'] //FIXME
+			});
+		});
+	</script>
+	<!-- //language-select -->
+	<link rel="stylesheet" href="../template/css/flexslider.css" media="screen" /><!-- flexslider css -->
+</head>
+
+<body>
+
+
+	<!-- breadcrumbs -->
+	<div class="w3layouts-breadcrumbs text-center">
+		<div class="container">
+			<span class="agile-breadcrumbs">
+				<a href="index.html"><i class="fa fa-home home_1"></i></a> /
+				<a href="all-classifieds.html">All Ads</a> /
+				<a href="cars.html">Cars</a> /
+				<span>Car name</span></span>
+		</div>
+	</div>
+	<!-- //breadcrumbs -->
+	<!--single-page-->
+	<div class="single-page main-grid-border">
+		<div class="container">
+			<div class="product-desc">
+				<div class="col-md-7 product-view">
+					<h2 id="titleId">Title</h2>
+					<p> <i class="fa fa-map-marker"></i><span id="addressId" style="color: red">state</span>, <span
+							id="cityId" style="color: red">city</span> | <span id="momentId">Added at 06:55 pm</span>
+					</p>
+					<div class="flexslider" id="imagesId">
+						<ul class="slides">
+							<li data-thumb="../template/images/ss1.jpg">
+								<img src="../template/images/ss1.jpg" />
+							</li>
+							<li data-thumb="../template/images/ss2.jpg">
+								<img src="../template/images/ss2.jpg" />
+							</li>
+							<li data-thumb="../template/images/ss3.jpg">
+								<img src="../template/images/ss3.jpg" />
+							</li>
+							<li data-thumb="../template/images/ss4.jpg">
+								<img src="../template/images/ss4.jpg" />
+							</li>
+						</ul>
+					</div>
+					<!-- FlexSlider -->
+					<script defer src="../template/js/jquery.flexslider.js"></script>
+
+					<script>
+						// Can also be used with $(document).ready()
+						$(window).load(function () {
+							$('.flexslider').flexslider({
+								animation: "slide",
+								controlNav: "thumbnails"
+							});
+						});
+					</script>
+					<!-- //FlexSlider -->
+
+
+					{{!-- bootstrap 4 --}}
+					{{!-- <link rel="stylesheet"
+						href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+						integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+						crossorigin="anonymous">
+					<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+						integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+						crossorigin="anonymous"></script> --}}
+					{{!-- // bootstrap 4 --}}
+
+
+					<div class="product-details">
+						<h4><span class="w3layouts-agileinfo">Lượt xem </span> : <strong> 150</strong> <button
+								id="subscribeId" class="btn btn-danger pull-right ">Lưu tin <i
+									class="fa fa-heart-o"></i>
+								<i class="fa fa-heart"></i></button></h4>
+						<h4><span class="w3layouts-agileinfo">Loại tin </span> : <span id="sellerId">Cần bán</span>
+							<div class="clearfix"></div>
+						</h4>
+						<h4><span class="w3layouts-agileinfo">Mô tả chi tiết</span> :<p id="contentId"></p>
+							<div class="clearfix"></div>
+						</h4>
+					</div>
+
+				</div>
+				<div class="col-md-5 product-details-grid">
+					<div class="item-price">
+						<div class="product-price">
+							<p class="p-price">Giá</p>
+							<h3 class="rate" id="priceId">$ 45999</h3>
+							<div class="clearfix"></div>
+						</div>
+						<div class="condition">
+							<p class="p-price">Liên hệ người đăng tin</p>
+							<h4 id="phoneNumberId">0904 914 325</h4>
+							<div class="clearfix"></div>
+						</div>
+						<div class="itemtype">
+							<p class="p-price">Loại sản phẩm</p>
+							<h4 id="titleclassifyId">Cars</h4>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+					<div id="messageId" style="cursor: pointer" class="interested text-center">
+						<h4>Bạn đang quan tâm đến tin này ?</h4>
+						<small><i class="fa fa-comments"></i> Chat với người đăng tin !</small>
+					</div>
+					<div class="tips">
+						<h4>MẸO MUA HÀNG AN TOÀN</h4>
+						<ul>
+							<li>Đi cùng 1 người bạn hiểu biết về sản phẩm khi giao dịch.</li>
+							<li>2Hands không can thiệp vào quá trình thương lượng và giao dịch giữa người mua và người
+								bán với mong muốn tạo điều kiện thuận lợi nhất cho việc mua bán giữa đôi bên.</li>
+							<li>Sự an toàn của người dùng luôn là trăn trở và ưu tiên hàng đầu của chúng tôi.</li>
+						</ul>
+
+						<h4></h4>
+						<h4>KIỂM TRA KỸ THÔNG TIN SẢN PHẨM</h4>
+						<ul>
+							<li>Hỏi ý kiến của người quen rành về sản phẩm.</li>
+							<li>Thận trọng với sản phẩm có giá rẻ so với thị trường.</li>
+						</ul>
+
+						<h4></h4>
+						<h4>TÌM HIỂU THÔNG TIN BÁN HÀNG TỪ NGƯỜI BÁN</h4>
+						<ul>
+							<li>Phương thức thanh toán, giao hàng.</li>
+							<li>Chính sách đổi trả hàng.</li>
+							<li>Điều kiện bảo hành/hoàn tiền (nếu có).</li>
+						</ul>
+
+						<h4></h4>
+						<h4>CHỌN PHƯƠNG THỨC GIAO DỊCH AN TOÀN</h4>
+						<ul>
+							<li>KHÔNH chuyển tiền trước khi nhận hàng.</li>
+							<li>NÊN giao dịch trực tiếp và từ 2 người trở lên.</li>
+						</ul>
+
+						<h4></h4>
+						<h4>LƯU THÔNG TIN GIAO DỊCH ĐẦY ĐỦ</h4>
+						<ul>
+							<li>Lưu giữ thông tin hóa đơn, các chức từ giao dịch để tiện việc đối chiếu/ đối chứng sau
+								này (nếu có).</li>
+						</ul>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+	<!--//single-page-->
+
+</body>
+<!-- Navigation-JavaScript -->
+<script src="../template/js/classie.js"></script>
+<script src="../template/js/main.js"></script>
+<script src="../js/connnectAPI.js"></script>
+
+<!-- //Navigation-JavaScript -->
+<!-- here stars scrolling icon -->
+<script type="text/javascript">
+	$(document).ready(function () {
+		/*
+			var defaults = {
+			containerID: 'toTop', // fading element id
+			containerHoverID: 'toTopHover', // fading element hover id
+			scrollSpeed: 1200,
+			easingType: 'linear' 
+			};
+		*/
+
+		$().UItoTop({ easingType: 'easeOutQuart' });
+
+	});
+</script>
+<!-- start-smoth-scrolling -->
+<script type="text/javascript" src="../template/js/move-top.js"></script>
+<script type="text/javascript" src="../template/js/easing.js"></script>
+<script type="text/javascript">
+	jQuery(document).ready(function ($) {
+		$(".scroll").click(function (event) {
+			event.preventDefault();
+			$('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1000);
+		});
+	});
+</script>
+<!-- start-smoth-scrolling -->
+<!-- //here ends scrolling icon -->
+
+<script>
+	var postId = `{{postId}}`
+	showDetailPost()
+
+	function showDetailPost() {
+		getDetailPostAPI(postId)
+			.then(post => {
+				console.log(post)
+				titleId.innerHTML = post.post.title;
+				addressId.innerHTML = post.post.address;
+				cityId.innerHTML = post.post.city.name;
+				momentId.innerHTML = post.post.moment;
+
+				sellerId.innerHTML = post.post.seller == 1 ? 'Cần bán' : 'Cần mua';
+				contentId.innerHTML = post.post.content;
+
+				priceId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(post.post.price) + ' ₫';
+				phoneNumberId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(post.post.user.phoneNumber);
+				titleclassifyId.innerHTML = post.post.classify.title;
+				
+				let chuoi_HTML_Image = `<ul class="slides">`
+				post.post.images.forEach(image => {
+					chuoi_HTML_Image += `<li data-thumb="${Dia_chi_Dich_vu}/${image}"> <img src="${Dia_chi_Dich_vu}/${image}" /></li>`
+				});
+				chuoi_HTML_Image += `</ul>`
+				imagesId.innerHTML = chuoi_HTML_Image;
+
+				subscribeId
+			})
+			.catch(err => {
+				console.log(err)
+			})
+	}
+
+	messageId.onclick = () => {
+		window.location = Dia_chi_Dich_vu + '/message/' + postId;
+	}
+</script>

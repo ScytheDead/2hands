@@ -526,7 +526,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	async function showBreadCrumbs(categoryId) {
 		let category = await getCategoryAPI(categoryId);
 		agileBreadcrumbsId.childNodes[3].innerHTML = category.category.title;
-		console.log(agileBreadcrumbsId.childNodes)
 	}
 
 	browseClassifyId.onchange = async () => {
@@ -596,7 +595,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		listPosts.forEach(post => {
 			console.log(today - new Date(post.updatedAt));
 			chuoi_HTML += `
-			<a href="single.html">
+			<a href="/post-detail/${post.id}">
 				<li>
 					<img src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" />
 					<section class="list-left">

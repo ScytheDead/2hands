@@ -42,6 +42,7 @@ router.get('/admin/post-detail/:postId', controllerPostAdmin.get_detail_post);
 const controllerIndex = require('../controllers/index');
 const controllerPost = require('../controllers/posts');
 const controllerLogin = require('../controllers/login');
+const controllerMessage = require('../controllers/message');
 // --------------------------------------------------------------------
 
 // index
@@ -51,8 +52,15 @@ router.get('/', controllerIndex.index);
 router.get('/login', controllerLogin.login);
 router.get('/signup', controllerLogin.signup);
 
+// chat
+router.get('/message/:postId', controllerMessage.message);
+
 // post
 router.get('/dang-tin', controllerPost.create_post);
+router.get('/post-detail/:postId', controllerPost.post_detail);
 router.get('/:categoryId', controllerPost.view_posts_by_category);
+
+
+
 
 module.exports = router;

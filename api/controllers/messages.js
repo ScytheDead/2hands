@@ -1,0 +1,237 @@
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const config = require('../../config');
+const Message = require('../models/messages');
+const User = require('../models/users');
+const Post = require('../models/posts');
+const moment = require('moment');
+moment.locale('vi');
+
+exports.create_Message = async (req, res) => {
+    const userSellId = req.body.userSellId;
+    const userBuyId = req.body.userBuyId;
+    const postId = req.body.postId;
+
+    User.findById(userSellId)
+        .then(userSell => {
+            User.findById(userBuyId)
+                .then(userBuy => {
+                    Post.findById(postId)
+                        .then(post => {
+                            if (post.user.toString() === userSellId.toString()) {
+                                Message.find({
+                                        userSell: userSellId,
+                                        userBuy: userBuyId,
+                                        post: postId
+                                    })
+                                    .select('_id userSell userBuy post contentChatUserBuy contentChatUserSell')
+                                    .populate('userSell', '_id name phoneNumber address avatar email gender created_at')
+                                    .populate('userBuy', '_id name phoneNumber address avatar email gender messages created_at')
+                                    .populate('post', '_id category classify title content price address city images')
+                                    .exec()
+                                    .then(message => {
+                                        if (message.length == 0) {
+                                            const messageCreate = new Message({
+                                                _id: new mongoose.Types.ObjectId(),
+                                                userSell: userSellId,
+                                                userBuy: userBuyId,
+                                                post: postId
+                                            });
+                                            messageCreate.save()
+                                                .then(result => {
+                                                    console.log(3333333333333333333333333333)
+                                                    userBuy.messages.push(result._id);
+                                                    userBuy.save();
+
+                                                    res.status(201).json({
+                                                        message: {
+                                                            _id: result._id,
+                                                            userSell: {
+                                                                id: userSell._id,
+                                                                name: userSell.name,
+                                                                phoneNumber: userSell.phoneNumber,
+                                                                address: userSell.address,
+                                                                avatar: userSell.avatar,
+                                                                email: userSell.email,
+                                                                gender: userSell.gender,
+                                                                createdAt: userSell.created_at
+                                                            },
+                                                            userBuy: {
+                                                                _id: userBuy._id,
+                                                                name: userBuy.name,
+                                                                phoneNumber: userBuy.phoneNumber,
+                                                                address: userBuy.address,
+                                                                avatar: userBuy.avatar,
+                                                                email: userBuy.email,
+                                                                gender: userBuy.gender,
+                                                                createdAt: userBuy.created_at,
+                                                                messages: userBuy.messages
+                                                            },
+                                                            post: {
+                                                                _id: post._id,
+                                                                category: post.category._id,
+                                                                classify: post.classify._id,
+                                                                title: post.title,
+                                                                content: post.content,
+                                                                price: post.price,
+                                                                address: post.address,
+                                                                city: post.city,
+                                                                createdAt: post.created_at,
+                                                                updatedAt: post.updated_at,
+                                                                images: post.images,
+                                                                moment: moment(post.updated_at, 'YYYYMMDD').fromNow()
+                                                            }
+                                                        }
+                                                    });
+                                                })
+                                                .catch(err => {
+                                                    res.status(500).json({
+                                                        error: err
+                                                    });
+                                                });
+                                        } else {
+                                            res.status(200).json({
+                                                message: message[0]
+                                            });
+                                        }
+
+                                    })
+                                    .catch(err => {
+                                        res.status(500).json({
+                                            error: err
+                                        });
+                                    })
+                            } else {
+                                res.status(500).json({
+                                    message: 'Post not of user sell'
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                message: 'No valid entry found for provided post ID',
+                                error: err
+                            });
+                        });
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        message: 'No valid entry found for provided user buy ID',
+                        error: err
+                    });
+                });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided user sell ID',
+                error: err
+            });
+        });
+}
+
+// exports.get_all_messages_by_user = (req, res) => {
+//     const token = req.headers.authorization.split(" ")[1];
+//     const user = jwt.verify(token, config.JWT_KEY);
+//     console.log(user);
+//     User.findById(user.id)
+//     .select('_id ')
+// }
+
+exports.get_message_by_id = (req, res) => {
+    const id = req.params.messageId;
+    const token = req.headers.authorization.split(" ")[1];
+    const user = jwt.verify(token, config.JWT_KEY);
+    Message.findById(id)
+        .select('_id userSell userBuy post contentChatUserBuy contentChatUserSell')
+        .populate('userSell', '_id name phoneNumber address avatar email gender messages created_at')
+        .populate('userBuy', '_id name phoneNumber address avatar email gender messages created_at')
+        .populate('post', '_id category classify user title content price address city images created_at updated_at')
+        .exec()
+        .then(message => {
+            res.status(200).json({
+                message: returnMessageGet(message, user)
+
+            });
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        })
+}
+
+function returnMessageGet(message, user) {
+    var userSell = {};
+    var userBuy = {};
+
+    var response = {
+        id: message._id,
+        post: {
+            id: message.post._id,
+            category: message.post.category._id,
+            classify: message.post.classify._id,
+            title: message.post.title,
+            content: message.post.content,
+            price: message.post.price,
+            address: message.post.address,
+            city: message.post.city,
+            createdAt: message.post.created_at,
+            updatedAt: message.post.updated_at,
+            images: message.post.images,
+            moment: moment(message.post.updated_at, 'YYYYMMDD').fromNow()
+        }
+    };
+
+    if (user.id.toString() === message.post.user.toString()) {
+        userSell = {
+            id: message.userSell._id,
+            name: message.userSell.name,
+            phoneNumber: message.userSell.phoneNumber,
+            address: message.userSell.address,
+            avatar: message.userSell.avatar,
+            email: message.userSell.email,
+            gender: message.userSell.gender,
+            createdAt: message.userSell.created_at,
+            messages: message.userSell.messages
+        }
+        userBuy = {
+            id: message.userBuy._id,
+            name: message.userBuy.name,
+            phoneNumber: message.userBuy.phoneNumber,
+            address: message.userBuy.address,
+            avatar: message.userBuy.avatar,
+            email: message.userBuy.email,
+            gender: message.userBuy.gender,
+            createdAt: message.userBuy.created_at
+        }
+    } else {
+        userSell = {
+            id: message.userSell._id,
+            name: message.userSell.name,
+            phoneNumber: message.userSell.phoneNumber,
+            address: message.userSell.address,
+            avatar: message.userSell.avatar,
+            email: message.userSell.email,
+            gender: message.userSell.gender,
+            createdAt: message.userSell.created_at
+        }
+        userBuy = {
+            id: message.userBuy._id,
+            name: message.userBuy.name,
+            phoneNumber: message.userBuy.phoneNumber,
+            address: message.userBuy.address,
+            avatar: message.userBuy.avatar,
+            email: message.userBuy.email,
+            gender: message.userBuy.gender,
+            createdAt: message.userBuy.created_at,
+            messages: message.userBuy.messages
+        }
+    }
+
+    response.userSell = userSell;
+    response.userBuy = userBuy;
+
+    return response;
+}
