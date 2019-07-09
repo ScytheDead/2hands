@@ -157,7 +157,7 @@
         loadAllData();
         async function loadAllData() {
             await getAllCategory();
-            var producer = await showProducerUpdate(idProducer)
+            var producer = await showProducerUpdate(idProducer);
             await getClassifiesByCategory(producer.producer.category._id);
             filterClassifyId.value = producer.producer.classify._id;
         }
@@ -247,7 +247,7 @@
 
     function showProducerUpdate(idProducer) {
         return new Promise((resolve, reject) => {
-            getProducerAPI(sessionStorage.getItem('token'), idProducer)
+            getProducerAPI(idProducer)
             .then(result => {
                 titleId.value = result.producer.title;
                 filterCategoryId.value = result.producer.category._id;

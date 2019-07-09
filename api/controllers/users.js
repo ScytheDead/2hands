@@ -27,8 +27,7 @@ exports.user_signup = (req, res, next) => {
                             phoneNumber: req.body.phoneNumber,
                             password: hash
                         });
-                        user
-                            .save()
+                        user.save()
                             .then(result => {
                                 console.log(result);
                                 res.status(201).json({
@@ -160,6 +159,7 @@ exports.users_get_user = async (req, res) => {
     const id = req.params.userId;
     User.findById(id)
         .select('_id phoneNumber isAdmin isEmployee isUser messages subscribes created_at updated_at name address avatar facebook email status gender note')
+        .populate('messages', '_id userSell userBuy post contentChatUserBuy contentChatUserSell')
         .exec()
         .then(user => {
             res.status(200).json({
@@ -314,45 +314,45 @@ exports.user_update_avatar = (req, res) => {
                     })
                     .catch(err => {
                         User.updateOne({
-                            _id: id
-                        }, {
-                            $set: {
-                                "avatar": undefined
-                            }
-                        })
-                        .exec()
-                        .then(result => {
-                            res.status(422).json({
-                                error: err
+                                _id: id
+                            }, {
+                                $set: {
+                                    "avatar": undefined
+                                }
+                            })
+                            .exec()
+                            .then(result => {
+                                res.status(422).json({
+                                    error: err
+                                });
+                            })
+                            .catch(err => {
+                                res.status(500).json({
+                                    message: 'No valid entry found for provided ID',
+                                    error: err
+                                });
                             });
-                        })
-                        .catch(err => {
-                            res.status(500).json({
-                                message: 'No valid entry found for provided ID',
-                                error: err
-                            });
-                        });
                     });
             } else {
                 User.updateOne({
-                    _id: id
-                }, {
-                    $set: {
-                        "avatar": undefined
-                    }
-                })
-                .exec()
-                .then(result => {
-                    res.status(404).json({
-                        error: 'Not found image'
+                        _id: id
+                    }, {
+                        $set: {
+                            "avatar": undefined
+                        }
+                    })
+                    .exec()
+                    .then(result => {
+                        res.status(404).json({
+                            error: 'Not found image'
+                        });
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'No valid entry found for provided ID',
+                            error: err
+                        });
                     });
-                })
-                .catch(err => {
-                    res.status(500).json({
-                        message: 'No valid entry found for provided ID',
-                        error: err
-                    });
-                });
             }
         })
         .catch(err => {
@@ -415,5 +415,5 @@ function saveImage(pathImage, base64String) {
 }
 
 function updateAvatarUser(id, pathAvatar) {
-    
+
 }

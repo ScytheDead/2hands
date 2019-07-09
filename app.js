@@ -11,7 +11,7 @@ const hbs = require('express-handlebars');
 const usersRoutes = require('./api/routes/users');
 const producersRoutes = require('./api/routes/producers');
 const postsRoutes = require('./api/routes/posts');
-// const messagesRoutes = require('./api/routes/messages');
+const messagesRoutes = require('./api/routes/messages');
 const classifiesRoutes = require('./api/routes/classifies');
 const categoriesRoutes = require('./api/routes/categories');
 const cityRoutes = require('./api/routes/cities');
@@ -59,7 +59,7 @@ app.use((req, res, next) => {
 app.use('/api/users', usersRoutes);
 app.use('/api/producers', producersRoutes);
 app.use('/api/posts', postsRoutes);
-// app.use('/api/messages', messagesRoutes);
+app.use('/api/messages', messagesRoutes);
 app.use('/api/classifies', classifiesRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/cities', cityRoutes);

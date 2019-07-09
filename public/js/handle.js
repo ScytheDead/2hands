@@ -76,10 +76,10 @@ function XL_Login(result) {
         showDropDown(infoUser);
         btnLogin.classList.add(`d-none`);
         sessionStorage.setItem('token', result.token);
-        TH_close_modal_login.click();
+        //TH_close_modal_login.click();
 
         // Notification success
-        modalNotificationSuccess(`Đăng nhập thành công`)
+        //modalNotificationSuccess(`Đăng nhập thành công`)
     }
 }
 
@@ -112,7 +112,7 @@ function XL_Logout() {
 // }
 
 function showDropDown(info) {
-    var chuoi_HTMLConDropDown = `<div class="dropdown d-none" id ="dropdownId" >
+    var chuoi_HTMLConDropDown = `<div class="dropdown" id ="dropdownId" >
     <button id="btnName" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">${info.name == null ? info.phoneNumber : (info.name == "" ? info.phoneNumber : info.name)}
             <span class="caret"></span></button>
     <ul class="dropdown-menu">
