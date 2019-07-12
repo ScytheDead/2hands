@@ -13,7 +13,11 @@ app.engine('hbs', hbs({
 }));
 
 exports.message = (req, res) => {
-    let postId = req.params.postId;
-    res.render('module/message/chat', {layout: 'template', postId: postId});
+    res.render('module/message/chat', {layout: 'template'});
+}
+
+exports.get_message = (req, res) => {
+    let messageId = req.params.messageId;
+    res.render('module/message/chat', {layout: 'template', messageId: messageId});
 }
 

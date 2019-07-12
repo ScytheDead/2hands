@@ -6,9 +6,12 @@
 	</div>
 	<div class="w3ls-header-right">
 		<ul>
+			<li class="dropdown head-dpdn" id="dropdownHeaderMessageId">
+
+			</li>
+
 			<li class="dropdown head-dpdn" id="dropdownHeader">
-				<a id="iconLoginId" href="/login" aria-expanded="false"><i class="fa fa-user"
-						aria-hidden="true"></i>
+				<a id="iconLoginId" href="/login" aria-expanded="false"><i class="fa fa-user" aria-hidden="true"></i>
 					Đăng nhập</a>
 			</li>
 			<li class="dropdown head-dpdn">
@@ -23,11 +26,74 @@
 
 	<div class="clearfix"> </div>
 </div>
+<script src="/socket.io/socket.io.js"></script>
 <script src="../js/handle.js"></script>
+<script src="../js/connectAPI.js"></script>
 <script>
+	const socket = io(Dia_chi_Dich_vu);
+
 	if (sessionStorage.getItem('token') != null) {
 		var user = decodedJWT(sessionStorage.getItem('token'));
+		//console.log(user);
+
 		var chuoiDropDown = showDropDown(user);
 		dropdownHeader.innerHTML = chuoiDropDown;
+
+		showMessagesNotification();
+
+
+
+
+		socket.on('server-send-message-push-notification', messageChatAndNameUser => {
+			console.log(messageChatAndNameUser);
+			showMessagesNotification();
+		});
+	}
+
+	function showMessagesNotification() {
+		getUserAPI(sessionStorage.getItem('token'), user.id)
+			.then(user => {
+				//console.log(user);
+
+				joinRoomChat(user.user);
+
+				var count = 0;
+				user.user.messages.forEach(message => {
+					if (user.user._id.toString() === message.userSell.toString()) {
+						message.contentChatUserBuy.forEach(contentMessage => {
+							if (contentMessage.seen == false) {
+								count++;
+							}
+						});
+					} else {
+						message.contentChatUserSell.forEach(contentMessage => {
+							if (contentMessage.seen == false) {
+								count++;
+							}
+						});
+					}
+				});
+				var chuoi_HTMLConDropDown = ` <a id="messageId" href="/message" aria-expanded="false"><i class="fa fa-comments-o"></i><span id="countNotificationId" style="color: red; font-weight:bold">${count == 0 ? `` : count}</span> Chat </a>`
+				dropdownHeaderMessageId.innerHTML = chuoi_HTMLConDropDown;
+			})
+			.catch(err => {
+				console.log(err);
+				if (err == 'Unauthorized') {
+					sessionStorage.removeItem('token');
+					window.location = Dia_chi_Dich_vu;
+				}
+			});
+	}
+
+	function joinRoomChat(user) {
+		console.log(user)
+		user.messages.forEach(message => {
+			let data = {
+				messageId: message._id,
+				userId: user._id,
+				flag: 0
+			}
+			socket.emit('client-join-room-chat', data);
+		});
 	}
 </script>

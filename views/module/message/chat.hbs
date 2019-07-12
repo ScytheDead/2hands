@@ -45,175 +45,190 @@
 
 	<!-- //language-select -->
 	<link rel="stylesheet" href="../template/css/flexslider.css" media="screen" /><!-- flexslider css -->
+
+	{{!-- template chat --}}
+	<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+	<link rel="stylesheet" href="../css/chat.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css"
+		href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.js"></script>
+
+
+
+	{{!-- //template chat --}}
 </head>
 
 <body style="padding: 0; background-color: ">
 
-	<div class="wthree-dot">
-		<h1 style="color:black" id="namePostId">Huy</h1>
-		<div class="profile">
-			<div class="wrap">
-				<div class="contact-form" style="padding: 2rem">
-					<form method="post">
-						<div class="w3l-contact-left">
-							<div style="margin-bottom: 1rem">
-								<h2 style="color: white">Cuộc hội thoại gần đây</h2>
+	<div class="container-fluid h-100">
+		<div class="row justify-content-center h-100">
+			<div class="col-md-4 col-xl-3 chat">
+				<div class="card mb-sm-3 mb-md-0 contacts_card">
+					<div class="card-header">
+						<div class="input-group">
+							<input type="text" placeholder="Search..." name="" class="form-control search">
+							<div class="input-group-prepend">
+								<span class="input-group-text search_btn"><i class="fa fa-search"></i></span>
 							</div>
-
-							<div id="listMessageId">
-								<div style="border-bottom: 1px solid white" class="styled-input agile-styled-input-top">
-									<label style="color:black">Huy</label>
-									<label style="margin-left: 68%; color:black" id="">3 giờ trước</label>
-									<label style="margin-top: 15%;max-width: 76%; font-weight: bold; color:black">Tiêu
-										đề
-										bài đăng sản
-										phẩm của người đăng</label>
-									<img style="margin: 10% 0 0 72%;" src="../template/images/ss3.jpg" width="25%"
-										height="25%">
-								</div>
-							</div>
-
-							{{!-- <div class="styled-input agile-styled-input-top">
-							<input type="text" name="Name" required="">
-							<label>Name</label>
-							<span></span>
 						</div>
-						<div class="styled-input">
-							<input type="email" name="Email" required=""> 
-							<label>Email</label>
-							<span></span>
-						</div> 
-						<div class="styled-input">
-							<input type="text" name="Phone" required="">
-							<label>Phone</label>
-							<span></span>
-						</div>
-						<div class="styled-input">
-							<input type="text" name="Subject" required="">
-							<label>Subject</label>
-							<span></span>
-						</div> --}}
-							{{!-- bootstrap 4 --}}
-							<link rel="stylesheet"
-								href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-								integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-								crossorigin="anonymous">
-							<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-								integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-								crossorigin="anonymous"></script>
-							{{!-- // bootstrap 4 --}}
-						</div>
-						<div class="w3l-contact-right">
-							<div class="styled-input agileits-input">
-
-								<div style="width: 48rem; height: 10rem; background: #FFE4E1">
-									<img style="float:left" id="imageId" src="../template/images/ss3.jpg" width="18%"
-										height="100%">
-									<label style="font-weight: bold; margin-left: 25%; color:black" id="titleId">Tiêu đề
-										bài đăng
-										sản phẩm của người đăng</label>
-									<label style="margin: 10% 0 0 25%; color:red" id="priceId">9.0000.000 đ</label>
-								</div>
-
-								{{!-- show messages --}}
-								<div id="showMessageId" style="width: 48rem; height: 25rem; margin-top: 1rem;">
-									<div id="listMessagesRightId" class="float-right">
-
+					</div>
+					<div class="card-body contacts_body">
+						<ui class="contacts" id="listMessagesId">
+							<li class="active">
+								<div class="d-flex bd-highlight">
+									<div class="img_cont">
+										<img src="https://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg"
+											class="rounded-circle user_img">
+										<span class="online_icon"></span>
 									</div>
-									
-									<div id="listMessagesLeftId">
-
+									<div class="user_info">
+										<span>Maryam Naz</span>
+										<p>Maryam is online</p>
 									</div>
 								</div>
-								{{!-- //show messages --}}
-
-								<textarea id="contentMessageId" style="color:white; min-height: 0; width: 120%" rows="4"
-									placeholder="Viết tin nhắn..." onkeyup="keyCode(event)"></textarea>
-								<button style="margin-left:112%" id="sendId" class="btn btn-success"><i
-										class="fa fa-paper-plane-o"></i></button>
-							</div>
-
-						</div>
-						<div class="clear"> </div>
-					</form>
+							</li>
+							<li>
+								<div class="d-flex bd-highlight">
+									<div class="img_cont">
+										<img src="https://2.bp.blogspot.com/-8ytYF7cfPkQ/WkPe1-rtrcI/AAAAAAAAGqU/FGfTDVgkcIwmOTtjLka51vineFBExJuSACLcBGAs/s320/31.jpg"
+											class="rounded-circle user_img">
+										<span class="online_icon offline"></span>
+									</div>
+									<div class="user_info">
+										<span>Sahar Darya</span>
+										<p>Sahar left 7 mins ago</p>
+									</div>
+								</div>
+							</li>
+							<li>
+								<div class="d-flex bd-highlight">
+									<div class="img_cont">
+										<img src="https://i.pinimg.com/originals/54/6e/6d/546e6d4c6ce4322e6aa3b2f8ca73ac28.jpg"
+											class="rounded-circle user_img">
+										<span class="online_icon"></span>
+									</div>
+									<div class="user_info">
+										<span>Yolduz Rafi</span>
+										<p>Yolduz is online</p>
+									</div>
+								</div>
+							</li>
+						</ui>
+					</div>
+					<div class="card-footer"></div>
 				</div>
 			</div>
-		</div>
-	</div>
+			<div class="col-md-8 col-xl-6 chat" id="contactRightId">
 
+				<div class="card">
+					<div class="card-body msg_card_body">
+						<img src="../images/user_icon.png" alt="">
+					</div>
+				</div>
+
+			</div>
+		</div>
 </body>
 <!-- Navigation-JavaScript -->
 <script src="../template/js/classie.js"></script>
 <script src="../template/js/main.js"></script>
 
-
-
-
+<script src="../js/moment.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
-	const socket = io(Dia_chi_Dich_vu);
+	moment.locale('vi');
+	//const socket = io(Dia_chi_Dich_vu);
 
-	var postId = `{{postId}}`;
+	var messageId = `{{messageId}}`
 	var token = sessionStorage.getItem('token');
 	var user = decodedJWT(token);
-	console.log(user);
 
-	showDetailPost();
+	if (messageId == ``) {
+		showListMessages();
+	} else {
+		showListMessages();
 
-	function showDetailPost() {
-		getDetailPostAPI(postId)
-			.then(post => {
-				console.log(post);
-				namePostId.innerHTML = post.post.user.name;
-				imageId.src = `${Dia_chi_Dich_vu}/${post.post.images[0]}`;
-				titleId.innerHTML = post.post.title;
-				priceId.innerHTML = post.post.price;
-
-				// join room chat with poster
-				let infoMessage = {
-					userSellId: post.post.user._id,
-					userBuyId: user.id,
-					postId: postId
-				}
-				createMessage(infoMessage);
+		getMessageAPI(token, messageId)
+			.then(message => {
+				showDetailMessage(messageId, message.message.post.id);
 			})
 			.catch(err => {
 				console.log(err);
-			})
+			});
+
 	}
 
-	function showListMessages(listMessages) {
-		listMessageId.innerHTML = ``;
+	function showListMessages() {
+		listMessagesId.innerHTML = ``;
 
-		listMessages.sort((a, b) => b.localeCompare(a));
+		getUserAPI(token, user.id)
+			.then(async user => {
+				console.log(user);
+				let listMessages = await sortListMessages(user.user.messages);
+				listMessages.map(message => {
+					getDetailPostAPI(message.post)
+						.then(post => {
+							getMessageAPI(token, message._id)
+								.then(messageGet => {
+									let name = ``;
+									let avatar = ``;
 
-		listMessages.map(messageId => {
-			getMessageAPI(sessionStorage.getItem('token'), messageId)
-				.then(message => {
-					listMessageId.innerHTML += `
-						<div style="border-bottom: 1px solid white" class="styled-input agile-styled-input-top">
-							<label style="color:black">${message.message.userSell.name}</label>
-							<label style="margin-left: 68%; color:black" id="">${message.message.post.moment}</label>
-							<label style="margin-top: 15%;max-width: 76%; font-weight: bold; color:black">${message.message.post.title}</label>
-							<img style="margin: 10% 0 0 72%;" src="${Dia_chi_Dich_vu}/${message.message.post.images[0]}" width="25%"height="25%">
-						</div>`
-				})
-				.catch(err => {
-					console.log(err);
-					if (JSON.parse(err).message == `Auth failed`) {
-						authFailed();
-					}
-				})
-		});
+									if (user.user._id == messageGet.message.userSell.id) {
+										name = messageGet.message.userBuy.name === undefined ? messageGet.message.userBuy.phoneNumber : messageGet.message.userBuy.name;
+										avatar = messageGet.message.userBuy.avatar === undefined ? 'images/user_icon.png' : messageGet.message.userBuy.avatar;
+									} else {
+										name = messageGet.message.userSell.name === undefined ? messageGet.message.userSell.phoneNumber : messageGet.message.userSell.name;
+										avatar = messageGet.message.userSell.avatar === undefined ? 'images/user_icon.png' : messageGet.message.userSell.avatar;
+									}
+
+									listMessagesId.innerHTML += `
+									<a href="/message/${message._id}">
+										<li class="${messageId == messageGet.message.id ? 'active' : ''}" style="cursor: pointer">
+											<div class="d-flex bd-highlight">
+												<div class="img_cont">
+													<img src="${Dia_chi_Dich_vu}/${avatar}"
+													class="rounded-circle user_img">
+													<span class="online_icon"></span>
+												</div>
+												<div class="user_info">
+													<span>${name}</span>
+													<p>${messageGet.message.moment}</p>
+													<span>${post.post.title}</span>
+												</div>
+											</div>
+										</li>
+									</a>`
+								})
+								.catch(err => {
+									console.log(err);
+									if (JSON.parse(err).message == `Auth failed`) {
+										authFailed();
+									}
+								});
+						})
+						.catch(err => {
+							console.log(err);
+						})
+				});
+			})
+			.catch(err => {
+				console.log(err);
+			});
 	}
 
 	function createMessage(infoMessage) {
 		createMessageAPI(sessionStorage.getItem('token'), infoMessage)
 			.then(message => {
-				console.log(message)
-				socket.emit('client-join-room-chat', {messageId: message.message._id, userId: user.id});
-				showListMessages(message.message.userBuy.messages);
+
 			})
 			.catch(err => {
 				console.log(err);
@@ -223,24 +238,16 @@
 			})
 	}
 
-	function authFailed() {
-		sessionStorage.removeItem('token');
-		window.location = Dia_chi_Dich_vu;
-	}
-
 	function keyCode(event) {
 		if (event.keyCode == 13) {
 			sendMessage();
 		}
 	}
 
-	sendId.onclick = () => {
-		sendMessage();
-	}
-
 	function sendMessage() {
-		let contentMessage = event.target.value.replace('\n','');
+		let contentMessage = contentMessageId.value.replace('\n', '');
 		let userAndContentMessage = {
+			messageId: messageId,
 			messageChat: contentMessage,
 			user: user.id
 		}
@@ -250,31 +257,192 @@
 	}
 
 	socket.on('server-response-client-join-room-chat', data => {
-		let listContentMessages = [];
-		data.messageLeft.map(message => listContentMessages.push(message));
-		data.messageRight.map(message => listContentMessages.push(message));
-		console.log(listContentMessages);
-		listContentMessages.map(message => {
-			let div = document.createElement('div');
-			let index = data.messageLeft.findIndex(messageLeft => messageLeft._id === message._id);
-			if(index == -1) {
-				div.innerHTML = `<p style="font-weight:bold">${data.nameRight}</p>`;
-				listMessagesRightId.appendChild(div);
-			} else {
-				listMessagesLeftId.appendChild(div);
-			}
-			div.innerHTML += message.content;
-		});
+		showListContentMessages(data);
 	});
 
 	socket.on('server-send-message', messageChatAndNameUser => {
+		console.log(messageChatAndNameUser);
+		let messageIdServerSendMessage = messageChatAndNameUser.messageId;
+		let userId = messageChatAndNameUser.userId;
 		let name = messageChatAndNameUser.name;
+		let avatar = messageChatAndNameUser.avatar;
 		let messageChat = messageChatAndNameUser.messageChat;
 
-		let div = document.createElement('div');
-		div.innerHTML = `<p style="font-weight:bold">${name}</p>`;
-		div.innerHTML += messageChat;
 
-		listMessagesRightId.appendChild(div);
+
+		if (messageIdServerSendMessage == messageId) {
+			let div = document.createElement('div');
+
+			if (user.id.toString() === userId.toString()) {
+				div.classList.add('d-flex');
+				div.classList.add('justify-content-end');
+				div.classList.add('mb-4');
+				div.innerHTML = `
+				<div class="msg_cotainer_send">
+					${messageChat}
+					<span class="msg_time_send">${moment().calendar()}</span>
+				</div>
+				<div class="img_cont_msg">
+					<img src="${Dia_chi_Dich_vu}/${avatar === undefined ? 'images/user_icon.png' : avatar}"
+						class="rounded-circle user_img_msg">
+				</div>				
+				`
+			} else {
+				div.classList.add('d-flex');
+				div.classList.add('justify-content-start');
+				div.classList.add('mb-4');
+				div.innerHTML = `
+				<div class="img_cont_msg">
+					<img src="${Dia_chi_Dich_vu}/${avatar === undefined ? 'images/user_icon.png' : avatar}"
+						class="rounded-circle user_img_msg">
+				</div>
+				<div class="msg_cotainer">
+					${messageChat}
+					<span class="msg_time">${moment().calendar()}</span>
+				</div>
+				`
+			}
+
+			loadDownMessage();
+			
+			contentDetailMessageId.appendChild(div);
+		}
 	});
+
+	async function showDetailMessage(messageId, postId) {
+		contactRightId.innerHTML = ``;
+		await getDetailPostAPI(postId)
+			.then(post => {
+				let chuoiHTML = `
+						<div class="card">
+							<div class="card-header msg_head">
+								<div class="d-flex bd-highlight">
+									<div class="img_cont">
+										<img src="${Dia_chi_Dich_vu}/${post.post.images[0]}"
+										class="rounded-circle user_img">
+									</div>
+								<div class="user_info">
+									<span>${post.post.title}</span>
+									<p style="color: red">${Tao_Chuoi_The_hien_So_nguyen_duong(post.post.price)} ₫</p>
+								</div>
+								<div class="video_cam">
+									<span><i class="fa fa-video"></i></span>
+									<span><i class="fa fa-phone"></i></span>
+								</div>
+							</div>
+							<span id="action_menu_btn" onclick="showToggle()" ><i class="fa fa-ellipsis-v"></i></span>
+							<div class="action_menu">
+								<ul>
+									<li><i class="fa fa-user-circle"></i> Xem thông tin</li>
+									<li><i class="fa fa-ban"></i> Chặn người này</li>
+								</ul>
+							</div>
+					</div>
+					<div class="card-body msg_card_body" id="contentDetailMessageId">
+
+						
+					</div>
+					<div class="card-footer">
+						<div class="input-group">
+							<textarea id="contentMessageId" onkeyup="keyCode(event)" class="form-control type_msg"
+								placeholder="Type your message..."></textarea>
+							<div class="input-group-append">
+								<span class="input-group-text send_btn" onclick="sendMessage()" ><i class="fa fa-paper-plane-o"></i></span>
+							</div>
+						</div>
+					</div>
+				</div>`;
+				contactRightId.innerHTML = chuoiHTML;
+
+				loadDownMessage();
+			})
+			.catch(err => {
+				console.log(err);
+			});
+
+		socket.emit('client-join-room-chat', { messageId: messageId, userId: user.id, flag: 1 });
+	}
+
+	async function showListContentMessages(data) {
+		let listContentMessages = [];
+		data.messageLeft.map(message => listContentMessages.push(message));
+		data.messageRight.map(message => listContentMessages.push(message));
+
+		listContentMessages.sort((x, y) => {
+			return new Date(x.time) - new Date(y.time);
+		});
+
+		listContentMessages.map(message => {
+			let div = document.createElement('div');
+			let index = data.messageLeft.findIndex(messageLeft => messageLeft._id === message._id);
+			if (index == -1) {
+				div.classList.add('d-flex');
+				div.classList.add('justify-content-end');
+				div.classList.add('mb-4');
+				div.innerHTML = `
+				<div class="msg_cotainer_send">
+					${message.content}
+					<span class="msg_time_send">${moment(message.time).calendar()}</span>
+				</div>
+				<div class="img_cont_msg">
+					<img src="${Dia_chi_Dich_vu}/${data.avatarRight === undefined ? 'images/user_icon.png' : data.avatarRight}"
+						class="rounded-circle user_img_msg">
+				</div>				
+				`
+			} else {
+				div.classList.add('d-flex');
+				div.classList.add('justify-content-start');
+				div.classList.add('mb-4');
+				div.innerHTML = `
+				<div class="img_cont_msg">
+					<img src="${Dia_chi_Dich_vu}/${data.avatarLeft === undefined ? 'images/user_icon.png' : data.avatarLeft}"
+						class="rounded-circle user_img_msg">
+				</div>
+				<div class="msg_cotainer">
+					${message.content}
+					<span class="msg_time">${moment(message.time).calendar()}</span>
+				</div>
+				`
+			}
+
+			contentDetailMessageId.appendChild(div);
+		});
+	}
+
+	function authFailed() {
+		sessionStorage.removeItem('token');
+		window.location = Dia_chi_Dich_vu;
+	}
+
+	function showToggle() {
+		$(document).ready(function () {
+			$('.action_menu').toggle();
+		});
+	}
+
+	//function sortListMessages(list) {
+	//	return new Promise((resolve, reject) => {
+	//		let listSorted = list.sort((x, y) => {
+	//			return (new Date(y.updated_at) - new Date(x.updated_at));
+	//		});
+	//
+	//		resolve(listSorted);
+	//	});
+	//}
+
+	function sortListMessages(list) {
+		return new Promise((resolve, reject) => {
+			let listSorted = list.sort((x, y) => {
+				new moment(x.updated_at).format('YYYYMMDD') - new moment(y.updated_at).format('YYYYMMDD');
+			});
+			console.log(listSorted);
+			resolve(listSorted);
+		});
+	}
+
+	function loadDownMessage() {
+		$('#contentDetailMessageId').stop().animate({
+			scrollTop: $('#contentDetailMessageId')[0].scrollHeight + 10000
+		}, 800);
+	}
 </script>
