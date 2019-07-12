@@ -40,7 +40,6 @@ exports.create_Message = async (req, res) => {
                                             });
                                             messageCreate.save()
                                                 .then(result => {
-                                                    console.log(3333333333333333333333333333)
                                                     userBuy.messages.push(result._id);
                                                     userBuy.save();
 
@@ -58,7 +57,7 @@ exports.create_Message = async (req, res) => {
                                                                 createdAt: userSell.created_at
                                                             },
                                                             userBuy: {
-                                                                _id: userBuy._id,
+                                                                id: userBuy._id,
                                                                 name: userBuy.name,
                                                                 phoneNumber: userBuy.phoneNumber,
                                                                 address: userBuy.address,
@@ -81,7 +80,8 @@ exports.create_Message = async (req, res) => {
                                                                 updatedAt: post.updated_at,
                                                                 images: post.images,
                                                                 moment: moment(post.updated_at, 'YYYYMMDD').fromNow()
-                                                            }
+                                                            },
+                                                            moment: moment(result.updated_at, 'YYYYMMDD').fromNow()
                                                         }
                                                     });
                                                 })
@@ -143,18 +143,18 @@ exports.get_message_by_id = (req, res) => {
     const token = req.headers.authorization.split(" ")[1];
     const user = jwt.verify(token, config.JWT_KEY);
     Message.findById(id)
-        .select('_id userSell userBuy post contentChatUserBuy contentChatUserSell')
+        .select('_id userSell userBuy post contentChatUserBuy contentChatUserSell created_at updated_at')
         .populate('userSell', '_id name phoneNumber address avatar email gender messages created_at')
         .populate('userBuy', '_id name phoneNumber address avatar email gender messages created_at')
         .populate('post', '_id category classify user title content price address city images created_at updated_at')
         .exec()
         .then(message => {
             res.status(200).json({
-                message: returnMessageGet(message, user)
-
+                message: returnMessageGet(message)
             });
         })
         .catch(err => {
+            console.log(err);
             res.status(404).json({
                 message: 'No valid entry found for provided ID',
                 error: err
@@ -162,14 +162,12 @@ exports.get_message_by_id = (req, res) => {
         })
 }
 
-function returnMessageGet(message, user) {
-    var userSell = {};
-    var userBuy = {};
-
+function returnMessageGet(message) {
     var response = {
         id: message._id,
         post: {
             id: message.post._id,
+            user: message.post.user,
             category: message.post.category._id,
             classify: message.post.classify._id,
             title: message.post.title,
@@ -181,11 +179,9 @@ function returnMessageGet(message, user) {
             updatedAt: message.post.updated_at,
             images: message.post.images,
             moment: moment(message.post.updated_at, 'YYYYMMDD').fromNow()
-        }
-    };
+        },
 
-    if (user.id.toString() === message.post.user.toString()) {
-        userSell = {
+        userSell: {
             id: message.userSell._id,
             name: message.userSell.name,
             phoneNumber: message.userSell.phoneNumber,
@@ -195,29 +191,8 @@ function returnMessageGet(message, user) {
             gender: message.userSell.gender,
             createdAt: message.userSell.created_at,
             messages: message.userSell.messages
-        }
-        userBuy = {
-            id: message.userBuy._id,
-            name: message.userBuy.name,
-            phoneNumber: message.userBuy.phoneNumber,
-            address: message.userBuy.address,
-            avatar: message.userBuy.avatar,
-            email: message.userBuy.email,
-            gender: message.userBuy.gender,
-            createdAt: message.userBuy.created_at
-        }
-    } else {
-        userSell = {
-            id: message.userSell._id,
-            name: message.userSell.name,
-            phoneNumber: message.userSell.phoneNumber,
-            address: message.userSell.address,
-            avatar: message.userSell.avatar,
-            email: message.userSell.email,
-            gender: message.userSell.gender,
-            createdAt: message.userSell.created_at
-        }
-        userBuy = {
+        },
+        userBuy: {
             id: message.userBuy._id,
             name: message.userBuy.name,
             phoneNumber: message.userBuy.phoneNumber,
@@ -227,11 +202,9 @@ function returnMessageGet(message, user) {
             gender: message.userBuy.gender,
             createdAt: message.userBuy.created_at,
             messages: message.userBuy.messages
-        }
-    }
-
-    response.userSell = userSell;
-    response.userBuy = userBuy;
+        },
+        moment: moment(message.updated_at, 'YYYYMMDD').fromNow()
+    };
 
     return response;
 }

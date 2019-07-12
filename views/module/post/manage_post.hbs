@@ -1,0 +1,47 @@
+<script>
+    if (sessionStorage.getItem('token') == null) {
+        window.location.href = Dia_chi_Dich_vu + '/login'
+    }
+</script>
+
+{{!-- bootstrap 4 --}}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+{{!-- // bootstrap 4 --}}
+
+<body>
+    <!-- breadcrumbs -->
+    <div class="w3layouts-breadcrumbs text-center">
+        <div class="container">
+            <span class="agile-breadcrumbs float-left"><a href="/create-post"><i class="fa fa-home home_1"></i></a> /
+                <span> Quản
+                    lý tin đăng</span></span>
+        </div>
+    </div>
+    <!-- //breadcrumbs -->
+    <!-- Submit Ad -->
+    <div class="submit-ad main-grid-border">
+        <div class="container">
+            <h2 class="w3-head">Quản lý tin đăng</h2>
+
+            <div class="post-ad-form">
+                aa
+            </div>
+
+            <div class="post-ad-form">
+                <button id="btnPostingId" class="btn btn-outline-success btn-lg active">Đang bán</button>
+                <button id="btnWaitingId" class="btn btn-outline-warning btn-lg">Đang chờ duyệt</button>
+                <button id="btnRejectId" class="btn btn-outline-danger btn-lg">Bị từ chối</button>
+            </div>
+
+        </div>
+    </div>
+    <!-- // Submit Ad -->
+</body>
+
+<script>
+    
+</script>

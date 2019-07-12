@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const User = require('../models/users');
+const Post = require('../models/posts');
 const config = require('../../config');
 
 exports.user_signup = (req, res, next) => {
@@ -49,6 +50,8 @@ exports.user_login = (req, res, next) => {
     User.findOne({
             phoneNumber: req.body.phoneNumber
         })
+        .select('_id phoneNumber password name address avatar facebook email gender isAdmin isEmployee isUser status subscribes messages note')
+        .populate('messages', '_id userSell userBuy post')
         .exec()
         .then(user => {
             if (user.length < 1) {
@@ -56,7 +59,7 @@ exports.user_login = (req, res, next) => {
                     message: 'Auth failed'
                 });
             }
-            bcrypt.compare(req.body.password, user.password, (err, result) => {
+            bcrypt.compare(req.body.password, user.password, async (err, result) => {
                 if (err) {
                     return res.status(401).json({
                         message: 'Auth failed'
@@ -67,7 +70,6 @@ exports.user_login = (req, res, next) => {
                         {
                             id: user._id,
                             phoneNumber: user.phoneNumber,
-                            // permission: user.permission,
                             isAdmin: user.isAdmin,
                             isEmployee: user.isEmployee,
                             isUser: user.isUser,
@@ -84,7 +86,6 @@ exports.user_login = (req, res, next) => {
                             status: user.status,
                             note: user.note
                         },
-                        // config.JWT_KEY, {
                         config.JWT_KEY, {
                             expiresIn: config.TIME_EXPIRES
                         }
@@ -159,7 +160,7 @@ exports.users_get_user = async (req, res) => {
     const id = req.params.userId;
     User.findById(id)
         .select('_id phoneNumber isAdmin isEmployee isUser messages subscribes created_at updated_at name address avatar facebook email status gender note')
-        .populate('messages', '_id userSell userBuy post contentChatUserBuy contentChatUserSell')
+        .populate('messages', '_id userSell userBuy post contentChatUserBuy contentChatUserSell created_at updated_at')
         .exec()
         .then(user => {
             res.status(200).json({

@@ -27,4 +27,8 @@ exports.post_detail = (req, res) => {
     res.render('module/post/post_detail', {layout: 'template', postId: postId });
 }
 
+exports.show_manage_posts = (req, res) => {
+    res.render('module/post/manage_post', {layout: 'template' });
+}
+
 

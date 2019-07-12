@@ -53,11 +53,13 @@ router.get('/login', controllerLogin.login);
 router.get('/signup', controllerLogin.signup);
 
 // chat
-router.get('/message/:postId', controllerMessage.message);
+router.get('/message', controllerMessage.message);
+router.get('/message/:messageId', controllerMessage.get_message);
 
 // post
 router.get('/dang-tin', controllerPost.create_post);
 router.get('/post-detail/:postId', controllerPost.post_detail);
+router.get('/posts', controllerPost.show_manage_posts);
 router.get('/:categoryId', controllerPost.view_posts_by_category);
 
 

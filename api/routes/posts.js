@@ -30,6 +30,14 @@ router.patch('/reject/:postId', checkAuth, PostController.reject_post);
 
 
 // Filter
+//     // Filter by user
+//         // Filter by user posting
+// router.get('/user/posting', checkAuth, PostController.posts_get_post_by_user_posting);
+//         // Filter by user waiting
+// router.get('/user/waiting', checkAuth, PostController.posts_get_post_by_user_waiting);
+//         // Filter by user reject
+// router.get('/user/reject', checkAuth, PostController.posts_get_post_by_user_reject);
+
 
 router.get('/user/:userId', checkAuth, PostController.posts_get_post_by_user);
 
