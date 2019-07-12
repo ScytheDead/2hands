@@ -16,6 +16,6 @@ const messageSchema = mongoose.Schema({
         seen: { type: Boolean, default: 0 }, //1: read, 0: unread
         time: { type : Date, default: Date.now }
     }]
-});
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 module.exports = mongoose.model('Message', messageSchema);
