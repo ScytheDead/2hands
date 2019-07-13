@@ -45,7 +45,7 @@
 
 
 		socket.on('server-send-message-push-notification', messageChatAndNameUser => {
-			console.log(messageChatAndNameUser);
+			//console.log(messageChatAndNameUser);
 			showMessagesNotification();
 		});
 	}
@@ -86,7 +86,7 @@
 	}
 
 	function joinRoomChat(user) {
-		console.log(user)
+		//console.log(user)
 		user.messages.forEach(message => {
 			let data = {
 				messageId: message._id,

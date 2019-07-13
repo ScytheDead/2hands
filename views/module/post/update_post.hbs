@@ -1,0 +1,566 @@
+<script>
+    if (sessionStorage.getItem('token') == null) {
+        window.location.href = Dia_chi_Dich_vu + '/login'
+    }
+</script>
+
+<head>
+    <title>Resale_v2 a Classified ads Category Flat Bootstrap Responsive Website Template | Single :: w3layouts</title>
+    <link rel="stylesheet" href="../template/css/bootstrap.min.css"><!-- bootstrap-CSS -->
+    <link rel="stylesheet" href="../template/css/bootstrap-select.css"><!-- bootstrap-select-CSS -->
+    <link href="../template/css/style.css" rel="stylesheet" type="text/css" media="all" /><!-- style.css -->
+    <link rel="stylesheet" href="../template/css/font-awesome.min.css" /><!-- fontawesome-CSS -->
+    <link rel="stylesheet" href="../template/css/menu_sideslide.css" type="text/css" media="all"><!-- Navigation-CSS -->
+    <!-- meta tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script
+        type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- //meta tags -->
+    <!--fonts-->
+    <link href='//fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
+    <link
+        href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
+        rel='stylesheet' type='text/css'>
+    <!--//fonts-->
+
+
+    {{!-- IMPORT MY LIBRARY --}}
+    <!--css-->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- js -->
+    <script src="../js/connectAPI.js"></script>
+    <script src="../js/handle.js"></script>
+    {{!-- // IMPORT MY LIBRARY --}}
+
+
+    <script type="text/javascript" src="../template/js/jquery.min.js"></script>
+    <!-- js -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="../template/js/bootstrap.js"></script>
+    <script src="../template/js/bootstrap-select.js"></script>
+    <script>
+        $(document).ready(function () {
+            var mySelect = $('#first-disabled2');
+
+            $('#special').on('click', function () {
+                mySelect.find('option:selected').prop('disabled', true);
+                mySelect.selectpicker('refresh');
+            });
+
+            $('#special2').on('click', function () {
+                mySelect.find('option:disabled').prop('disabled', false);
+                mySelect.selectpicker('refresh');
+            });
+
+            $('#basic2').selectpicker({
+                liveSearch: true,
+                maxOptions: 1
+            });
+        });
+    </script>
+    <!-- language-select -->
+
+    <!-- Source -->
+    <script src="../template/js/jquery.uls.data.js"></script>
+    <script src="../template/js/jquery.uls.data.utils.js"></script>
+    <script src="../template/js/jquery.uls.lcd.js"></script>
+    <script src="../template/js/jquery.uls.languagefilter.js"></script>
+    <script src="../template/js/jquery.uls.regionfilter.js"></script>
+    <script src="../template/js/jquery.uls.core.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.uls-trigger').uls({
+                onSelect: function (language) {
+                    var languageName = $.uls.data.getAutonym(language);
+                    $('.uls-trigger').text(languageName);
+                },
+                quickList: ['en', 'hi', 'he', 'ml', 'ta', 'fr'] //FIXME
+            });
+        });
+    </script>
+    <!-- //language-select -->
+    <link rel="stylesheet" href="../template/css/flexslider.css" media="screen" /><!-- flexslider css -->
+</head>
+
+<body>
+    <!-- breadcrumbs -->
+    <div class="w3layouts-breadcrumbs text-center">
+        <div class="container">
+            <span class="agile-breadcrumbs"><a href="/"><i class="fa fa-home home_1"></i></a> / <span> Chỉnh sửa
+                    tin</span></span>
+        </div>
+    </div>
+    <!-- //breadcrumbs -->
+    <!-- Submit Ad -->
+    <div class="submit-ad main-grid-border">
+        <div class="container">
+            <h2 class="w3-head">Chỉnh sửa tin</h2>
+
+            {{!-- toast message --}}
+            <div id="errorMessageId"></div>
+
+            <div class="post-ad-form">
+                <form>
+                    <label>Chọn chuyên mục <span>*</span></label>
+                    <select class="" id="listCategoriesId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+                    <label id="txtClassify">Chọn thể loại <span>*</span></label>
+                    <select class="" id="listClassifiesId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+                    <label id="txtProducer">Chọn nhà sản xuất <span>*</span></label>
+                    <select class="" id="listProducersId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+
+                    <label>Tiêu đề <span>*</span></label>
+                    <input type="text" class="phone" id="titleId" placeholder="">
+                    <div class="clearfix"></div>
+                    <label>Mô tả chi tiết <span>*</span></label>
+                    <textarea class="mess" id="contentId" placeholder="Viết tiếng Việt có dấu
+    - Tình trạng
+    - Thời gian sử dụng
+    - Bảo hành nếu có
+    - Sửa chữa, nâng cấp, phụ kiện đi kèm
+    - Địa chỉ giao nhận, đổi trả
+    - Mô tả tối thiểu 20 ký tự"></textarea>
+                    <div class="clearfix"></div>
+
+                    <label>Loại tin: </label>
+                    <div class="radio">
+                        <label><input type="radio" id="rdoSellerId" value="1" name="optradio">Cần
+                            bán</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" id="rdoBuyerId" value="0" name="optradio">Cần mua</label>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <label>Giá <span>*</span></label>
+                    <input type="text" class="phone" id="priceId" placeholder="">
+                    <div class="clearfix"></div>
+
+                    <label>Địa chỉ nơi bán: <span>*</span></label>
+                    <input type="text" class="address" id="addressId" placeholder="">
+                    <div class="clearfix"></div>
+
+                    <label>Thành phố: <span>*</span></label>
+                    <select class="" id="listCitiesId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+                    <div class="upload-ad-photos">
+                        <label>Hình ảnh:</label>
+                        <div class="photos-upload-view">
+                            <form>
+                                <div>
+                                    <a id="addImageId" class="btn btn-danger btn-lg">
+                                        <i class="fa fa-camera fa-4x"></i>
+                                    </a>
+                                    <div style="position: absolute; right: 875px; top: 1080px;">
+                                        <i class="fa fa-hand-o-left"></i>
+                                        <em>Bạn cần đăng ít nhất 1 hình</em>
+                                    </div>
+                                    <input type="file" id="fileselect" style="display: none" multiple="multiple"
+                                        accept="image/*" />
+                                </div>
+                            </form>
+
+                            <div id="messages">
+                                <p>Tối thiểu 1 hình và tối đa 6 hình</p>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <label id="createdAtId"></label>
+
+                    <div class="personal-details">
+                        <p class="post-terms">Khi nhấn <strong>nút Đăng tin</strong> là bạn đã đồng ý với các <a
+                                href="terms.html" target="_blank">Điều khoản sử dụng </a> và <a href="privacy.html"
+                                target="_blank">Chính sách bảo mật</a></p>
+                        <input type="submit" id="btnSuaTin" value="Sửa tin">
+                        <div class="clearfix"></div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <!-- // Submit Ad -->
+</body>
+
+<!-- Navigation-JavaScript -->
+<script src="../template/js/classie.js"></script>
+<script src="../template/js/main.js"></script>
+
+
+<!-- //Navigation-JavaScript -->
+<!-- here stars scrolling icon -->
+<script type="text/javascript">
+    $(document).ready(function () {
+		/*
+			var defaults = {
+			containerID: 'toTop', // fading element id
+			containerHoverID: 'toTopHover', // fading element hover id
+			scrollSpeed: 1200,
+			easingType: 'linear' 
+			};
+		*/
+
+        $().UItoTop({ easingType: 'easeOutQuart' });
+
+    });
+</script>
+<!-- start-smoth-scrolling -->
+<script type="text/javascript" src="../template/js/move-top.js"></script>
+<script type="text/javascript" src="../template/js/easing.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function ($) {
+        $(".scroll").click(function (event) {
+            event.preventDefault();
+            $('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1000);
+        });
+    });
+</script>
+<!-- start-smoth-scrolling -->
+<!-- //here ends scrolling icon -->
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+    var postId = `{{postId}}`;
+
+    var listImageSelected = [];
+    var flagImages = 0;
+
+    showDetailPost();
+
+    function showDetailPost() {
+        getDetailPostAPI(postId)
+            .then(async post => {
+                await showListCity();
+                await getAllCategory();
+                const countClassfies = await getClassifiesByCategory(post.post.category._id);
+
+                listCategoriesId.value = post.post.category._id;
+                listCategoriesId.disabled = true;
+
+                if (countClassfies > 0) {
+                    listClassifiesId.value = post.post.classify._id;
+                    listClassifiesId.disabled = true;
+
+                    const countProducers = await getProducersByClassify(post.post.classify._id);
+                    if (countProducers > 0) {
+                        listProducersId.value = post.post.producer._id;
+                    }
+                }
+
+                titleId.value = post.post.title;
+                contentId.innerHTML = post.post.content;
+                post.post.seller == true ? rdoSellerId.checked = true : rdoBuyerId.checked = true;
+                priceId.value = post.post.price;
+                addressId.value = post.post.address;
+                listCitiesId.value = post.post.city._id;
+                createdAtId.innerHTML = getDateFormat(post.post.createdAt);
+
+                messages.innerHTML = ``;
+
+                post.post.images.map((image, i) => {
+                    messages.innerHTML += `<img style="border: 1px solid gray; margin-left: 5px" src="${Dia_chi_Dich_vu}/${image}" width="100" height="100">`
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    function getAllCategory() {
+        return new Promise((resolve, reject) => {
+            getAllCategoriesAPI()
+                .then(listCategories => {
+                    if (listCategories.count > 0) {
+                        listCategories.categories.map(category => {
+                            listCategoriesId.innerHTML += `<option value="${category.id}">${category.title}</option>`
+                        });
+                        resolve(listCategories.count);
+                    } else {
+                        listCategoriesId.innerHTML += `<option value="">Không có chuyên mục nào</option>`
+                        listCategoriesId.disabled = true;
+                        resolve(0);
+                    }
+                })
+                .catch(err => {
+                    reject(0);
+                    messageError(err);
+                });
+        });
+    }
+
+    function getClassifiesByCategory(CategoryId) {
+        return new Promise((resolve, reject) => {
+            getClassifiesByCategoryAPI(CategoryId)
+                .then(listClassifies => {
+                    listClassifiesId.innerHTML = ``;
+                    listClassifiesId.disabled = false;
+                    if (listClassifies.count > 0) {
+                        listClassifies.classifies.map(classify => {
+                            listClassifiesId.innerHTML += `<option value="${classify.id}">${classify.title}</option>`
+                        })
+                        resolve(listClassifies.count);
+                    } else {
+                        txtClassify.style.visibility = 'hidden';
+                        listClassifiesId.style.visibility = 'hidden';
+                        resolve(0);
+                    }
+                }).catch(err => {
+                    reject(0);
+                    console.log(err)
+                    //messageError(err);
+                });
+        });
+    }
+
+    function getProducersByClassify(ClassifyId) {
+        return new Promise((resolve, reject) => {
+            getProducersByClassifyAPI(ClassifyId)
+                .then(listProducers => {
+                    listProducersId.innerHTML = ``;
+                    listProducersId.disabled = false;
+                    if (listProducers.count > 0) {
+                        listProducers.producers.map(producer => {
+                            listProducersId.innerHTML += `<option value="${producer.id}">${producer.title}</option>`
+                        });
+                        resolve(listProducers.count);
+                    } else {
+                        // listProducersId.innerHTML = `<option value="">Không có nhà sản xuất nào trong thể loại này</option>`
+                        //listProducersId.disabled = true;
+                        txtProducer.style.visibility = 'hidden';
+                        listProducersId.style.visibility = 'hidden';
+                        resolve(0);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    if (err == 'Unauthorized') {
+                        sessionStorage.removeItem('token');
+                        window.location = Dia_chi_Dich_vu;
+                    }
+                    reject(0);
+                });
+        });
+    }
+
+    function showListCity() {
+        return new Promise((resolve, reject) => {
+            getAllCityAPI()
+                .then(listCities => {
+                    listCitiesId.innerHTML = ``;
+                    if (listCities.count > 0) {
+                        listCities.cities.map(city => {
+                            listCitiesId.innerHTML += `<option value="${city._id}">${city.name}</option>`
+                        });
+                        resolve(listCities.count);
+                    } else {
+                        resolve(0);
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                });
+        });
+    }
+
+    async function showImageSelect(listImage) {
+        messages.innerHTML = ``;
+        var chuoi_HTML = `<div>`;
+        for (var i = 0; i < listImage.length; i++) {
+            chuoi_HTML += `
+                    <img style="border: 1px solid gray;" id="image${i}" src="${await getBase64(listImage[i])}" width="100" height="100">
+                    <button onclick="deleteImageShow(${i})" style="margin-top: -98px; margin-left: -25px; border: 1px solid; border-radius: 50%;" type="button" class="btn btn-dark btn-sm">
+                        <i class="fa fa-times"></i>
+                    </button>`
+        }
+        chuoi_HTML += `</div>`
+        messages.innerHTML += chuoi_HTML;
+        messages.innerHTML += `<p style="margin-top: 10px">Tối thiểu 1 ảnh và tối đa 6 ảnh</p>`
+    }
+
+    btnSuaTin.onclick = () => {
+        hiddenMessageError();
+        console.log(listProducersId.value == ``);
+        // xử lý sự kiện click
+        getListBase64(listImageSelected)
+            .then(listBase64 => {
+                var infoPostUpdate = [
+                    { 'propName': 'producer', 'value': listProducersId.value == `` ? undefined : listProducersId.value },
+                    { 'propName': 'title', 'value': titleId.value },
+                    { 'propName': 'content', 'value': contentId.value },
+                    { 'propName': 'price', 'value': priceId.value },
+                    { 'propName': 'address', 'value': addressId.value },
+                    { 'propName': 'city', 'value': listCitiesId.value },
+                    { 'propName': 'seller', 'value': rdoSellerId.checked }
+                ];
+
+                if (flagImages) {
+                    infoPostUpdate.push({ 'propName': 'images', 'value': listBase64 });
+                }
+
+                console.log(infoPostUpdate);
+
+                updatePostAPI(sessionStorage.getItem('token'), postId, infoPostUpdate)
+                    .then(async result => {
+                        if (result.message == `Post updated`) {
+                            showMessageSuccess(`Sửa tin thành công.<br>Tin của bạn đang được kiểm duyệt`);
+                            let post = await getDetailPostAPI(postId);
+                            console.log(result);
+                            socket.emit('client-create-post', post.post);
+                        }
+                    })
+                    .catch(err => {
+                        var chuoi_error = ``;
+                        console.log(JSON.parse(err));
+                        if (JSON.parse(err).message != undefined) {
+                            if (JSON.parse(err).message == `The title already exists`) {
+                                chuoi_error = `Tiêu đề này đã tồn tại.<br>Xin chọn tiêu đề khác.`
+                            } else if (JSON.parse(err).message == `pictures too much or too little`) {
+                                chuoi_error = `Phải chọn ít nhất 1 ảnh và tối đa 6 ảnh.`
+                            } else if (JSON.parse(err).message == `Auth failed`) {
+                                sessionStorage.removeItem('token');
+                                setTimeout(() => {
+                                    window.location = Dia_chi_Dich_vu;
+                                }, 1500);
+                            }
+
+                        } else if (JSON.parse(err).error.errors != undefined) {
+                            if (JSON.parse(err).error.errors.title != undefined) {
+                                if (JSON.parse(err).error.errors.title.message == 'title too short') {
+                                    chuoi_error += 'Tiêu đề quá ngắn. (Tiêu đề từ 5 đến 255 ký tự) <br>';
+                                } else if (JSON.parse(err).error.errors.title.message == 'title too long') {
+                                    chuoi_error += 'Tiêu đề quá dài. (Tiêu đề từ 5 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.title.message == 'Path `title` is required.') {
+                                    chuoi_error += 'Tiêu đề không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.content != undefined) {
+                                if (JSON.parse(err).error.errors.content.message == 'content too short') {
+                                    chuoi_error += 'Mô tả chi tiết quá ngắn. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.content.message == 'content too long') {
+                                    chuoi_error += 'Mô tả chi tiết quá dài. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.content.message == 'Path `content` is required.') {
+                                    chuoi_error += 'Mô tả chi tiết không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.address != undefined) {
+                                if (JSON.parse(err).error.errors.address.message == 'address too short') {
+                                    chuoi_error += 'Địa chỉ quá ngắn. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.address.message == 'address too long') {
+                                    chuoi_error += 'Địa chỉ quá dài. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.address.message == 'Path `address` is required.') {
+                                    chuoi_error += 'Địa chỉ không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.price != undefined) {
+                                if (JSON.parse(err).error.errors.price.message == 'Path `price` is required.') {
+                                    chuoi_error += 'Giá không được để trống.<br>';
+                                } else if (JSON.parse(err).error.errors.price.message == `Cast to Number failed for value "${priceId.value}" at path "price"`) {
+                                    chuoi_error += 'Giá phải là một con số.<br>';
+                                }
+                            }
+                        } else {
+                            if (JSON.parse(err).error == 'Wrong file format')
+                                chuoi_error += 'Sai định dạng hình ảnh.<br>';
+                        }
+
+                        showMessageError(chuoi_error);
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                if (JSON.parse(err).error.message != undefined)
+                    messageError(JSON.parse(err).error.message);
+                else if (JSON.parse(err).message != undefined)
+                    messageError(JSON.parse(err).message);
+                else
+                    messageError(err);
+            });
+        // 
+
+        window.scrollTo(0,1);
+
+        //window.onload = function () {
+        //    if (window.jQuery) {
+        //        // jQuery is loaded  
+        //        alert("Yeah!");
+        //    } else {
+        //        // jQuery is not loaded
+        //        alert("Doesn't Work");
+        //    }
+        //}
+    }
+
+    addImageId.onclick = () => {
+        fileselect.click();
+    }
+
+    fileselect.onchange = async () => {
+        hiddenMessageError();
+        var maxImageShow;
+        if (fileselect.files.length > 0) {
+            listImageSelected = [];
+        }
+
+        if (fileselect.files.length > 6) {
+            showMessageError(`Bạn chỉ được đăng tối đa 6 ảnh`);
+            maxImageShow = 6;
+        } else {
+            maxImageShow = fileselect.files.length;
+        }
+
+        for (var i = 0; i < maxImageShow; i++) {
+            listImageSelected.push(fileselect.files[i]);
+        }
+        showImageSelect(listImageSelected);
+        flagImages = 1;
+    }
+
+    function deleteImageShow(posImage) {
+        listImageSelected.splice(posImage, 1)
+        showImageSelect(listImageSelected)
+    }
+
+    function showMessageError(message) {
+        errorMessageId.innerHTML = message;
+        errorMessageId.classList.add('errorMessage');
+        errorMessageId.classList.remove('successMessage');
+
+        window.scrollTo(0,1);
+    }
+
+    function showMessageSuccess(message) {
+        errorMessageId.innerHTML = message;
+        errorMessageId.classList.add('successMessage');
+        errorMessageId.classList.remove('errorMessage');
+        setTimeout(() => {
+            window.location = Dia_chi_Dich_vu + '/posts';
+        }, 1500);
+    }
+
+    function hiddenMessageError() {
+        errorMessageId.innerHTML = ``;
+        errorMessageId.classList.remove('errorMessage');
+        errorMessageId.classList.remove('successMessage');
+    }
+
+
+</script>
