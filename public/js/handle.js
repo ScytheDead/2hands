@@ -119,7 +119,7 @@ function showDropDown(info) {
     <ul class="dropdown-menu">
         <li><a href="#" class="bg-primary"><i class="fa fa-user-circle fa-2x"></i>&nbsp; Quản lý tài khoản</a></li>
         <li><a href="/posts" class="bg-primary"><i class="fa fa-newspaper-o fa-2x"></i>&nbsp; Quản lý tin đăng</a></li>
-        <li><a href="#" class="bg-primary"><i class="fa fa-heart-o fa-2x"></i>&nbsp; Các tin đã lưu</a></li>`
+        <li><a href="/subscribes" class="bg-primary"><i class="fa fa-heart-o fa-2x"></i>&nbsp; Các tin đã lưu</a></li>`
 
     if (info.isAdmin || info.isEmployee) {
         chuoi_HTMLConDropDown += ` <li><a href="/admin" class="bg-primary"><i class="fa fa-user-secret fa-2x"></i>&nbsp; Quản trị</a></li>`;

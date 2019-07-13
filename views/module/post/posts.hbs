@@ -526,6 +526,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	async function showBreadCrumbs(categoryId) {
 		let category = await getCategoryAPI(categoryId);
 		agileBreadcrumbsId.childNodes[3].innerHTML = category.category.title;
+		postCategoryId.innerHTML = category.category.title;
 	}
 
 	browseClassifyId.onchange = async () => {

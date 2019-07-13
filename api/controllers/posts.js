@@ -450,6 +450,95 @@ exports.posts_get_post_by_user = (req, res) => {
         });
 }
 
+exports.posts_get_post_by_user_posting = (req, res) => {
+    const userId = req.params.userId;
+    Post.find({
+            user: userId,
+            status: 1
+        })
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .populate('city', 'name location type')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.posts_get_post_by_user_waiting = (req, res) => {
+    const userId = req.params.userId;
+    Post.find({
+            user: userId,
+            status: 0
+        })
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .populate('city', 'name location type')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.posts_get_post_by_user_reject = (req, res) => {
+    const userId = req.params.userId;
+    Post.find({
+            user: userId,
+            status: -1
+        })
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .populate('city', 'name location type')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
 
 
 exports.posts_get_post_accept_by_category = (req, res) => {

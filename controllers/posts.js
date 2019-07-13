@@ -27,8 +27,17 @@ exports.post_detail = (req, res) => {
     res.render('module/post/post_detail', {layout: 'template', postId: postId });
 }
 
+exports.post_edit = (req, res) => {
+    let postId = req.params.postId;
+    res.render('module/post/update_post', {layout: 'template', postId: postId });
+}
+
 exports.show_manage_posts = (req, res) => {
     res.render('module/post/manage_post', {layout: 'template' });
+}
+
+exports.show_subscribes_posts = (req, res) => {
+    res.render('module/post/post_subscribes', {layout: 'template' });
 }
 
 
