@@ -361,7 +361,100 @@ exports.user_update_avatar = (req, res) => {
                 message: 'No valid entry found for provided ID',
                 error: err
             });
+        });
+}
+
+exports.user_update_subscribe = (req, res) => {
+    const id = req.params.userId;
+    User.findById(id)
+        .select('subscribes')
+        .exec()
+        .then(user => {
+            console.log(user);
+            if (req.body.postId !== undefined && req.body.postId !== null) {
+                const postId = req.body.postId;
+                Post.findById(postId)
+                    .then(post => {
+                        console.log(post);
+                        let result = user.subscribes.findIndex(postId => postId.toString() === post._id.toString());
+                        console.log(result);
+                        if (result == -1) {
+                            user.subscribes.push(post._id);
+                            user.save(() => {
+                                res.status(200).json({
+                                    message: 'Subscribe success',
+                                });
+                            });
+                        } else {
+                            user.subscribes.pull(post._id);
+                            user.save(() => {
+                                res.status(200).json({
+                                    message: 'Unsubscribe success',
+                                });
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'No valid entry found for provided post ID',
+                            error: err
+                        });
+                    });
+            } else {
+                res.status(404).json({
+                    message: 'Not found post ID'
+                });
+            }
         })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided user ID',
+                error: err
+            });
+        });
+}
+
+exports.users_get_subscribes = (req, res) => {
+    const id = req.params.userId;
+    User.findById(id)
+        .select('subscribes')
+        .populate('subscribes', '_id classify category title price city images updated_at')
+        .exec()
+        .then(user => {
+            console.log(user);
+            const response = {
+                count: user.subscribes.length,
+                subscribes: user.subscribes.map(subscribe => {
+                    return {
+                        // id: user._id,
+                        // phoneNumber: user.phoneNumber,
+                        // // permission: user.permission,
+                        // isAdmin: user.isAdmin,
+                        // isEmployee: user.isEmployee,
+                        // isUser: user.isUser,
+                        // messages: user.messages,
+                        // subscribes: user.subscribes,
+                        // createdAt: user.created_at,
+                        // updatedAt: user.updated_at,
+                        // name: user.name,
+                        // address: user.address,
+                        // avatar: user.avatar,
+                        // facebook: user.facebook,
+                        // email: user.email,
+                        // gender: user.gender,
+                        // status: user.status,
+                        // note: user.note,
+                    }
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided user ID',
+                error: err
+            });
+        });
 }
 
 function checkPermission(tokenEncoded) {
