@@ -47,12 +47,12 @@
                     <div class="clearfix"></div>
                     <label>Mô tả chi tiết <span>*</span></label>
                     <textarea class="mess" id="contentId" placeholder="Viết tiếng Việt có dấu
-    - Tình trạng
-    - Thời gian sử dụng
-    - Bảo hành nếu có
-    - Sửa chữa, nâng cấp, phụ kiện đi kèm
-    - Địa chỉ giao nhận, đổi trả
-    - Mô tả tối thiểu 20 ký tự"></textarea>
+                         - Tình trạng
+                         - Thời gian sử dụng
+                         - Bảo hành nếu có
+                         - Sửa chữa, nâng cấp, phụ kiện đi kèm
+                         - Địa chỉ giao nhận, đổi trả
+                         - Mô tả tối thiểu 20 ký tự"></textarea>
                     <div class="clearfix"></div>
 
                     <label>Loại tin: </label>
@@ -208,7 +208,7 @@
                     })
                     .catch(err => {
                         var chuoi_error = ``;
-                        console.log(JSON.parse(err));
+                        console.log(err);
                         if (JSON.parse(err).message != undefined) {
                             if (JSON.parse(err).message == `The title already exists`) {
                                 chuoi_error = `Tiêu đề này đã tồn tại.<br>Xin chọn tiêu đề khác.`
