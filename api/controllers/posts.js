@@ -49,13 +49,13 @@ exports.posts_create_post = (req, res) => {
                         Classify.findById(req.body.classify) //check Classify available
                             .then(async classify => {
                                 if (classify.category._id.toString() === category._id.toString()) {
-                                    
+
                                     if (req.body.producer != undefined && req.body.producer != ``) {
                                         Producer.findById(req.body.producer) //check Producer available
                                             .then(async producer => {
                                                 if (producer.category._id.toString() === category._id.toString()) {
                                                     if (producer.classify.toString() === classify._id.toString()) {
-                                                        
+
                                                     } else {
                                                         flagCreate = 0;
                                                         res.status(500).json({
@@ -100,9 +100,7 @@ exports.posts_create_post = (req, res) => {
                                 if (req.body.images !== undefined && req.body.images !== null) {
                                     if (req.body.images.length >= 1 && req.body.images.length <= 6) {
                                         const pathImage = 'uploads/posts/';
-                                        // delete images not in DB
-                                        deleteImagesNotInDB(pathImage);
-                                        // 
+
                                         await saveArrayImage(pathImage, req.body.images)
                                             .then(arrayNameImage => {
                                                 arrayImage = arrayNameImage;
@@ -118,6 +116,7 @@ exports.posts_create_post = (req, res) => {
                                             })
 
                                         if (flagCreate) {
+
                                             // user category classify producer title content price images seller note
                                             Post.find({
                                                     title: req.body.title
@@ -146,6 +145,9 @@ exports.posts_create_post = (req, res) => {
                                                         });
                                                         post.save()
                                                             .then(result => {
+                                                                // delete images not in DB
+                                                                deleteImagesNotInDB(pathImage);
+                                                                // 
                                                                 res.status(201).json({
                                                                     message: 'Created post successful',
                                                                     createdPost: {
@@ -866,7 +868,7 @@ async function saveArrayImage(pathImage, arrayBase64) {
 }
 
 
-async function deleteImagesNotInDB(pathImage){
+async function deleteImagesNotInDB(pathImage) {
     // delete images not in DB
     let listImageNameDifferent = [];
     let listImagesInDB = await getAllImagesNameInDB();
