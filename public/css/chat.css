@@ -197,7 +197,7 @@ html {
 .msg_time {
     position: absolute;
     left:0;
-    right: -55px;
+    right: -100px;
     bottom: -15px;
     color: rgba(255, 255, 255, 0.5);
     font-size: 10px;
@@ -206,7 +206,7 @@ html {
 .msg_time_send {
     position: absolute;
     right: 0;
-    left: -55px;
+    left: -65px;
     bottom: -15px;
     color: rgba(255, 255, 255, 0.5);
     font-size: 10px;

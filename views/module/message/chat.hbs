@@ -2,7 +2,6 @@
 	if (sessionStorage.getItem('token') == null) {
 		window.location.href = Dia_chi_Dich_vu + '/login';
 	}
-	btnName.childNodes[1].className = ``;
 </script>
 
 <head>
@@ -165,7 +164,6 @@
 			.catch(err => {
 				console.log(err);
 			});
-
 	}
 
 	function showListMessages() {
@@ -174,7 +172,7 @@
 		getUserAPI(token, user.id)
 			.then(async user => {
 				console.log(user);
-				let listMessages = await sortListMessages(user.user.messages);
+				let listMessages = sortListMessages(user.user.messages);
 				listMessages.map(message => {
 					getDetailPostAPI(message.post)
 						.then(post => {
@@ -305,7 +303,7 @@
 			}
 
 			loadDownMessage();
-			
+
 			contentDetailMessageId.appendChild(div);
 		}
 	});
@@ -432,13 +430,11 @@
 	//}
 
 	function sortListMessages(list) {
-		return new Promise((resolve, reject) => {
-			let listSorted = list.sort((x, y) => {
-				new moment(x.updated_at).format('YYYYMMDD') - new moment(y.updated_at).format('YYYYMMDD');
-			});
-			console.log(listSorted);
-			resolve(listSorted);
+		let listSorted = list.sort((x, y) => {
+			new moment(x.updated_at).format('YYYYMMDD') - new moment(y.updated_at).format('YYYYMMDD');
 		});
+		console.log(listSorted);
+		return listSorted;
 	}
 
 	function loadDownMessage() {
