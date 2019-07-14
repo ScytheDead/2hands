@@ -38,47 +38,34 @@
 	if (sessionStorage.getItem('token') != null) {
 		var user = decodedJWT(sessionStorage.getItem('token'));
 		getUser();
-		//console.log(user);
 
 		socket.on('server-send-message-push-notification', messageChatAndNameUser => {
 			//console.log(messageChatAndNameUser);
-			showMessagesNotification();
+			getUser();
 		});
 	}
 
-	function showMessagesNotification() {
-		getUserAPI(sessionStorage.getItem('token'), user.id)
-			.then(user => {
-				//console.log(user);
+	function showMessagesNotification(user) {
+		joinRoomChat(user.user);
 
-				joinRoomChat(user.user);
-
-				var count = 0;
-				user.user.messages.forEach(message => {
-					if (user.user._id.toString() === message.userSell.toString()) {
-						message.contentChatUserBuy.forEach(contentMessage => {
-							if (contentMessage.seen == false) {
-								count++;
-							}
-						});
-					} else {
-						message.contentChatUserSell.forEach(contentMessage => {
-							if (contentMessage.seen == false) {
-								count++;
-							}
-						});
+		var count = 0;
+		user.user.messages.forEach(message => {
+			if (user.user._id.toString() === message.userSell.toString()) {
+				message.contentChatUserBuy.forEach(contentMessage => {
+					if (contentMessage.seen == false) {
+						count++;
 					}
 				});
-				var chuoi_HTMLConDropDown = ` <a id="messageId" href="/message" aria-expanded="false"><i class="fa fa-comments-o"></i><span id="countNotificationId" style="color: red; font-weight:bold">${count == 0 ? `` : count}</span> Chat </a>`
-				dropdownHeaderMessageId.innerHTML = chuoi_HTMLConDropDown;
-			})
-			.catch(err => {
-				console.log(err);
-				if (err == 'Unauthorized') {
-					sessionStorage.removeItem('token');
-					window.location = Dia_chi_Dich_vu;
-				}
-			});
+			} else {
+				message.contentChatUserSell.forEach(contentMessage => {
+					if (contentMessage.seen == false) {
+						count++;
+					}
+				});
+			}
+		});
+		var chuoi_HTMLConDropDown = ` <a id="messageId" href="/message" aria-expanded="false"><i class="fa fa-comments-o"></i><span id="countNotificationId" style="color: red; font-weight:bold">${count == 0 ? `` : count}</span> Chat </a>`
+		dropdownHeaderMessageId.innerHTML = chuoi_HTMLConDropDown;
 	}
 
 	function joinRoomChat(user) {
@@ -93,25 +80,29 @@
 		});
 	}
 
-	function getUser() {
+	async function getUser() {
 		getUserAPI(sessionStorage.getItem('token'), user.id)
-			.then(async user => {
-
-				var chuoiDropDown = showDropDown(user.user);
+			.then(user => {
+				let chuoiDropDown = showDropDown(user.user);
 				dropdownHeader.innerHTML = chuoiDropDown;
-
-				showMessagesNotification();
 
 				let url = window.location.pathname;
 				if (url == '/user' || url == '/posts') {
 					btnName.childNodes[1].className = ``;
 					btnName.classList.add('btn-lg');
-				} else if (url == '/message/') {
+				} else if (url.indexOf('/message/') != -1 ) {
 					btnName.childNodes[1].className = ``;
 				}
+
+				showMessagesNotification(user);
 			})
 			.catch(err => {
 				console.log(err);
+				if (err == 'Unauthorized') {
+					sessionStorage.removeItem('token');
+					window.location = Dia_chi_Dich_vu;
+				}
 			});
+
 	}
 </script>
