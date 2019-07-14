@@ -85,10 +85,10 @@
 	<div class="w3layouts-breadcrumbs text-center">
 		<div class="container">
 			<span class="agile-breadcrumbs">
-				<a href="index.html"><i class="fa fa-home home_1"></i></a> /
-				<a href="all-classifieds.html">All Ads</a> /
-				<a href="cars.html">Cars</a> /
-				<span>Car name</span></span>
+				<a href="/"><i class="fa fa-home home_1"></i></a> /
+				<a style="cursor: pointer" id="breadcrumbs_categoryId" onclick="goThisCategory()">All Ads</a> /
+				{{!-- <a href="cars.html">Cars</a> / --}}
+				<span id="breadcrumbs_titleId">Car name</span></span>
 		</div>
 	</div>
 	<!-- //breadcrumbs -->
@@ -103,18 +103,7 @@
 					</p>
 					<div class="flexslider" id="imagesId">
 						<ul class="slides">
-							<li data-thumb="../template/images/ss1.jpg">
-								<img src="../template/images/ss1.jpg" />
-							</li>
-							<li data-thumb="../template/images/ss2.jpg">
-								<img src="../template/images/ss2.jpg" />
-							</li>
-							<li data-thumb="../template/images/ss3.jpg">
-								<img src="../template/images/ss3.jpg" />
-							</li>
-							<li data-thumb="../template/images/ss4.jpg">
-								<img src="../template/images/ss4.jpg" />
-							</li>
+
 						</ul>
 					</div>
 					<!-- FlexSlider -->
@@ -145,9 +134,9 @@
 
 					<div class="product-details">
 						<h4><span class="w3layouts-agileinfo">Lượt xem </span> : <strong> 150</strong> <button
-								id="subscribeId" class="btn btn-danger pull-right ">Lưu tin <i
+								onclick="subscribePost()" class="btn btn-danger pull-right ">Lưu tin <i id="subscribeId"
 									class="fa fa-heart-o"></i>
-								<i class="fa fa-heart"></i></button></h4>
+							</button></h4>
 						<h4><span class="w3layouts-agileinfo">Loại tin </span> : <span id="sellerId">Cần bán</span>
 							<div class="clearfix"></div>
 						</h4>
@@ -267,16 +256,24 @@
 
 <script>
 	var postId = `{{postId}}`;
+	if (sessionStorage.getItem('token') != null) {
+		var token = sessionStorage.getItem('token');
+		var user = decodedJWT(token);
+	}
 
 	showDetailPost();
 
 	var postAll;
 
-	function showDetailPost() {
-		getDetailPostAPI(postId)
+	async function showDetailPost() {
+		await getDetailPostAPI(postId)
 			.then(post => {
 				postAll = post;
 				console.log(post)
+
+				breadcrumbs_categoryId.innerHTML = post.post.category.title;
+				breadcrumbs_titleId.innerHTML = post.post.title;
+
 				titleId.innerHTML = post.post.title;
 				addressId.innerHTML = post.post.address;
 				cityId.innerHTML = post.post.city.name;
@@ -288,7 +285,7 @@
 
 				priceId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(post.post.price) + ' ₫';
 				nameId.innerHTML = post.post.user.name;
-				titleclassifyId.innerHTML = post.post.classify.title;
+				titleclassifyId.innerHTML = post.post.classify == undefined ? post.post.category.title : post.post.classify.title;
 
 				let chuoi_HTML_Image = `<ul class="slides">`
 				post.post.images.forEach(image => {
@@ -297,8 +294,21 @@
 				chuoi_HTML_Image += `</ul>`
 				imagesId.innerHTML = chuoi_HTML_Image;
 
-				//subscribeId
-
+				if (sessionStorage.getItem('token') != null) {
+					getSubscribestUserAPI(token, user.id)
+						.then(listSubscribes => {
+							console.log(listSubscribes);
+							if (listSubscribes.count > 0) {
+								let result = listSubscribes.subscribes.findIndex(post => post.id == postId);
+								if (result != -1) {
+									subscribeId.className = 'fa fa-heart';
+								}
+							}
+						})
+						.catch(err => {
+							console.log(err);
+						});
+				}
 			})
 			.catch(err => {
 				console.log(err)
@@ -306,29 +316,58 @@
 	}
 
 	function createMessage() {
-		var token = sessionStorage.getItem('token');
-		var user = decodedJWT(token);
+		if (sessionStorage.getItem('token') != null) {
+			let infoMessage = {
+				userSellId: postAll.post.user._id,
+				userBuyId: user.id,
+				postId: postId
+			}
 
-		let infoMessage = {
-			userSellId: postAll.post.user._id,
-			userBuyId: user.id,
-			postId: postId
+			createMessageAPI(token, infoMessage)
+				.then(message => {
+					window.location = Dia_chi_Dich_vu + '/message/' + message.message._id;
+				})
+				.catch(err => {
+					console.log(err);
+					if (JSON.parse(err).message == `Auth failed`) {
+						authFailed();
+					}
+				});
+		} else {
+			window.location = Dia_chi_Dich_vu + '/login';
 		}
+	}
 
-		createMessageAPI(sessionStorage.getItem('token'), infoMessage)
-			.then(message => {
-				window.location = Dia_chi_Dich_vu + '/message/' + message.message._id;
-			})
-			.catch(err => {
-				console.log(err);
-				if (JSON.parse(err).message == `Auth failed`) {
-					authFailed();
-				}
-			});
+	function subscribePost() {
+		if (sessionStorage.getItem('token') != null) {
+			let post = { postId: postId }
+			subscribePostAPI(token, user.id, post)
+				.then(result => {
+					console.log(result);
+					if (result.message == `Subscribe success`) {
+						subscribeId.classList.remove('fa-heart-o');
+						subscribeId.classList.add('fa-heart');
+						showToast('Tin đã được lưu vào danh sách theo dõi.');
+					} else if (result.message == `Unsubscribe success`) {
+						subscribeId.classList.add('fa-heart-o');
+						subscribeId.classList.remove('fa-heart');
+						showToast('Đã hủy theo dõi tin này.');
+					}
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		} else {
+			window.location = Dia_chi_Dich_vu + '/login';
+		}
 	}
 
 	function authFailed() {
 		sessionStorage.removeItem('token');
 		window.location = Dia_chi_Dich_vu;
+	}
+
+	function goThisCategory() {
+		window.location = Dia_chi_Dich_vu + '/' + postAll.post.category._id;
 	}
 </script>
