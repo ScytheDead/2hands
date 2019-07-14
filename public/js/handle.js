@@ -247,3 +247,4 @@ function showToast(contentToast) {
         toast.classList.remove('show');
     }, 2000);
 }
+

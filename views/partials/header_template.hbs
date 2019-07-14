@@ -93,11 +93,11 @@
 		});
 	}
 
-	async function getUser() {
-		await getUserAPI(sessionStorage.getItem('token'), user.id)
+	function getUser() {
+		getUserAPI(sessionStorage.getItem('token'), user.id)
 			.then(async user => {
 
-				var chuoiDropDown = await showDropDown(user.user);
+				var chuoiDropDown = showDropDown(user.user);
 				dropdownHeader.innerHTML = chuoiDropDown;
 
 				showMessagesNotification();
