@@ -178,16 +178,19 @@
 						.then(post => {
 							getMessageAPI(token, message._id)
 								.then(messageGet => {
+
 									let name = ``;
 									let avatar = ``;
 
 									if (user.user._id == messageGet.message.userSell.id) {
-										name = messageGet.message.userBuy.name === undefined ? messageGet.message.userBuy.phoneNumber : messageGet.message.userBuy.name;
-										avatar = messageGet.message.userBuy.avatar === undefined ? 'images/user_icon.png' : messageGet.message.userBuy.avatar;
+										name = messageGet.message.userBuy.name == undefined ? messageGet.message.userBuy.phoneNumber : messageGet.message.userBuy.name;
+										avatar = messageGet.message.userBuy.avatar == undefined ? 'images/user_icon.png' : messageGet.message.userBuy.avatar;
 									} else {
-										name = messageGet.message.userSell.name === undefined ? messageGet.message.userSell.phoneNumber : messageGet.message.userSell.name;
-										avatar = messageGet.message.userSell.avatar === undefined ? 'images/user_icon.png' : messageGet.message.userSell.avatar;
+										name = messageGet.message.userSell.name == undefined ? messageGet.message.userSell.phoneNumber : messageGet.message.userSell.name;
+										avatar = messageGet.message.userSell.avatar == undefined ? 'images/user_icon.png' : messageGet.message.userSell.avatar;
 									}
+									console.log(messageGet);
+									console.log(name);
 
 									listMessagesId.innerHTML += `
 									<a href="/message/${message._id}">

@@ -185,7 +185,7 @@ exports.user_update = async (req, res) => {
     const id = req.params.userId;
     const updateOps = {};
     for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
+        updateOps[ops.propName] = ops.value == '' ? undefined : ops.value;
     }
 
     //check permission if update permission
