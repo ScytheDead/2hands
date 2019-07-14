@@ -44,8 +44,32 @@
     margin: 6px;
 }
 
-.dropdown-value{
+.dropdown-value {
     float: left;
     margin: 5px 10px;
 }
 
+#toast {
+    position: fixed;
+    top:0;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: #000;
+    color: #fff;
+    padding: 16px;
+    border-radius: 4px;
+    z-index: 1;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    visibility: hidden;
+    opacity: 0;
+}
+
+#toast.show {
+    visibility: visible;
+    animation: fadeInOutToast 2s;
+}
+
+@keyframes fadeInOutToast{
+    5%, 95%{opacity: 1; top: 50px}
+    15%, 85%{opacity: 1; top: 30px}
+}

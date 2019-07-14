@@ -113,23 +113,25 @@ function XL_Logout() {
 
 
 function showDropDown(info) {
-    var chuoi_HTMLConDropDown = `<div class="dropdown" id ="dropdownId" >
-    <button id="btnName" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">${info.name == null ? info.phoneNumber : (info.name == "" ? info.phoneNumber : info.name)}
-            <span class="caret"></span></button>
-    <ul class="dropdown-menu">
-        <li><a href="#" class="bg-primary"><i class="fa fa-user-circle fa-2x"></i>&nbsp; Quản lý tài khoản</a></li>
-        <li><a href="/posts" class="bg-primary"><i class="fa fa-newspaper-o fa-2x"></i>&nbsp; Quản lý tin đăng</a></li>
-        <li><a href="/subscribes" class="bg-primary"><i class="fa fa-heart-o fa-2x"></i>&nbsp; Các tin đã lưu</a></li>`
+    return new Promise((resolve, reject) => {
+        let chuoi_HTMLConDropDown = `<div class="dropdown" id ="dropdownId" >
+        <button id="btnName" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">${info.name == null ? info.phoneNumber : (info.name == "" ? info.phoneNumber : info.name)}
+                <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            <li><a href="/user" class="bg-primary"><i class="fa fa-user-circle fa-2x"></i>&nbsp; Quản lý tài khoản</a></li>
+            <li><a href="/posts" class="bg-primary"><i class="fa fa-newspaper-o fa-2x"></i>&nbsp; Quản lý tin đăng</a></li>
+            <li><a href="/subscribes" class="bg-primary"><i class="fa fa-heart fa-2x"></i>&nbsp; Các tin đã lưu</a></li>`
 
-    if (info.isAdmin || info.isEmployee) {
-        chuoi_HTMLConDropDown += ` <li><a href="/admin" class="bg-primary"><i class="fa fa-user-secret fa-2x"></i>&nbsp; Quản trị</a></li>`;
-    }
+        if (info.isAdmin || info.isEmployee) {
+            chuoi_HTMLConDropDown += ` <li><a href="/admin" class="bg-primary"><i class="fa fa-user-secret fa-2x"></i>&nbsp; Quản trị</a></li>`;
+        }
 
-    chuoi_HTMLConDropDown += `<li><a href="#" class="bg-primary" onclick="XL_Logout()"><i class="fa fa-sign-out fa-2x"></i>&nbsp; Đăng xuất</a></li>
-    </ul>
-</div>`;
+        chuoi_HTMLConDropDown += `<li><a href="#" class="bg-primary" onclick="XL_Logout()"><i class="fa fa-sign-out fa-2x"></i>&nbsp; Đăng xuất</a></li>
+        </ul>
+    </div>`;
 
-    return chuoi_HTMLConDropDown;
+        resolve(chuoi_HTMLConDropDown);
+    });
 }
 
 function changedFormLogin(status) {
@@ -236,4 +238,12 @@ function Tao_Chuoi_The_hien_So_nguyen_duong(So_nguyen) {
         }
     }
     return Chuoi_The_hien
+}
+
+function showToast(contentToast) {
+    toast.classList.add('show');
+    toast.innerHTML = contentToast;
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
 }
