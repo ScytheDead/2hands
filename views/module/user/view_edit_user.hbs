@@ -121,11 +121,11 @@
 
         btnLuu.onclick = () => {
             let infoUserUpdate = [
-                { "propName": "name", "value": nameId.value },
-                { "propName": "address", "value": addressId.value },
-                { "propName": "facebook", "value": facebookId.value },
-                { "propName": "email", "value": emailId.value },
-                { "propName": "gender", "value": genderId.value == "" ? null : genderId.value },
+                { "propName": "name", "value": nameId.value == "" ? undefined : nameId.value},
+                { "propName": "address", "value": addressId.value == "" ? undefined : addressId.value},
+                { "propName": "facebook", "value": facebookId.value == "" ? undefined : facebookId.value},
+                { "propName": "email", "value": emailId.value == "" ? undefined : emailId.value},
+                { "propName": "gender", "value": genderId.value == "" ? undefined : genderId.value },
             ]
 
             updateAccountUserAPI(token, user.id, infoUserUpdate)
