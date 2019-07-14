@@ -5,6 +5,8 @@ const fs = require('fs');
 const User = require('../models/users');
 const Post = require('../models/posts');
 const config = require('../../config');
+const moment = require('moment');
+moment.locale('vi');
 
 exports.user_signup = (req, res, next) => {
     User.find({
@@ -418,36 +420,51 @@ exports.users_get_subscribes = (req, res) => {
     const id = req.params.userId;
     User.findById(id)
         .select('subscribes')
-        .populate('subscribes', '_id classify category title price city images updated_at')
         .exec()
         .then(user => {
-            console.log(user);
-            const response = {
-                count: user.subscribes.length,
-                subscribes: user.subscribes.map(subscribe => {
-                    return {
-                        // id: user._id,
-                        // phoneNumber: user.phoneNumber,
-                        // // permission: user.permission,
-                        // isAdmin: user.isAdmin,
-                        // isEmployee: user.isEmployee,
-                        // isUser: user.isUser,
-                        // messages: user.messages,
-                        // subscribes: user.subscribes,
-                        // createdAt: user.created_at,
-                        // updatedAt: user.updated_at,
-                        // name: user.name,
-                        // address: user.address,
-                        // avatar: user.avatar,
-                        // facebook: user.facebook,
-                        // email: user.email,
-                        // gender: user.gender,
-                        // status: user.status,
-                        // note: user.note,
+            let listSubscribes = [];
+            user.subscribes.map(subscribe => {
+                listSubscribes.push(mongoose.Types.ObjectId(subscribe));
+            });
+
+            Post.find({
+                    _id: {
+                        $in: listSubscribes
                     }
                 })
-            };
-            res.status(200).json(response);
+                .select('_id classify category title price city images updated_at')
+                .populate('category', 'title')
+                .populate('classify', 'title')
+                .sort({
+                    updated_at: -1
+                })
+                .populate('city', 'name')
+                .exec()
+                .then(listPosts => {
+                    console.log(listPosts);
+                    const response = {
+                        count: listPosts.length,
+                        subscribes: listPosts.map(post => {
+                            return {
+                                id: post._id,
+                                classify: post.classify,
+                                category: post.category,
+                                title: post.title,
+                                price: post.price,
+                                city: post.city,
+                                images: post.images,
+                                updatedAt: post.updated_at,
+                                moment: moment(post.updated_at, 'YYYYMMDD').fromNow()
+                            }
+                        })
+                    };
+                    res.status(200).json(response);
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
         })
         .catch(err => {
             res.status(500).json({

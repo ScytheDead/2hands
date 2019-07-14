@@ -43,6 +43,7 @@ const controllerIndex = require('../controllers/index');
 const controllerPost = require('../controllers/posts');
 const controllerLogin = require('../controllers/login');
 const controllerMessage = require('../controllers/message');
+const controllerUser = require('../controllers/user');
 // --------------------------------------------------------------------
 
 // index
@@ -51,6 +52,9 @@ router.get('/', controllerIndex.index);
 // login
 router.get('/login', controllerLogin.login);
 router.get('/signup', controllerLogin.signup);
+
+// user
+router.get('/user', controllerUser.detail_user);
 
 // chat
 router.get('/message', controllerMessage.message);
@@ -63,7 +67,6 @@ router.get('/post-edit/:postId', controllerPost.post_edit);
 router.get('/posts', controllerPost.show_manage_posts);
 router.get('/subscribes', controllerPost.show_subscribes_posts);
 router.get('/:categoryId', controllerPost.view_posts_by_category);
-
 
 
 

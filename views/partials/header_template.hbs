@@ -4,6 +4,7 @@
 		<p><a href="mobileapp.html"><i class="fa fa-download" aria-hidden="true"></i>Tải phiên bản dành cho di dộng </a>
 		</p>
 	</div>
+
 	<div class="w3ls-header-right">
 		<ul>
 			<li class="dropdown head-dpdn" id="dropdownHeaderMessageId">
@@ -25,6 +26,8 @@
 	</div>
 
 	<div class="clearfix"> </div>
+
+	<div id="toast"></div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
 <script src="../js/handle.js"></script>
@@ -34,15 +37,8 @@
 
 	if (sessionStorage.getItem('token') != null) {
 		var user = decodedJWT(sessionStorage.getItem('token'));
+		getUser();
 		//console.log(user);
-
-		var chuoiDropDown = showDropDown(user);
-		dropdownHeader.innerHTML = chuoiDropDown;
-
-		showMessagesNotification();
-
-
-
 
 		socket.on('server-send-message-push-notification', messageChatAndNameUser => {
 			//console.log(messageChatAndNameUser);
@@ -95,5 +91,27 @@
 			}
 			socket.emit('client-join-room-chat', data);
 		});
+	}
+
+	async function getUser() {
+		await getUserAPI(sessionStorage.getItem('token'), user.id)
+			.then(async user => {
+
+				var chuoiDropDown = await showDropDown(user.user);
+				dropdownHeader.innerHTML = chuoiDropDown;
+
+				showMessagesNotification();
+
+				let url = window.location.pathname;
+				if (url == '/user' || url == '/posts') {
+					btnName.childNodes[1].className = ``;
+					btnName.classList.add('btn-lg');
+				} else if (url == '/message/') {
+					btnName.childNodes[1].className = ``;
+				}
+			})
+			.catch(err => {
+				console.log(err);
+			});
 	}
 </script>

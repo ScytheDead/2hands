@@ -1,7 +1,9 @@
 <script>
     if (sessionStorage.getItem('token') == null) {
-        window.location.href = Dia_chi_Dich_vu + '/login'
+        window.location.href = Dia_chi_Dich_vu + '/login';
     }
+    btnName.childNodes[1].className = ``;
+    btnName.classList.add('btn-lg');
 </script>
 
 {{!-- bootstrap 4 --}}
@@ -27,31 +29,41 @@
         <div class="container">
             <h2 class="w3-head">Quản lý tin đăng</h2>
 
-            <div class="post-ad-form">
-                aa
+            <div class="">
+                <div class="upload-ad-photos">
+                    <div class="photos-upload-view">
+                        <img class="float-left" id="imageId" src="/images/user_icon.png" width="100" height="100">
+                        <h1 id="nameId" style="margin-left: 15rem"></h1><br>
+                        <button onclick="window.location='/user'" class="btn btn-outline-primary btn-lg ml-4">Xem thông tin
+                            cá
+                            nhân</button>
+                        <input type="file" id="fileselect" style="display: none" accept="image/*" />
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
             </div>
 
-            <div class="post-ad-form">
+            <div class="">
                 <button id="btnPostingId" class="btn btn-outline-success btn-lg">Đang bán</button>
                 <button id="btnWaitingId" class="btn btn-outline-warning btn-lg">Đang chờ duyệt</button>
                 <button id="btnRejectId" class="btn btn-outline-danger btn-lg">Bị từ chối</button>
             </div>
 
-            <div class="post-ad-form">
-                <table id="tableProducersId" class="table mt-3" style="">
+            <div class="">
+                <table id="tableProducersId" class="table" style="">
                     <thead>
                         <tr>
-                            <th>Hình</th>
-                            <th>Chuyên mục</th>
-                            <th>Thể loại</th>
-                            <th>Nhà sản xuất</th>
-                            <th>Tiêu đề</th>
-                            <th>Giá</th>
-                            <th>Loại tin</th>
-                            <th>Ngày tạo</th>
-                            <th>Lần cập nhật gần nhất</th>
-                            <th>Cách đây</th>
-                            <th>Thao tác</th>
+                            <th><h3>Hình</h3></th>
+                            <th><h3>Chuyên mục</h3></th>
+                            <th><h3>Thể loại</h3></th>
+                            <th><h3>Nhà sản xuất</h3></th>
+                            <th><h3>Tiêu đề</h3></th>
+                            <th><h3>Giá</h3></th>
+                            <th><h3>Loại tin</h3></th>
+                            <th><h3>Ngày tạo</h3></th>
+                            <th><h3>Lần cập nhật gần nhất</h3></th>
+                            <th><h3>Cách đây</h3></th>
+                            <th><h3>Thao tác</h3></th>
                         </tr>
                     </thead>
                     <tbody id="tableBodyId">
@@ -130,15 +142,15 @@
         listPosts.forEach(post => {
             chuoi_HTML += `<tr>
                 <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="70" height="70"></td>
-                <td>${post.category.title}</td>
-                <td>${post.classify == undefined ? '' : post.classify.title}</td>
-                <td>${post.producer == undefined ? '' : post.producer.title}</td>
-                <td>${post.title}</td>
-                <td>${post.price}</td>
-                <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
-                <td>${getDateFormat(post.createdAt)}</td>
-                <td>${getDateFormat(post.updatedAt)}</td>
-                <td>${post.moment}</td>`
+                <td><h5>${post.category.title}</h5></td>
+                <td><h5>${post.classify == undefined ? '' : post.classify.title}</h5></td>
+                <td><h5>${post.producer == undefined ? '' : post.producer.title}</h5></td>
+                <td><h5>${post.title}</h5></td>
+                <td><h5 class="text-danger">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)}₫</h5></td>
+                <td><h5>${post.seller == true ? "Cần bán" : "Cần mua"}</h5></td>
+                <td><h5>${getDateFormat(post.createdAt)}</h5></td>
+                <td><h5>${getDateFormat(post.updatedAt)}</h5></td>
+                <td><h5>${post.moment}</h5></td>`
             if (status == 1 || status == -1) {
                 chuoi_HTML += `<td>
                                 <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/u_${post.id}'">Chi tiết</button>
@@ -172,5 +184,11 @@
                 console.log(err);
             });
     }
+
+    getUserAPI(token, user.id)
+        .then(user => {
+            imageId.src = user.user.avatar == undefined ? '/images/user_icon.png' : user.user.avatar;
+            nameId.innerHTML = user.user.name == undefined ? user.user.phoneNumber : user.user.name;
+        });
 
 </script>
