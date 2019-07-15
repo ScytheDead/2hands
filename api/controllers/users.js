@@ -372,14 +372,11 @@ exports.user_update_subscribe = (req, res) => {
         .select('subscribes')
         .exec()
         .then(user => {
-            console.log(user);
             if (req.body.postId !== undefined && req.body.postId !== null) {
                 const postId = req.body.postId;
                 Post.findById(postId)
                     .then(post => {
-                        console.log(post);
                         let result = user.subscribes.findIndex(postId => postId.toString() === post._id.toString());
-                        console.log(result);
                         if (result == -1) {
                             user.subscribes.push(post._id);
                             user.save(() => {

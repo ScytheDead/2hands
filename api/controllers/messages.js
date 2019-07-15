@@ -68,7 +68,7 @@ exports.create_Message = async (req, res) => {
                                                                 messages: userBuy.messages
                                                             },
                                                             post: {
-                                                                _id: post._id,
+                                                                id: post._id,
                                                                 category: post.category._id,
                                                                 classify: post.classify._id,
                                                                 title: post.title,
@@ -140,8 +140,6 @@ exports.create_Message = async (req, res) => {
 
 exports.get_message_by_id = (req, res) => {
     const id = req.params.messageId;
-    const token = req.headers.authorization.split(" ")[1];
-    const user = jwt.verify(token, config.JWT_KEY);
     Message.findById(id)
         .select('_id userSell userBuy post contentChatUserBuy contentChatUserSell created_at updated_at')
         .populate('userSell', '_id name phoneNumber address avatar email gender messages created_at')
@@ -162,14 +160,58 @@ exports.get_message_by_id = (req, res) => {
         })
 }
 
+exports.get_all_messages_by_user = (req, res) => {
+    const userId = req.params.userId;
+    User.findById(userId)
+        .select('messages')
+        .exec()
+        .then(user => {
+            Message.find({
+                    '_id': {
+                        $in: user.messages
+                    }
+                })
+                .select('userSell userBuy post contentChatUserBuy contentChatUserSell created_at updated_at')
+                .sort({
+                    updated_at: -1
+                })
+                .populate('userSell', 'name phoneNumber address avatar email gender messages created_at')
+                .populate('userBuy', 'name phoneNumber address avatar email gender messages created_at')
+                .populate('post', 'category classify user title content price address city images created_at updated_at')
+                .exec()
+                .then(listMessages => {
+                    const response = {
+                        count: listMessages.length,
+                        messages: listMessages.map(message => {
+                            return returnMessageGet(message);
+                        })
+                    }
+                    res.status(200).json(response);
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        })
+        .catch(err => {
+
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
 function returnMessageGet(message) {
     var response = {
-        id: message._id,
+        _id: message._id,
         post: {
-            id: message.post._id,
+            _id: message.post._id,
             user: message.post.user,
             category: message.post.category._id,
-            classify: message.post.classify._id,
+            classify: message.post.classify == undefined ? undefined : message.post.classify._id,
             title: message.post.title,
             content: message.post.content,
             price: message.post.price,
@@ -180,9 +222,8 @@ function returnMessageGet(message) {
             images: message.post.images,
             moment: moment(message.post.updated_at, 'YYYYMMDD').fromNow()
         },
-
         userSell: {
-            id: message.userSell._id,
+            _id: message.userSell._id,
             name: message.userSell.name,
             phoneNumber: message.userSell.phoneNumber,
             address: message.userSell.address,
@@ -193,7 +234,7 @@ function returnMessageGet(message) {
             messages: message.userSell.messages
         },
         userBuy: {
-            id: message.userBuy._id,
+            _id: message.userBuy._id,
             name: message.userBuy.name,
             phoneNumber: message.userBuy.phoneNumber,
             address: message.userBuy.address,
@@ -203,6 +244,10 @@ function returnMessageGet(message) {
             createdAt: message.userBuy.created_at,
             messages: message.userBuy.messages
         },
+        contentChatUserBuy: message.contentChatUserBuy,
+        contentChatUserSell: message.contentChatUserSell,
+        createdAt: message.created_at,
+        updatedAt: message.updated_at,
         moment: moment(message.updated_at, 'YYYYMMDD').fromNow()
     };
 

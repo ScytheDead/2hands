@@ -3,25 +3,17 @@
         <h1><a href="/"><span>2</span>Hands</a></h1>
     </div>
     <div class="agileits_search">
-        <form action="#" method="post">
-            <input name="Search" type="text" placeholder="Nhập sản phẩm bạn cần tìm kiếm" required="" />
-            <select id="agileinfo_search" name="agileinfo_search" required="">
+        <form class="autocomplete" id="formSearchId" method="post">
+            <input style="width: 80%" id="valueSearchId" type="text" placeholder="Nhập sản phẩm bạn cần tìm kiếm"
+                required="" />
+            {{!-- <select id="agileinfo_search" name="agileinfo_search" onkeyup="keyCode(event)" required="">
                 <option value="">Tất cả chuyên mục</option>
-                <option value="Mobiles">Mobiles</option>
-                <option value="Electronics & Appliances">Electronics & Appliances</option>
-                <option value="Cars">Cars</option>
-                <option value="Bikes">Bikes</option>
-                <option value="Furnitures">Furnitures</option>
-                <option value="Books, Sports & Hobbies">Books, Sports & Hobbies</option>
-                <option value="Fashion">Fashion</option>
-                <option value="Kids">Kids</option>
-                <option value="Services">Services</option>
-                <option value="Jobs">Jobs</option>
-                <option value="Real Estates">Real Estates</option>
-            </select>
-            <button type="submit" class="btn btn-default" aria-label="Left Align">
+
+            </select> --}}
+            <button id="btnSearchId" class="btn btn-default" aria-label="Left Align">
                 <i class="fa fa-search" aria-hidden="true"> </i>
             </button>
+            <div id="dialogId" class="dialog"></div>
         </form>
         <a class="post-w3layouts-ad" href="/dang-tin">Đăng tin miễn phí</a>
     </div>
@@ -29,15 +21,44 @@
 </div>
 
 <script>
-    getAllCategoriesAPI()
-        .then(listCategories => {
-            let chuoi_HTML = `<option value="">Tất cả chuyên mục</option>`;
-            listCategories.categories.forEach(category => {
-                chuoi_HTML += `<option value="${category.id}">${category.title}</option>`
-            });
-            agileinfo_search.innerHTML = chuoi_HTML;
-        })
-        .catch(err => {
-            console.log(err);
-        })
+
+    valueSearchId.onkeyup = event => {
+        setTimeout(() => {
+            searchAutocomplete(event);
+        }, 500);
+    }
+
+    function searchAutocomplete(event) {
+        const valueSearch = {
+            search: valueSearchId.value
+        }
+        searchPostAPI(valueSearch)
+            .then(listPosts => {
+                console.log(listPosts)
+                if (listPosts.count > 0) {
+                    sessionStorage.setItem('search', JSON.stringify(listPosts.posts));
+                    if (event.keyCode == 13) {
+                        window.location = Dia_chi_Dich_vu + '/search';
+                    }
+
+                    dialogId.classList.add('open');
+                    dialogId.innerHTML = ``;
+                    listPosts.posts.forEach(post => {
+                        let div = document.createElement('div');
+                        div.innerHTML = `${post.title.replace(valueSearchId.value, '<span style="font-weight:bold">' + valueSearchId.value + '</span>')}`;
+                        div.onclick = () => { window.location = '/post-detail/' + post.id }
+                        dialogId.appendChild(div);
+                    });
+                } else {
+                    dialogId.classList.remove('open');
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    $("#formSearchId").submit(e => {
+        e.preventDefault();
+    });
 </script>

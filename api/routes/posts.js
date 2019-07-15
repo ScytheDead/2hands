@@ -38,8 +38,10 @@ router.get('/user/waiting/:userId', checkAuth, PostController.posts_get_post_by_
 //         // Filter by user reject
 router.get('/user/reject/:userId', checkAuth, PostController.posts_get_post_by_user_reject);
 
+// Search
+router.get('/user/reject/:userId', checkAuth, PostController.posts_get_post_by_user_reject);
 
-router.get('/user/:userId', checkAuth, PostController.posts_get_post_by_user);
+router.post('/search', PostController.search_post);
 
 router.get('/accept/category/:categoryId', PostController.posts_get_post_accept_by_category);
 

@@ -170,7 +170,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<section class="list-left">
 						<h5 class="title">${post.title}</h5>
 						<span class="adprice">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)} ₫</span>
-						<p class="catpath">${post.classify.title}</p>
+						<p class="catpath">${post.classify == undefined ? post.category.title : post.classify.title}</p>
 					</section>
 					<section class="list-right">
 						<span class="date">${post.moment}</span>

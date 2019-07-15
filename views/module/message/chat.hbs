@@ -14,8 +14,7 @@
 	<!-- meta tags -->
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<script
-		type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+
 	<!-- //meta tags -->
 	<!--fonts-->
 	<link href='//fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
@@ -155,89 +154,58 @@
 	if (messageId == ``) {
 		showListMessages();
 	} else {
-		showListMessages();
-
-		getMessageAPI(token, messageId)
-			.then(message => {
-				showDetailMessage(messageId, message.message.post.id);
-			})
-			.catch(err => {
-				console.log(err);
-			});
+		showListMessages(showDetailMessage);
 	}
 
-	function showListMessages() {
-		listMessagesId.innerHTML = ``;
+	function showListMessages(callback) {
+		// listMessagesId.innerHTML = ``;
+		getAllMessageUserAPI(token, user.id)
+			.then(listMessages => {
+				//console.log(listMessages);
+				listMessagesId.innerHTML = ``;
 
-		getUserAPI(token, user.id)
-			.then(async user => {
-				console.log(user);
-				let listMessages = sortListMessages(user.user.messages);
-				listMessages.map(message => {
-					getDetailPostAPI(message.post)
-						.then(post => {
-							getMessageAPI(token, message._id)
-								.then(messageGet => {
+				if (listMessages.count > 0) {
+					let name = ``;
+					let avatar = ``;
 
-									let name = ``;
-									let avatar = ``;
+					listMessages.messages.map(message => {
 
-									if (user.user._id == messageGet.message.userSell.id) {
-										name = messageGet.message.userBuy.name == undefined ? messageGet.message.userBuy.phoneNumber : messageGet.message.userBuy.name;
-										avatar = messageGet.message.userBuy.avatar == undefined ? 'images/user_icon.png' : messageGet.message.userBuy.avatar;
-									} else {
-										name = messageGet.message.userSell.name == undefined ? messageGet.message.userSell.phoneNumber : messageGet.message.userSell.name;
-										avatar = messageGet.message.userSell.avatar == undefined ? 'images/user_icon.png' : messageGet.message.userSell.avatar;
-									}
-									console.log(messageGet);
-									console.log(name);
+						if (user.id == message.userSell._id) {
+							name = message.userBuy.name == undefined ? message.userBuy.phoneNumber : message.userBuy.name;
+							avatar = message.userBuy.avatar == undefined ? 'images/user_icon.png' : message.userBuy.avatar;
+						} else {
+							name = message.userSell.name == undefined ? message.userSell.phoneNumber : message.userSell.name;
+							avatar = message.userSell.avatar == undefined ? 'images/user_icon.png' : message.userSell.avatar;
+						}
 
-									listMessagesId.innerHTML += `
-									<a href="/message/${message._id}">
-										<li class="${messageId == messageGet.message.id ? 'active' : ''}" style="cursor: pointer">
-											<div class="d-flex bd-highlight">
-												<div class="img_cont">
-													<img src="${Dia_chi_Dich_vu}/${avatar}"
-													class="rounded-circle user_img">
-													<span class="online_icon"></span>
-												</div>
-												<div class="user_info">
-													<span>${name}</span>
-													<p>${messageGet.message.moment}</p>
-													<span>${post.post.title}</span>
-												</div>
-											</div>
-										</li>
-									</a>`
-								})
-								.catch(err => {
-									console.log(err);
-									if (JSON.parse(err).message == `Auth failed`) {
-										authFailed();
-									}
-								});
-						})
-						.catch(err => {
-							console.log(err);
-						})
-				});
-			})
-			.catch(err => {
-				console.log(err);
-			});
-	}
+						//console.log(user);
+						//console.log(message);
 
-	function createMessage(infoMessage) {
-		createMessageAPI(sessionStorage.getItem('token'), infoMessage)
-			.then(message => {
+						listMessagesId.innerHTML += `
+							<a href="/message/${message._id}">
+								<li class="${messageId == message.id ? 'active' : ''}" style="cursor: pointer">
+									<div class="d-flex bd-highlight">
+										<div class="img_cont">
+											<img src="${Dia_chi_Dich_vu}/${avatar}"
+											class="rounded-circle user_img">
+											<span class="online_icon"></span>
+										</div>
+										<div class="user_info">
+											<span>${name}</span>
+											<p>${message.moment}</p>
+											<span>${shortTitle(message.post.title)}</span>
+										</div>
+									</div>
+								</li>
+							</a>`
+					});
 
-			})
-			.catch(err => {
-				console.log(err);
-				if (JSON.parse(err).message == `Auth failed`) {
-					authFailed();
+					callback(listMessages);
 				}
 			})
+			.catch(err => {
+				console.log(err);
+			});
 	}
 
 	function keyCode(event) {
@@ -254,7 +222,6 @@
 			user: user.id
 		}
 		socket.emit('client-send-message', userAndContentMessage);
-		console.log(userAndContentMessage);
 		contentMessageId.value = ``;
 	}
 
@@ -263,14 +230,11 @@
 	});
 
 	socket.on('server-send-message', messageChatAndNameUser => {
-		console.log(messageChatAndNameUser);
 		let messageIdServerSendMessage = messageChatAndNameUser.messageId;
 		let userId = messageChatAndNameUser.userId;
 		let name = messageChatAndNameUser.name;
 		let avatar = messageChatAndNameUser.avatar;
 		let messageChat = messageChatAndNameUser.messageChat;
-
-
 
 		if (messageIdServerSendMessage == messageId) {
 			let div = document.createElement('div');
@@ -311,39 +275,41 @@
 		}
 	});
 
-	async function showDetailMessage(messageId, postId) {
+	async function showDetailMessage(listMessages) {
 		contactRightId.innerHTML = ``;
-		await getDetailPostAPI(postId)
-			.then(post => {
-				let chuoiHTML = `
-						<div class="card">
-							<div class="card-header msg_head">
-								<div class="d-flex bd-highlight">
-									<div class="img_cont">
-										<img src="${Dia_chi_Dich_vu}/${post.post.images[0]}"
-										class="rounded-circle user_img">
-									</div>
-								<div class="user_info">
-									<span>${post.post.title}</span>
-									<p style="color: red">${Tao_Chuoi_The_hien_So_nguyen_duong(post.post.price)} ₫</p>
-								</div>
-								<div class="video_cam">
-									<span><i class="fa fa-video"></i></span>
-									<span><i class="fa fa-phone"></i></span>
-								</div>
+		const messageDetail = listMessages.messages.find(message => message._id == messageId);
+		console.log(messageDetail);
+
+		const chuoiHTML = `
+				<div class="card">
+					<div class="card-header msg_head">
+						<div class="d-flex bd-highlight">
+							<div class="img_cont">
+									<img src="${Dia_chi_Dich_vu}/${messageDetail.post.images[0]}"
+									class="rounded-circle user_img">
 							</div>
-							<span id="action_menu_btn" onclick="showToggle()" ><i class="fa fa-ellipsis-v"></i></span>
-							<div class="action_menu">
-								<ul>
-									<li><i class="fa fa-user-circle"></i> Xem thông tin</li>
-									<li><i class="fa fa-ban"></i> Chặn người này</li>
-								</ul>
+							<div class="user_info">
+								<span>${messageDetail.post.title}</span>
+								<p style="color: red">${Tao_Chuoi_The_hien_So_nguyen_duong(messageDetail.post.price)} ₫</p>
 							</div>
+							<div class="video_cam">
+								<span><i class="fa fa-video"></i></span>
+								<span><i class="fa fa-phone"></i></span>
+							</div>
+						</div>
+						<span id="action_menu_btn" onclick="showToggle()" ><i class="fa fa-ellipsis-v"></i></span>
+						<div class="action_menu">
+							<ul>
+								<li><i class="fa fa-user-circle"></i> Xem thông tin</li>
+								<li><i class="fa fa-ban"></i> Chặn người này</li>
+							</ul>
+						</div>
 					</div>
+
 					<div class="card-body msg_card_body" id="contentDetailMessageId">
 
-						
 					</div>
+
 					<div class="card-footer">
 						<div class="input-group">
 							<textarea id="contentMessageId" onkeyup="keyCode(event)" class="form-control type_msg"
@@ -354,13 +320,9 @@
 						</div>
 					</div>
 				</div>`;
-				contactRightId.innerHTML = chuoiHTML;
+		contactRightId.innerHTML = chuoiHTML;
 
-				loadDownMessage();
-			})
-			.catch(err => {
-				console.log(err);
-			});
+		loadDownMessage();
 
 		socket.emit('client-join-room-chat', { messageId: messageId, userId: user.id, flag: 1 });
 	}
@@ -422,27 +384,21 @@
 		});
 	}
 
-	//function sortListMessages(list) {
-	//	return new Promise((resolve, reject) => {
-	//		let listSorted = list.sort((x, y) => {
-	//			return (new Date(y.updated_at) - new Date(x.updated_at));
-	//		});
-	//
-	//		resolve(listSorted);
-	//	});
-	//}
-
-	function sortListMessages(list) {
-		let listSorted = list.sort((x, y) => {
-			new moment(x.updated_at).format('YYYYMMDD') - new moment(y.updated_at).format('YYYYMMDD');
-		});
-		console.log(listSorted);
-		return listSorted;
-	}
-
 	function loadDownMessage() {
 		$('#contentDetailMessageId').stop().animate({
 			scrollTop: $('#contentDetailMessageId')[0].scrollHeight + 10000
 		}, 800);
+	}
+
+	function shortTitle(title) {
+		const lengthShow = 28;
+		let titleShow = '';
+		if (title.length > lengthShow) {
+			for (let i = 0; i <= lengthShow; i++) {
+				titleShow += title[i];
+			}
+			return titleShow + '...';
+		}
+		return title;
 	}
 </script>
