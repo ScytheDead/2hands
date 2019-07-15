@@ -81,6 +81,7 @@
 					</div>
 					<div class="card-body contacts_body">
 						<ui class="contacts" id="listMessagesId">
+
 							<li class="active">
 								<div class="d-flex bd-highlight">
 									<div class="img_cont">
@@ -94,32 +95,7 @@
 									</div>
 								</div>
 							</li>
-							<li>
-								<div class="d-flex bd-highlight">
-									<div class="img_cont">
-										<img src="https://2.bp.blogspot.com/-8ytYF7cfPkQ/WkPe1-rtrcI/AAAAAAAAGqU/FGfTDVgkcIwmOTtjLka51vineFBExJuSACLcBGAs/s320/31.jpg"
-											class="rounded-circle user_img">
-										<span class="online_icon offline"></span>
-									</div>
-									<div class="user_info">
-										<span>Sahar Darya</span>
-										<p>Sahar left 7 mins ago</p>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="d-flex bd-highlight">
-									<div class="img_cont">
-										<img src="https://i.pinimg.com/originals/54/6e/6d/546e6d4c6ce4322e6aa3b2f8ca73ac28.jpg"
-											class="rounded-circle user_img">
-										<span class="online_icon"></span>
-									</div>
-									<div class="user_info">
-										<span>Yolduz Rafi</span>
-										<p>Yolduz is online</p>
-									</div>
-								</div>
-							</li>
+
 						</ui>
 					</div>
 					<div class="card-footer"></div>
@@ -226,7 +202,7 @@
 	}
 
 	socket.on('server-response-client-join-room-chat', data => {
-		showListContentMessages(data);
+		showListContentMessages(data, loadDownMessage);
 	});
 
 	socket.on('server-send-message', messageChatAndNameUser => {
@@ -269,9 +245,8 @@
 				`
 			}
 
-			loadDownMessage();
-
 			contentDetailMessageId.appendChild(div);
+			loadDownMessage();
 		}
 	});
 
@@ -280,54 +255,15 @@
 		const messageDetail = listMessages.messages.find(message => message._id == messageId);
 		console.log(messageDetail);
 
-		const chuoiHTML = `
-				<div class="card">
-					<div class="card-header msg_head">
-						<div class="d-flex bd-highlight">
-							<div class="img_cont">
-									<img src="${Dia_chi_Dich_vu}/${messageDetail.post.images[0]}"
-									class="rounded-circle user_img">
-							</div>
-							<div class="user_info">
-								<span>${messageDetail.post.title}</span>
-								<p style="color: red">${Tao_Chuoi_The_hien_So_nguyen_duong(messageDetail.post.price)} ₫</p>
-							</div>
-							<div class="video_cam">
-								<span><i class="fa fa-video"></i></span>
-								<span><i class="fa fa-phone"></i></span>
-							</div>
-						</div>
-						<span id="action_menu_btn" onclick="showToggle()" ><i class="fa fa-ellipsis-v"></i></span>
-						<div class="action_menu">
-							<ul>
-								<li><i class="fa fa-user-circle"></i> Xem thông tin</li>
-								<li><i class="fa fa-ban"></i> Chặn người này</li>
-							</ul>
-						</div>
-					</div>
+		const chuoiHTML = drawBorderDetailChat(messageDetail);
 
-					<div class="card-body msg_card_body" id="contentDetailMessageId">
-
-					</div>
-
-					<div class="card-footer">
-						<div class="input-group">
-							<textarea id="contentMessageId" onkeyup="keyCode(event)" class="form-control type_msg"
-								placeholder="Type your message..."></textarea>
-							<div class="input-group-append">
-								<span class="input-group-text send_btn" onclick="sendMessage()" ><i class="fa fa-paper-plane-o"></i></span>
-							</div>
-						</div>
-					</div>
-				</div>`;
 		contactRightId.innerHTML = chuoiHTML;
 
-		loadDownMessage();
-
 		socket.emit('client-join-room-chat', { messageId: messageId, userId: user.id, flag: 1 });
+
 	}
 
-	async function showListContentMessages(data) {
+	async function showListContentMessages(data, callback) {
 		let listContentMessages = [];
 		data.messageLeft.map(message => listContentMessages.push(message));
 		data.messageRight.map(message => listContentMessages.push(message));
@@ -371,6 +307,7 @@
 
 			contentDetailMessageId.appendChild(div);
 		});
+		callback();
 	}
 
 	function authFailed() {
@@ -401,4 +338,48 @@
 		}
 		return title;
 	}
+
+	function drawBorderDetailChat(messageDetail) {
+				const chuoiHTML = `
+				<div class="card">
+					<div class="card-header msg_head">
+						<div class="d-flex bd-highlight">
+							<div class="img_cont">
+									<img src="${Dia_chi_Dich_vu}/${messageDetail.post.images[0]}"
+									class="rounded-circle user_img">
+							</div>
+							<div class="user_info">
+								<span>${messageDetail.post.title}</span>
+								<p style="color: red">${Tao_Chuoi_The_hien_So_nguyen_duong(messageDetail.post.price)} ₫</p>
+							</div>
+							<div class="video_cam">
+								<span><i class="fa fa-video"></i></span>
+								<span><i class="fa fa-phone"></i></span>
+							</div>
+						</div>
+						<span id="action_menu_btn" onclick="showToggle()" ><i class="fa fa-ellipsis-v"></i></span>
+						<div class="action_menu">
+							<ul>
+								<li><i class="fa fa-user-circle"></i> Xem thông tin</li>
+								<li><i class="fa fa-ban"></i> Chặn người này</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="card-body msg_card_body" id="contentDetailMessageId">
+
+					</div>
+
+					<div class="card-footer">
+						<div class="input-group">
+							<textarea id="contentMessageId" onkeyup="keyCode(event)" class="form-control type_msg"
+								placeholder="Type your message..."></textarea>
+							<div class="input-group-append">
+								<span class="input-group-text send_btn" onclick="sendMessage()" ><i class="fa fa-paper-plane-o"></i></span>
+							</div>
+						</div>
+					</div>
+				</div>`;
+				return chuoiHTML;
+			}
 </script>
