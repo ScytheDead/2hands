@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-    <a class="navbar-brand" href="#">2Hands</a>
+    <a class="navbar-brand" href="/">2Hands</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -13,7 +13,7 @@
                     aria-label="Search"> --}}
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="btn btn-secondary my-2 my-sm-0" href="#"><i class="fa fa-search" aria-hidden="true"></i> Tìm rao vặt</a>
+                        <a class="btn btn-secondary my-2 my-sm-0" href="/"><i class="fa fa-search" aria-hidden="true"></i> Tìm rao vặt</a>
                     </li>
 
                     <li class="nav-item ml-2">
@@ -36,23 +36,11 @@
                 </li>
                 {{!-- end dropdown --}}
                 <li class="nav-item">
-                    <button id="btnCreatePost" class="nav-link btn text-light btn-info ml-3">Đăng tin</button>
+                    <button id="btnCreatePost" onclick="window.location='/dang-tin'" class="nav-link btn text-light btn-info ml-3">Đăng tin</button>
                 </li>
             </ul>
 
         </div>
-
-        {{!-- btn Login --}}
-        {{!-- <div>
-            <div class="form-inline my-2 my-lg-0 p-1">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <button class="btn btn-secondary" id="btnLogin"><strong><i class="fa fa-sign-in"></i>&nbsp; Đăng nhập</strong></button>
-                    </li>
-                </ul>
-            </div>
-        </div> --}}
-        {{!--  --}}
 
         <div>
             <ul class="navbar-nav">

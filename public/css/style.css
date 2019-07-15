@@ -49,9 +49,10 @@
     margin: 5px 10px;
 }
 
+/* toast message */
 #toast {
     position: fixed;
-    top:0;
+    top: 0;
     left: 50%;
     transform: translate(-50%);
     background-color: #000;
@@ -69,7 +70,69 @@
     animation: fadeInOutToast 2s;
 }
 
-@keyframes fadeInOutToast{
-    5%, 95%{opacity: 1; top: 50px}
-    15%, 85%{opacity: 1; top: 30px}
+@keyframes fadeInOutToast {
+
+    5%,
+    95% {
+        opacity: 1;
+        top: 50px
+    }
+
+    15%,
+    85% {
+        opacity: 1;
+        top: 30px
+    }
 }
+
+/* // toast message */
+
+/* search autocomplete */
+
+.autocomplete {
+    background: #fff;
+    position: relative;
+    width: 400px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0, 12), 0 2px 2px rgba(0, 0, 0, 0, 24);
+}
+
+.autocomplete .close {
+    position: absolute;
+    font-size: 13px;
+    z-index: 10;
+    top: 10;
+    left: calc(100% - 50px);
+    color: #aaa;
+    cursor: pointer;
+    display: none;
+}
+
+.autocomplete .close.visible {
+    display: block;
+}
+
+.dialog {
+    width: 88%;
+    display: none;
+    min-height: 40px;
+    max-height: 330px;
+    overflow: scroll;
+    border-top: 1px solid #f4f4f4;
+}
+
+.dialog.open {
+    display: block;
+}
+
+.dialog div {
+    padding: 20px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dialog div:hover {
+    background: #f2f2f2;
+}
+
+/* // search autocomplete */
