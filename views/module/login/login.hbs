@@ -1,4 +1,4 @@
-<body>
+<body onkeyup="keyCode(event)">
 	<!-- login form -->
 	<section>
 		<div id="agileits-sign-in-page" class="sign-in-wrapper">
@@ -80,5 +80,11 @@
 					TH_errorMessage.innerHTML = `Số điện thoại hoặc mật khẩu không đúng, vui lòng đăng nhập lại.`
 				}
 			});
+	}
+
+	function keyCode(event) {
+		if (event.keyCode == 13) {
+			TH_login.click();
+		}
 	}
 </script>

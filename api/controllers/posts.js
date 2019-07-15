@@ -135,6 +135,7 @@ exports.posts_create_post = (req, res) => {
                                                             classify: req.body.classify,
                                                             producer: req.body.producer,
                                                             title: req.body.title,
+                                                            ascii_title: change_alias(req.body.title),
                                                             content: req.body.content,
                                                             city: req.body.city,
                                                             price: req.body.price,
@@ -293,6 +294,10 @@ exports.posts_update_post = async (req, res) => {
 
     if (updateOps.category !== undefined) {
         await delete updateOps.category;
+    }
+
+    if (updateOps.title !== undefined) {
+        updateOps.ascii_title = change_alias(updateOps.title);
     }
 
     if (updateOps.priority !== undefined || updateOps.status !== undefined) {
@@ -790,6 +795,47 @@ exports.posts_get_post_waiting = async (req, res) => {
         });
 }
 
+exports.search_post = (req, res) => {
+    const valueSearch = req.body.search;
+    const condition = {
+        // $search: new RegExp("\"" + valueSearch + "\"")
+        $search: valueSearch
+    }
+
+    console.log(condition);
+    Post.find({
+            $text: condition,
+            status: 1
+        })
+        .select('_id user producer classify category title ascii_title content price address city images seller priority status note created_at updated_at')
+        .sort({
+            updated_at: -1
+        })
+        //.limit(7)
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .populate('city', 'name location type')
+        .exec()
+        .then(posts => {
+            console.log(posts);
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+}
+
 function checkPermission(tokenEncoded) {
     return new Promise(resolve => {
         const decoded = jwt.verify(tokenEncoded, config.JWT_KEY);
@@ -889,6 +935,7 @@ function returnValueGet(doc) {
         classify: doc.classify,
         category: doc.category,
         title: doc.title,
+        ascii_title: doc.ascii_title,
         content: doc.content,
         price: doc.price,
         address: doc.address,
@@ -907,4 +954,20 @@ function returnValueGet(doc) {
         //moment: moment().startOf('hour').from(doc.updated_at)
         moment: moment(doc.updated_at, 'YYYYMMDD').fromNow()
     }
+}
+
+function change_alias(alias) {
+    var str = alias;
+    str = str.toLowerCase();
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    str = str.replace(/đ/g, "d");
+    str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, " ");
+    str = str.replace(/ + /g, " ");
+    str = str.trim();
+    return str;
 }

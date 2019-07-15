@@ -38,7 +38,6 @@ io.on('connection', socket => {
     });
 
     socket.on('client-join-room-chat', data => {
-        console.log(data);
         console.log('socket room: ' + data.messageId);
         socket.join(data.messageId);
         socket.room = data.messageId;

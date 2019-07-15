@@ -63,9 +63,11 @@ router.get('/message/:messageId', controllerMessage.get_message);
 // post
 router.get('/dang-tin', controllerPost.create_post);
 router.get('/post-detail/:postId', controllerPost.post_detail);
+router.get('/post-detail-manage/:postId', controllerPost.post_detail_manage);
 router.get('/post-edit/:postId', controllerPost.post_edit);
 router.get('/posts', controllerPost.show_manage_posts);
 router.get('/subscribes', controllerPost.show_subscribes_posts);
+router.get('/search', controllerPost.show_posts_search);
 router.get('/:categoryId', controllerPost.view_posts_by_category);
 
 
