@@ -15,8 +15,10 @@ exports.create_Message = async (req, res) => {
 
     User.findById(userSellId)
         .then(userSell => {
+            console.log(userSell);
             User.findById(userBuyId)
                 .then(userBuy => {
+                    console.log(userBuy);
                     Post.findById(postId)
                         .then(post => {
                             if (post.user.toString() === userSellId.toString()) {
@@ -109,6 +111,7 @@ exports.create_Message = async (req, res) => {
                             }
                         })
                         .catch(err => {
+                            console.log(err);
                             res.status(500).json({
                                 message: 'No valid entry found for provided post ID',
                                 error: err

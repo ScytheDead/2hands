@@ -145,6 +145,7 @@
 					let avatar = ``;
 
 					listMessages.messages.map(message => {
+						console.log(message);
 
 						if (user.id == message.userSell._id) {
 							name = message.userBuy.name == undefined ? message.userBuy.phoneNumber : message.userBuy.name;
