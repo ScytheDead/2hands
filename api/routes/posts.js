@@ -39,7 +39,6 @@ router.get('/user/waiting/:userId', checkAuth, PostController.posts_get_post_by_
 router.get('/user/reject/:userId', checkAuth, PostController.posts_get_post_by_user_reject);
 
 // Search
-router.get('/user/reject/:userId', checkAuth, PostController.posts_get_post_by_user_reject);
 
 router.post('/search', PostController.search_post);
 
