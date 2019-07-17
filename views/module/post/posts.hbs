@@ -73,22 +73,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<div class="container">
 			<div class="select-box">
 				<div style="float: left">
-					<select class="selectpicker show-tick">
+					<select class="selectpicker show-tick" id="listCityId">
 						<option selected style="color:#eee;">TP Hồ Chí Minh</option>
 						<option>Birmingham</option>
 						<option>Anchorage</option>
 						<option>Phoenix</option>
 						<option>Little Rock</option>
-						<option>Los Angeles</option>
-						<option>Denver</option>
-						<option>Bridgeport</option>
-						<option>Wilmington</option>
-						<option>Jacksonville</option>
-						<option>Atlanta</option>
-						<option>Honolulu</option>
-						<option>Boise</option>
-						<option>Chicago</option>
-						<option>Indianapolis</option>
 
 						<optgroup label="Alabama">
 							<option>Birmingham</option>
@@ -104,34 +94,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 							<option>Sitka</option>
 							<option>Ketchikan</option>
 						</optgroup>
-						<optgroup label="Arizona">
-							<option>Phoenix</option>
-							<option>Tucson</option>
-							<option>Mesa</option>
-							<option>Chandler</option>
-							<option>Glendale</option>
-						</optgroup>
-						<optgroup label="Arkansas">
-							<option>Little Rock</option>
-							<option>Fort Smith</option>
-							<option>Fayetteville</option>
-							<option>Springdale</option>
-							<option>Jonesboro</option>
-						</optgroup>
-						<optgroup label="California">
-							<option>Los Angeles</option>
-							<option>San Diego</option>
-							<option>San Jose</option>
-							<option>San Francisco</option>
-							<option>Fresno</option>
-						</optgroup>
-
 					</select>
 				</div>
 
 				<div class="browse-category">
 					<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-					<select class="selectpicker show-tick" data-live-search="true" id="browseClassifyId">
+					<select class="selectpicker show-tick" data-live-search="true" id="listClassifyId">
 
 					</select>
 				</div>
@@ -272,12 +240,20 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 <script>
 	var categoryId = `{{categoryId}}`
+	var cityId = `{{cityId}}`
 	if (sessionStorage.getItem('token') != null) {
 		var token = sessionStorage.getItem('token');
 		var user = decodedJWT(token);
 	}
 
 	var listSubscribes = [];
+
+	var listPostFilter = [];
+
+	showAllCity();
+	getPostsAcceptByCategory();
+	getClassifiesByCategory(categoryId);
+
 
 
 	showBreadCrumbs(categoryId);
@@ -287,19 +263,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		postCategoryId.innerHTML = category.category.title;
 	}
 
-	browseClassifyId.onchange = async () => {
-		groupBTNProducers.innerHTML = '';
-		agileBreadcrumbsId.childNodes[5].innerHTML = '';
-
-		if (browseClassifyId.value != '') {
-			getProducersByClassify(browseClassifyId.value);
-			// show agile breadcrumbs
-			let classify = await getClassifyAPI(browseClassifyId.value);
-			agileBreadcrumbsId.childNodes[5].innerHTML = classify.classify.title;
-		}
-	}
-
-	getClassifiesByCategory(categoryId);
 
 	function getClassifiesByCategory(categoryId) {
 		getClassifiesByCategoryAPI(categoryId)
@@ -308,7 +271,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				listClassifies.classifies.forEach(classify => {
 					chuoi_HTML += `<option value="${classify.id}">${classify.title}</option>`
 				});
-				browseClassifyId.innerHTML = chuoi_HTML;
+				listClassifyId.innerHTML = chuoi_HTML;
 			})
 			.catch(err => {
 				console.log(err);
@@ -335,19 +298,38 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			});
 	}
 
-	getPostsAcceptByCategory();
+
 	function getPostsAcceptByCategory() {
 		getPostsAcceptByCategoryAPI(categoryId)
 			.then(async listPosts => {
-				console.log(listPosts);
+
+
+				listCityId.onchange = () => {
+					showListPostFilter(listPosts.posts);
+				}
+
+				listClassifyId.onchange = async () => {
+					showListPostFilter(listPosts.posts);
+					groupBTNProducers.innerHTML = '';
+					agileBreadcrumbsId.childNodes[5].innerHTML = '';
+					if (listClassifyId.value != '') {
+						getProducersByClassify(listClassifyId.value);
+						// show agile breadcrumbs
+						let classify = await getClassifyAPI(listClassifyId.value);
+						agileBreadcrumbsId.childNodes[5].innerHTML = classify.classify.title;
+					} else {
+
+					}
+				}
+
 				if (sessionStorage.getItem('token') != null) {
 					let subscribes = await getSubscribestUserAPI(token, user.id);
 					if (subscribes.count > 0) {
 						listSubscribes = subscribes.subscribes;
 					}
 				}
-				if(listPosts.count > 0){
-					showPostsAcceptByCategory(listPosts.posts);
+				if (listPosts.count > 0) {
+					showPosts(listPosts.posts);
 				}
 			})
 			.catch(err => {
@@ -355,7 +337,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			})
 	}
 
-	function showPostsAcceptByCategory(listPosts) {
+	function showPosts(listPosts) {
 		console.log(listPosts);
 		let chuoi_HTML = ``;
 		listPosts.forEach(post => {
@@ -380,6 +362,45 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		})
 
 		listPostsId.innerHTML = chuoi_HTML;
+	}
+
+	function showListPostFilter(listPostAll) {
+		console.log(listCityId.value);
+		console.log(listClassifyId.value);
+
+		if (listCityId.value == '' && listClassifyId.value == '') {
+			listPostFilter = listPostAll;
+			showPosts(listPostAll);
+		} else {
+			listPostFilter = [];
+
+			if (listCityId.value != '' && listClassifyId.value != '') {
+				listPostAll.forEach(post => {
+					if (post.city._id == listCityId.value && post.classify._id == listClassifyId.value) {
+						listPostFilter.push(post);
+					}
+				});
+			} else if (listCityId.value != '') {
+				listPostAll.forEach(post => {
+					if (post.city._id == listCityId.value) {
+						listPostFilter.push(post);
+					}
+				});
+			} else if (listClassifyId.value != '') {
+				listPostAll.forEach(post => {
+					if (post.classify._id == listClassifyId.value) {
+						listPostFilter.push(post);
+					}
+				});
+			}
+
+			console.log(listPostFilter);
+			if (listPostFilter.length > 0) {
+				showPosts(listPostFilter);
+			} else {
+				listPostsId.innerHTML = '<h1>Không có tin theo điều kiện lọc này</h1>'
+			}
+		}
 	}
 
 	function subscribePost(postId) {
@@ -408,6 +429,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 	function goDetail(postId) {
 		window.location = Dia_chi_Dich_vu + '/post-detail/' + postId;
+	}
+
+	function showAllCity() {
+		getAllCityAPI()
+			.then(listCities => {
+				console.log(listCities);
+				listCityId.innerHTML = '<option value="">Toàn quốc</option>';
+				listCities.cities.forEach(city => {
+					listCityId.innerHTML += `<option value="${city._id}">${city.name}</option>`
+				});
+				//listCityId.value = '5d1ca94a17d78e8bad37e106';
+			})
+			.catch(err => {
+				console.log(err);
+			});
 	}
 
 </script>

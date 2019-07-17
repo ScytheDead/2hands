@@ -133,8 +133,9 @@
 
 
 					<div class="product-details">
-						<h4><span class="w3layouts-agileinfo">Lượt xem </span> : <strong> 150</strong> <button
-								onclick="subscribePost()" class="btn btn-danger pull-right ">Lưu tin <i id="subscribeId"
+						<h4><img style="border-radius: 50px; border: 1px solid #909090;" id="avatarId" src="../images/user_icon.png" height="70" width="70" alt=""> <strong
+								id="nameId" style="margin-left: 2rem"> Huy</strong> <button onclick="subscribePost()"
+								class="btn btn-danger pull-right ">Lưu tin <i id="subscribeId"
 									class="fa fa-heart-o"></i>
 							</button></h4>
 						<h4><span class="w3layouts-agileinfo">Loại tin </span> : <span id="sellerId">Cần bán</span>
@@ -157,14 +158,14 @@
 							<h3 class="rate" id="priceId">$ 45999</h3>
 							<div class="clearfix"></div>
 						</div>
-						<div class="condition">
-							<p class="p-price">Tên người đăng</p>
-							<h4 id="nameId">Tèo</h4>
-							<div class="clearfix"></div>
-						</div>
 						<div class="itemtype">
 							<p class="p-price">Loại sản phẩm</p>
 							<h4 id="titleclassifyId">Cars</h4>
+							<div class="clearfix"></div>
+						</div>
+						<div class="condition">
+							<p class="p-price">Hãng</p>
+							<h4 id="producerId">Tèo</h4>
 							<div class="clearfix"></div>
 						</div>
 					</div>
@@ -279,12 +280,15 @@
 				cityId.innerHTML = post.post.city.name;
 				momentId.innerHTML = post.post.moment;
 
+				avatarId.src = post.post.user.avatar == undefined ? '../images/user.icon.png' : Dia_chi_Dich_vu + '/' + post.post.user.avatar;
+				nameId.innerHTML = post.post.user.name == undefined ? post.post.user.phoneNumber : post.post.user.name;
 				sellerId.innerHTML = post.post.seller == 1 ? 'Cần bán' : 'Cần mua';
 				phoneNumberId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(post.post.user.phoneNumber);
 				contentId.innerHTML = post.post.content;
 
 				priceId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(post.post.price) + ' ₫';
-				nameId.innerHTML = post.post.user.name;
+				producerId.innerHTML = post.post.producer == undefined ? '' : post.post.producer.title;
+				
 				titleclassifyId.innerHTML = post.post.classify == undefined ? post.post.category.title : post.post.classify.title;
 
 				let chuoi_HTML_Image = `<ul class="slides">`

@@ -43,7 +43,9 @@
                     dialogId.innerHTML = ``;
                     listPosts.posts.forEach(post => {
                         let div = document.createElement('div');
-                        div.innerHTML = `${post.title.replace(valueSearchId.value, '<span style="font-weight:bold">' + valueSearchId.value + '</span>')}`;
+                        div.innerHTML = `${post.title.replace(valueSearchId.value, '<span style="font-weight:bold">' + valueSearchId.value + '</span>')} 
+                        <span style="color: #ff4c4c">trong ${post.classify == undefined ? post.category.title : post.classify.title}</span>
+                        `;
                         div.onclick = () => { window.location = '/post-detail/' + post.id }
                         dialogId.appendChild(div);
                     });
