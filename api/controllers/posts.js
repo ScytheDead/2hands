@@ -4,6 +4,7 @@ const Category = require('../models/categories');
 const Post = require('../models/posts');
 const User = require('../models/users');
 const City = require('../models/cities');
+const Message = require('../models/messages');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -15,7 +16,9 @@ moment.locale('vi');
 exports.posts_get_all = (req, res) => {
     Post.find()
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -42,6 +45,7 @@ exports.posts_create_post = (req, res) => {
     var flagCreate = 1;
     const token = req.headers.authorization.split(" ")[1];
     const user = jwt.verify(token, config.JWT_KEY);
+    const maxPost = 10;
     User.findById(user.id) //check User available
         .then(user => {
             Post.find({
@@ -50,7 +54,7 @@ exports.posts_create_post = (req, res) => {
                 .select('_id')
                 .then(listPosts => {
                     console.log(listPosts.length);
-                    if (listPosts.length < 5) {
+                    if (listPosts.length < maxPost) {
                         Category.findById(req.body.category) //check Category available
                             .then(async category => {
                                 if (req.body.classify != undefined) {
@@ -251,7 +255,7 @@ exports.posts_create_post = (req, res) => {
 
                     } else {
                         res.status(500).json({
-                            message: 'number of posts cannot exceed 5'
+                            message: 'number of posts cannot exceed ' + maxPost
                         });
                     }
                 })
@@ -422,6 +426,7 @@ exports.posts_update_post = async (req, res) => {
 
 exports.posts_delete_post = (req, res) => {
     const id = req.params.postId;
+    console.log(id);
     Post.findById(id)
         .select('images')
         .exec()
@@ -429,6 +434,38 @@ exports.posts_delete_post = (req, res) => {
             if (result.images !== undefined && result.images !== null) {
                 await deleteArrayImage(result.images);
             }
+
+            User.find({
+                    subscribes: id
+                })
+                .then(listUser => {
+                    console.log(listUser);
+                    if (listUser.length > 0) {
+                        listUser.forEach(user => {
+                            const resultFindSubscribe = user.subscribes.findIndex(postId => postId == id);
+                            console.log(resultFindSubscribe);
+                            if (resultFindSubscribe != -1) {
+                                user.subscribes.pull(id);
+                                user.save();
+                            }
+                        });
+                    }
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+
+            Message.deleteMany({
+                    post: id
+                })
+                .then(result => console.log(result))
+                .catch(err => {
+                    res.status(500).json({
+                        error: err
+                    });
+                });
 
             Post.deleteOne({
                     _id: id
@@ -454,7 +491,9 @@ exports.posts_get_post_by_user = (req, res) => {
             user: userId
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -485,7 +524,9 @@ exports.posts_get_post_by_user_posting = (req, res) => {
             status: 1
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -516,7 +557,9 @@ exports.posts_get_post_by_user_waiting = (req, res) => {
             status: 0
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -547,7 +590,9 @@ exports.posts_get_post_by_user_reject = (req, res) => {
             status: -1
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -579,7 +624,9 @@ exports.posts_get_post_accept_by_category = (req, res) => {
             category: categoryId
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -610,7 +657,9 @@ exports.posts_get_post_accept_by_classify = (req, res) => {
             classify: classifyId
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -641,7 +690,9 @@ exports.posts_get_post_accept_by_producer = (req, res) => {
             producer: producerId
         })
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -736,7 +787,9 @@ exports.posts_get_post_accept = async (req, res) => {
             status: 1
         })
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -769,7 +822,9 @@ exports.posts_get_post_reject = async (req, res) => {
             status: -1
         })
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
@@ -802,7 +857,9 @@ exports.posts_get_post_waiting = async (req, res) => {
             status: 0
         })
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
-        .sort({updated_at: -1})
+        .sort({
+            updated_at: -1
+        })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
