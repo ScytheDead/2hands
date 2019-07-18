@@ -145,8 +145,6 @@
 					let avatar = ``;
 
 					listMessages.messages.map(message => {
-						console.log(message);
-
 						if (user.id == message.userSell._id) {
 							name = message.userBuy.name == undefined ? message.userBuy.phoneNumber : message.userBuy.name;
 							avatar = message.userBuy.avatar == undefined ? 'images/user_icon.png' : message.userBuy.avatar;
@@ -351,7 +349,7 @@
 							</div>
 							<div class="user_info">
 								<span>${messageDetail.post.title}</span>
-								<p style="color: red">${Tao_Chuoi_The_hien_So_nguyen_duong(messageDetail.post.price)} ₫</p>
+								<p style="font-size: 1rem; color: red">${Tao_Chuoi_The_hien_So_nguyen_duong(messageDetail.post.price)} ₫</p>
 							</div>
 							<div class="video_cam">
 								<span><i class="fa fa-video"></i></span>
