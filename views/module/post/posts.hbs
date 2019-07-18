@@ -285,12 +285,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				console.log(listProducers)
 				let chuoi_HTML = ``;
 				listProducers.producers.forEach(producer => {
-					chuoi_HTML += `<button class="btn btn-danger" style="margin-left: 10px">
+					chuoi_HTML += `<button class="btn btn-danger" onclick="showListPostFilterByProducer('${producer.id}')" style="margin-left: 10px">
 						<img src="${Dia_chi_Dich_vu}/${producer.image}" width="30" height="30" alt="">
 						<br>
 						${producer.title}
 					</button>`
 				});
+				chuoi_HTML += `<br><button style="margin: 1rem" onclick="showListPostFilterByProducer('')" class="btn btn-success">Bỏ lọc theo nhà sản xuất</button>`;
 				groupBTNProducers.innerHTML = chuoi_HTML;
 			})
 			.catch(err => {
@@ -302,8 +303,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	function getPostsAcceptByCategory() {
 		getPostsAcceptByCategoryAPI(categoryId)
 			.then(async listPosts => {
-
-
 				listCityId.onchange = () => {
 					showListPostFilter(listPosts.posts);
 				}
@@ -317,8 +316,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						// show agile breadcrumbs
 						let classify = await getClassifyAPI(listClassifyId.value);
 						agileBreadcrumbsId.childNodes[5].innerHTML = classify.classify.title;
-					} else {
-
 					}
 				}
 
@@ -334,7 +331,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			})
 			.catch(err => {
 				console.log(err);
-			})
+			});
 	}
 
 	function showPosts(listPosts) {
@@ -344,15 +341,15 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			let result = listSubscribes.findIndex(postSubscribe => postSubscribe.id == post.id);
 			console.log(result);
 			chuoi_HTML += `
-				<li style="cursor: pointer">
-					<img src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" onclick="goDetail('${post.id}')"/>
-					<section class="list-left" onclick="goDetail('${post.id}')">
+				<li>
+					<img style="cursor: pointer" src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" onclick="goDetail('${post.id}')"/>
+					<section style="cursor: pointer" class="list-left" onclick="goDetail('${post.id}')">
 						<h5 class="title">${post.title}</h5>
 						<span class="adprice">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)} ₫</span>
 						<p class="catpath">${post.classify == undefined ? '' : post.classify.title}</p>
 						
 					</section>
-					<section class="list-right" onclick="goDetail('${post.id}')">
+					<section style="cursor: pointer" class="list-right" onclick="goDetail('${post.id}')">
 						<span class="date">${post.moment}</span>
 						<span class="cityname">${post.city.name}</span>
 					</section>
@@ -400,6 +397,26 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			} else {
 				listPostsId.innerHTML = '<h1>Không có tin theo điều kiện lọc này</h1>'
 			}
+		}
+	}
+
+	function showListPostFilterByProducer(producerId) {
+		let listPostFilterByProducer = [];
+		if (producerId == '') {
+			listPostFilterByProducer = listPostFilter;
+		} else {
+			listPostFilter.forEach(post => {
+				if (post.producer._id == producerId) {
+					listPostFilterByProducer.push(post);
+				}
+			});
+		}
+
+		console.log(listPostFilterByProducer);
+		if (listPostFilterByProducer.length > 0) {
+			showPosts(listPostFilterByProducer);
+		} else {
+			listPostsId.innerHTML = '<h1>Không có tin theo điều kiện lọc này</h1>'
 		}
 	}
 

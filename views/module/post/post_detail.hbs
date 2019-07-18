@@ -280,7 +280,7 @@
 				cityId.innerHTML = post.post.city.name;
 				momentId.innerHTML = post.post.moment;
 
-				avatarId.src = post.post.user.avatar == undefined ? '../images/user.icon.png' : Dia_chi_Dich_vu + '/' + post.post.user.avatar;
+				avatarId.src = post.post.user.avatar == undefined ? '../images/user_icon.png' : Dia_chi_Dich_vu + '/' + post.post.user.avatar;
 				nameId.innerHTML = post.post.user.name == undefined ? post.post.user.phoneNumber : post.post.user.name;
 				sellerId.innerHTML = post.post.seller == 1 ? 'Cần bán' : 'Cần mua';
 				phoneNumberId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(post.post.user.phoneNumber);
