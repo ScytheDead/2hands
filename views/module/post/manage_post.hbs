@@ -16,7 +16,7 @@
     <!-- breadcrumbs -->
     <div class="w3layouts-breadcrumbs text-center">
         <div class="container">
-            <span class="agile-breadcrumbs float-left"><a href="/create-post"><i class="fa fa-home home_1"></i></a> /
+            <span class="agile-breadcrumbs float-left"><a href="/"><i class="fa fa-home home_1"></i></a> /
                 <span> Quản
                     lý tin đăng</span></span>
         </div>
@@ -46,6 +46,7 @@
                 <button id="btnPostingId" class="btn btn-outline-success btn-lg">Đang bán</button>
                 <button id="btnWaitingId" class="btn btn-outline-warning btn-lg">Đang chờ duyệt</button>
                 <button id="btnRejectId" class="btn btn-outline-danger btn-lg">Bị từ chối</button>
+                <button id="btnHideId" class="btn btn-outline-info btn-lg">Tin đã ẩn</button>
             </div>
 
             <div class="">
@@ -111,11 +112,12 @@
                 btnPostingId.classList.add('active');
                 btnWaitingId.classList.remove('active');
                 btnRejectId.classList.remove('active');
+                btnHideId.classList.remove('active');
                 if (posts.count > 0) {
                     tableProducersId.classList.remove('d-none');
                     showDataTable(posts.posts, 1);
                 } else {
-                    showToast('Không có tin nào đang đăng');
+                    showToast('Không có tin nào đang đăng.');
                     tableProducersId.classList.add('d-none');
                 }
                 buttonClick = `posting`;
@@ -134,12 +136,13 @@
                 btnPostingId.classList.remove('active');
                 btnWaitingId.classList.add('active');
                 btnRejectId.classList.remove('active');
+                btnHideId.classList.remove('active');
                 if (posts.count > 0) {
                     tableProducersId.classList.remove('d-none');
                     showDataTable(posts.posts, 0);
                 }
                 else {
-                    showToast('Không có tin nào đang chờ duyệt');
+                    showToast('Không có tin nào đang chờ duyệt.');
                     tableProducersId.classList.add('d-none');
                 }
                 buttonClick = `waiting`;
@@ -155,17 +158,40 @@
                 btnPostingId.classList.remove('active');
                 btnWaitingId.classList.remove('active');
                 btnRejectId.classList.add('active');
-                console.log(posts);
+                btnHideId.classList.remove('active');
                 if (posts.count > 0) {
                     tableProducersId.classList.remove('d-none');
                     showDataTable(posts.posts, -1);
                 }
                 else {
-                    showToast('Không có tin nào bị từ chối');
-                    tableProducersId.innerHTML = `<h1>Không có tin nào bị từ chối</h1>`
+                    showToast('Không có tin nào bị từ chối.');
+                    tableProducersId.classList.add('d-none');
                 }
 
                 buttonClick = `reject`;
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    btnHideId.onclick = () => {
+        getPostHiddentByUserAPI(sessionStorage.getItem('token'), user.id)
+            .then(posts => {
+                btnPostingId.classList.remove('active');
+                btnWaitingId.classList.remove('active');
+                btnRejectId.classList.remove('active');
+                btnHideId.classList.add('active');
+                if (posts.count > 0) {
+                    tableProducersId.classList.remove('d-none');
+                    showDataTable(posts.posts, -2);
+                }
+                else {
+                    showToast('Không có tin nào đang được ẩn.');
+                    tableProducersId.classList.add('d-none');
+                }
+
+                buttonClick = `hide`;
             })
             .catch(err => {
                 console.log(err);
@@ -177,7 +203,7 @@
         let chuoi_HTML = ``;
         listPosts.forEach(post => {
             chuoi_HTML += `<tr>
-                <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="70" height="70"></td>
+                <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="70" height="50"></td>
                 <td><h5>${post.category.title}</h5></td>
                 <td><h5>${post.classify == undefined ? '' : post.classify.title}</h5></td>
                 <td><h5>${post.producer == undefined ? '' : post.producer.title}</h5></td>
@@ -187,15 +213,29 @@
                 <td><h5>${getDateFormat(post.createdAt)}</h5></td>
                 <td><h5>${getDateFormat(post.updatedAt)}</h5></td>
                 <td><h5>${post.moment}</h5></td>`
-            if (status == 1 || status == -1) {
+            if (status == 1) {
                 chuoi_HTML += `<td>
                                 <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
                                 <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button>
+                                <button class="btn btn-outline-secondary btn-lg mt-2" onclick="hidePost('${post.id}')">Ẩn tin</button>
                                 <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
                             </td>`
             } else if (status == 0) {
                 chuoi_HTML += `<td>
                                 <button class="btn btn-outline-warning btn-lg" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/u_${post.id}'">Chi tiết</button>
+                            </td>`
+            } else if (status == -1) {
+                chuoi_HTML += `<td>
+                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
+                                <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button>
+                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
+                            </td>`
+            } else if (status == -2) {
+                chuoi_HTML += `<td>
+                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
+                                <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button>
+                                <button class="btn btn-outline-info btn-lg mt-2" onclick="showPost('${post.id}')">Hiện tin</button>
+                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
                             </td>`
             }
             chuoi_HTML += ` </tr>`;
@@ -213,7 +253,52 @@
                         btnWaitingId.click();
                     } else if (buttonClick === `reject`) {
                         btnRejectId.click();
+                    } else if (buttonClick === `hide`) {
+                        btnHideId.click();
                     }
+                    showToast('Tin đã được xóa.');
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    function hidePost(postId) {
+        hidePostAPI(token, postId)
+            .then(result => {
+                if (result.message === `Post hidden`) {
+                    if (buttonClick === `posting`) {
+                        btnPostingId.click();
+                    } else if (buttonClick === `waiting`) {
+                        btnWaitingId.click();
+                    } else if (buttonClick === `reject`) {
+                        btnRejectId.click();
+                    } else if (buttonClick === `hide`) {
+                        btnHideId.click();
+                    }
+                    showToast('Tin đã được ẩn.');
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    function showPost(postId) {
+        showPostAPI(token, postId)
+            .then(result => {
+                if (result.message === `Waiting admin accept post to show`) {
+                    if (buttonClick === `posting`) {
+                        btnPostingId.click();
+                    } else if (buttonClick === `waiting`) {
+                        btnWaitingId.click();
+                    } else if (buttonClick === `reject`) {
+                        btnRejectId.click();
+                    } else if (buttonClick === `hide`) {
+                        btnHideId.click();
+                    }
+                    showToast('Đã gửi yêu cầu hiển thị tin. Vui lòng đợi người quản trị duyệt để hiển thị.');
                 }
             })
             .catch(err => {

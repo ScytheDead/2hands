@@ -214,8 +214,8 @@
                                 chuoi_error = `Tiêu đề này đã tồn tại.<br>Xin chọn tiêu đề khác.`
                             } else if (JSON.parse(err).message == `pictures too much or too little`) {
                                 chuoi_error = `Phải chọn ít nhất 1 ảnh và tối đa 6 ảnh.`
-                            } else if (JSON.parse(err).message == `number of posts cannot exceed 5`) {
-                                chuoi_error = `Tài khoản của bạn chỉ được đăng tối đa 5 tin.`
+                            } else if (JSON.parse(err).message == `number of posts cannot exceed 10`) {
+                                chuoi_error = `Tài khoản của bạn chỉ được đăng tối đa 10 tin.`
                             } else if (JSON.parse(err).message == `Auth failed`) {
                                 sessionStorage.removeItem('token');
                                 setTimeout(() => {

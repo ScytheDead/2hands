@@ -57,6 +57,7 @@
     transform: translate(-50%);
     background-color: #000;
     color: #fff;
+    font-size: 1.5rem;
     padding: 16px;
     border-radius: 4px;
     z-index: 1;
@@ -67,7 +68,7 @@
 
 #toast.show {
     visibility: visible;
-    animation: fadeInOutToast 2s;
+    animation: fadeInOutToast 3s;
 }
 
 @keyframes fadeInOutToast {

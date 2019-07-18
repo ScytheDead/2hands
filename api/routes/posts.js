@@ -10,6 +10,7 @@ router.get('/accept', checkAuth, PostController.posts_get_post_accept);
 router.get('/reject', checkAuth, PostController.posts_get_post_reject);
 
 router.get('/waiting', checkAuth, PostController.posts_get_post_waiting);
+
 //
 
 router.get('/', PostController.posts_get_all);
@@ -28,6 +29,12 @@ router.patch('/accept/:postId', checkAuth, PostController.accept_post);
 //reject post
 router.patch('/reject/:postId', checkAuth, PostController.reject_post);
 
+//hide post
+router.patch('/hide/:postId', checkAuth, PostController.hide_post);
+
+//show post
+router.patch('/show/:postId', checkAuth, PostController.show_post);
+
 
 // Filter
 //     // Filter by user
@@ -37,6 +44,8 @@ router.get('/user/posting/:userId', checkAuth, PostController.posts_get_post_by_
 router.get('/user/waiting/:userId', checkAuth, PostController.posts_get_post_by_user_waiting);
 //         // Filter by user reject
 router.get('/user/reject/:userId', checkAuth, PostController.posts_get_post_by_user_reject);
+//         // Filter by user hidden
+router.get('/user/hide/:userId', checkAuth, PostController.posts_get_post_by_user_hide);
 
 // Search
 
