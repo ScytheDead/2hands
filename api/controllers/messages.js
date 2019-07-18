@@ -169,6 +169,7 @@ exports.get_all_messages_by_user = (req, res) => {
         .select('messages')
         .exec()
         .then(user => {
+            console.log(user);
             Message.find({
                     '_id': {
                         $in: user.messages
@@ -183,6 +184,12 @@ exports.get_all_messages_by_user = (req, res) => {
                 .populate('post', 'category classify user title content price address city images created_at updated_at')
                 .exec()
                 .then(listMessages => {
+                    const syncIdMessageUser_Message = listMessages.map(message => {
+                        return message._id;
+                    });
+                    user.messages = syncIdMessageUser_Message;
+                    user.save();
+                    
                     const response = {
                         count: listMessages.length,
                         messages: listMessages.map(message => {
