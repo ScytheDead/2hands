@@ -736,13 +736,13 @@ exports.posts_get_post_accept = async (req, res) => {
             status: 1
         })
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
+        .sort({updated_at: -1})
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
         .populate('classify', 'title')
         .populate('category', 'title')
         .populate('city', 'name location type')
         .exec()
-        .sort({updated_at: -1})
         .then(posts => {
             const response = {
                 count: posts.length,
