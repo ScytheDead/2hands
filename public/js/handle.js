@@ -243,7 +243,7 @@ function showToast(contentToast) {
     toast.innerHTML = contentToast;
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 2000);
+    }, 3000);
 }
 
 function change_alias(alias) {
@@ -260,4 +260,15 @@ function change_alias(alias) {
     str = str.replace(/ + /g, " ");
     str = str.trim();
     return str;
+}
+
+function shortString(title, lengthShow) {
+    let titleShow = '';
+    if (title.length > lengthShow) {
+        for (let i = 0; i <= lengthShow; i++) {
+            titleShow += title[i];
+        }
+        return titleShow + '...';
+    }
+    return title;
 }

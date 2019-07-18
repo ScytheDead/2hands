@@ -168,7 +168,7 @@
 										<div class="user_info">
 											<span>${name}</span>
 											<p>${message.moment}</p>
-											<span>${shortTitle(message.post.title)}</span>
+											<span>${shortString(message.post.title, 28)}</span>
 										</div>
 									</div>
 								</li>
@@ -324,18 +324,6 @@
 		$('#contentDetailMessageId').stop().animate({
 			scrollTop: $('#contentDetailMessageId')[0].scrollHeight + 10000
 		}, 800);
-	}
-
-	function shortTitle(title) {
-		const lengthShow = 28;
-		let titleShow = '';
-		if (title.length > lengthShow) {
-			for (let i = 0; i <= lengthShow; i++) {
-				titleShow += title[i];
-			}
-			return titleShow + '...';
-		}
-		return title;
 	}
 
 	function drawBorderDetailChat(messageDetail) {

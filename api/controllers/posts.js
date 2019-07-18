@@ -616,6 +616,39 @@ exports.posts_get_post_by_user_reject = (req, res) => {
         });
 }
 
+exports.posts_get_post_by_user_hide = (req, res) => {
+    const userId = req.params.userId;
+
+    Post.find({
+            user: userId,
+            status: -2
+        })
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
+        .sort({
+            updated_at: -1
+        })
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .populate('city', 'name location type')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
 
 exports.posts_get_post_accept_by_category = (req, res) => {
     const categoryId = req.params.categoryId;
@@ -765,6 +798,54 @@ exports.reject_post = async (req, res) => {
         .then(result => {
             res.status(200).json({
                 message: 'Post rejected',
+                PostURL: `${config.API_ADDRESS}/api/posts/` + id
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.hide_post = (req, res) => {
+    const id = req.params.postId;
+    Post.updateOne({
+            _id: id
+        }, {
+            $set: {
+                status: -2
+            }
+        })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'Post hidden',
+                PostURL: `${config.API_ADDRESS}/api/posts/` + id
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.show_post = (req, res) => {
+    const id = req.params.postId;
+    Post.updateOne({
+            _id: id
+        }, {
+            $set: {
+                status: 0
+            }
+        })
+        .exec()
+        .then(result => {
+            res.status(200).json({
+                message: 'Waiting admin accept post to show',
                 PostURL: `${config.API_ADDRESS}/api/posts/` + id
             });
         })
