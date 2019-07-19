@@ -618,10 +618,43 @@ exports.posts_get_post_by_user_reject = (req, res) => {
 
 exports.posts_get_post_by_user_hide = (req, res) => {
     const userId = req.params.userId;
-
     Post.find({
             user: userId,
             status: -2
+        })
+        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
+        .sort({
+            updated_at: -1
+        })
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .populate('city', 'name location type')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(404).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+}
+
+exports.posts_get_post_by_user_priority = (req, res) => {
+    const userId = req.params.userId;
+    Post.find({
+            user: userId,
+            priority: 1,
+            status: 1
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
         .sort({
@@ -855,6 +888,68 @@ exports.show_post = (req, res) => {
                 error: err
             });
         });
+}
+
+exports.priority_post = async (req, res) => {
+    if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
+        return res.status(401).json({
+            message: 'You don\'t have permission'
+        });
+    }
+
+    const id = req.params.postId;
+    Post.findById(id)
+        .select('priority status')
+        .then(post => {
+            console.log(post);
+            if (post.status == 1) {
+                if (post.priority == false) {
+                    post.priority = 1;
+                    post.save(() => {
+                        res.status(200).json({
+                            message: 'Priority post success'
+                        });
+                    });
+                } else {
+                    post.priority = 0;
+                    post.save(() => {
+                        res.status(200).json({
+                            message: 'Non priority post success'
+                        });
+                    });
+                }
+            } else {
+                res.status(500).json({
+                    message: 'Error: Post should be accepted before prioritize'
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'No valid entry found for provided ID',
+                error: err
+            });
+        });
+
+    // Post.updateOne({
+    //         _id: id
+    //     }, {
+    //         $set: {
+    //             priority: 1
+    //         }
+    //     })
+    //     .exec()
+    //     .then(result => {
+    //         res.status(200).json({
+    //             message: 'Priority post success',
+    //         });
+    //     })
+    //     .catch(err => {
+    //         res.status(500).json({
+    //             message: 'No valid entry found for provided ID',
+    //             error: err
+    //         });
+    //     });
 }
 
 exports.posts_get_post_accept = async (req, res) => {

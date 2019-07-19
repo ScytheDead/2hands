@@ -35,6 +35,9 @@ router.patch('/hide/:postId', checkAuth, PostController.hide_post);
 //show post
 router.patch('/show/:postId', checkAuth, PostController.show_post);
 
+//priority
+router.patch('/priority/:postId', checkAuth, PostController.priority_post);
+
 
 // Filter
 //     // Filter by user
@@ -46,6 +49,8 @@ router.get('/user/waiting/:userId', checkAuth, PostController.posts_get_post_by_
 router.get('/user/reject/:userId', checkAuth, PostController.posts_get_post_by_user_reject);
 //         // Filter by user hidden
 router.get('/user/hide/:userId', checkAuth, PostController.posts_get_post_by_user_hide);
+//         // Filter by user priority
+router.get('/user/priority/:userId', checkAuth, PostController.posts_get_post_by_user_priority);
 
 // Search
 
