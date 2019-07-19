@@ -10,7 +10,7 @@ function messageError(err) {
         toastError(`Cập nhật hình ảnh thất bại !`);
     } else if (err == 'Not Found Image') {
         toastError(`Xin vui lòng chọn hình ảnh !`);
-    }else if (err == 'Internal Server Error') {
+    } else if (err == 'Internal Server Error') {
         toastError(`Tạo mới thất bại !`);
     } else if (err == 'This category have still contains classify') {
         toastError(`Chuyên mục này vẫn còn chứa thể loại bên trong !`);
@@ -30,7 +30,7 @@ function messageError(err) {
         toastError(`Tiêu đề tối đa 100 ký tự !`);
     } else if (err == 'The title already exists') {
         toastError(`Tiêu đề này đã được sử dụng. Xin vui lòng chọn tiêu đề khác !`);
-    } 
+    }
 }
 
 function messageSuccess(result) {
@@ -71,12 +71,16 @@ function messageSuccess(result) {
         modelTitleThongBao.innerHTML = `Tin đã được duyệt thành công`;
     } else if (result.message == 'Post rejected') {
         modelTitleThongBao.innerHTML = `Tin đã được từ chối thành công`;
-    } 
- 
+    } else if (result.message == 'Non priority post success') {
+        modelTitleThongBao.innerHTML = `Tin đã được hủy ưu tiên thành công`;
+    } else if (result.message == 'Priority post success') {
+        modelTitleThongBao.innerHTML = `Tin đã được ưu tiên thành công`;
+    }
+
     modal_ThongBao.click();
     setTimeout(() => {
         Tat_Thong_bao.click();
-    }, 1500);
+    }, 2000);
 }
 
 function toastError(toastDisplayError) {
