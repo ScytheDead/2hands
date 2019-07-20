@@ -19,22 +19,32 @@ io.on('connection', socket => {
 
     socket.on('admin-join-room', () => {
         socket.join('Admin');
-        socket.room = 'Admin';
+        socket.roomAdmin = 'Admin';
     });
-    
+
     // load real-time create post 
     socket.on('client-create-post', post => {
         io.sockets.in('Admin').emit('server-send-create-post', post);
     });
 
-    socket.on('client-join-room-chat', data => {
-        console.log(data);
-        console.log('socket room: ' + data.messageId);
-        socket.join(data.messageId);
-        socket.room = data.messageId;
+    socket.on('client-currently-logged', data => {
+        let listMessagesId = data.listMessagesId;
+        socket.room = listMessagesId;
 
-        if (data.flag) {
-            Message.findById(socket.room)
+        listMessagesId.forEach(messageId => {
+            socket.join(messageId);
+        });
+    });
+
+    socket.on('client-join-room-chat', data => {
+        //console.log(data);
+        console.log('socket room: ' + data.messageId);
+        //socket.room = data.messageId;
+        console.log(socket.room);
+        let room = socket.room.find(messageId => messageId == data.messageId);
+        console.log(room)
+        if (room != undefined) {
+            Message.findById(room)
                 .select('_id userSell userBuy post contentChatUserBuy contentChatUserSell')
                 .populate('userSell', 'phoneNumber name avatar address city')
                 .populate('userBuy', 'phoneNumber name avatar address city')
@@ -73,69 +83,91 @@ io.on('connection', socket => {
         let userId = userAndContentMessage.user;
         let messageChat = userAndContentMessage.messageChat;
         let messageId = userAndContentMessage.messageId;
+        //console.log(socket.room);
 
-        let messageChatAndNameUser;
+        let room = socket.room.find(roomMessageId => roomMessageId == messageId);
+        console.log(room)
+        if (room != undefined) {
+            let messageChatAndNameUser;
 
-        Message.findById(messageId)
-            .then(message => {
-                User.findById(message.userSell)
-                    .then(userSell => {
-                        console.log(userSell);
-                        User.findById(message.userBuy)
-                            .then(userBuy => {
-                                let result1 = userSell.messages.find(message => message.toString() === socket.room.toString());
-                                let result2 = userBuy.messages.find(message => message.toString() === socket.room.toString());
-                                //undefined or message id
-                                if (result1 === undefined) {
-                                    userSell.messages.push(socket.room);
-                                    userSell.save();
-                                } else if (result2 === undefined) {
-                                    userBuy.messages.push(socket.room);
-                                    userBuy.save();
-                                }
-
-                                if (message.userSell.toString() === userId.toString()) {
-                                    message.contentChatUserSell.push({
-                                        content: messageChat
-                                    });
-
-                                    messageChatAndNameUser = {
-                                        messageId: messageId,
-                                        userId: userSell._id,
-                                        avatar: userSell.avatar,
-                                        name: userSell.name === undefined ? userSell.phoneNumber : userSell.name,
-                                        messageChat: messageChat
+            Message.findById(messageId)
+                .then(message => {
+                    User.findById(message.userSell)
+                        .then(userSell => {
+                            User.findById(message.userBuy)
+                                .then(userBuy => {
+                                    let result1 = userSell.messages.find(message => message.toString() === messageId.toString());
+                                    let result2 = userBuy.messages.find(message => message.toString() === messageId.toString());
+                                    //undefined or message id
+                                    if (result1 === undefined) {
+                                        userSell.messages.push(messageId);
+                                        userSell.save();
+                                    } else if (result2 === undefined) {
+                                        userBuy.messages.push(messageId);
+                                        userBuy.save();
                                     }
-                                } else {
-                                    message.contentChatUserBuy.push({
-                                        content: messageChat
-                                    });
 
-                                    messageChatAndNameUser = {
-                                        messageId: messageId,
-                                        userId: userBuy._id,
-                                        avatar: userBuy.avatar,
-                                        name: userBuy.name === undefined ? userBuy.phoneNumber : userBuy.name,
-                                        messageChat: messageChat
+                                    if (message.userSell.toString() === userId.toString()) {
+                                        message.contentChatUserSell.push({
+                                            content: messageChat
+                                        });
+
+                                        messageChatAndNameUser = {
+                                            messageId: messageId,
+                                            userId: userSell._id,
+                                            avatar: userSell.avatar,
+                                            name: userSell.name === undefined ? userSell.phoneNumber : userSell.name,
+                                            messageChat: messageChat
+                                        }
+                                    } else {
+                                        message.contentChatUserBuy.push({
+                                            content: messageChat
+                                        });
+
+                                        messageChatAndNameUser = {
+                                            messageId: messageId,
+                                            userId: userBuy._id,
+                                            avatar: userBuy.avatar,
+                                            name: userBuy.name === undefined ? userBuy.phoneNumber : userBuy.name,
+                                            messageChat: messageChat
+                                        }
                                     }
-                                }
 
-                                message.save(() => {
-                                    io.sockets.in(messageId).emit('server-send-message', messageChatAndNameUser);
-                                    io.sockets.in(messageId).emit('server-send-message-push-notification', messageChatAndNameUser);
+                                    message.save(() => {
+                                        io.sockets.in(messageId).emit('server-send-message', messageChatAndNameUser);
+                                    });
+                                })
+                                .catch(err => {
+                                    console.log(err);
                                 });
-                            })
-                            .catch(err => {
-                                console.log(err);
-                            });
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            })
-            .catch(err => {
-                console.log(err);
-            });
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+    });
+
+    socket.on("user-typing", data => {
+        console.log(data);
+        let messageId = data.messageId;
+        let response = {
+            nameUserTyping: data.name,
+            userIdTyping: data.userId,
+            avatarUserTyping: data.avatar
+        }
+        io.sockets.in(messageId).emit("someone-typing", response);
+    });
+
+    socket.on("user-pause-typing", data => {
+        console.log(data);
+        let userIdPauseTyping = data.userId;
+        let messageId = data.messageId;
+
+        io.sockets.in(messageId).emit("someone-pause-typing", userIdPauseTyping);
     });
 
     socket.on('disconnect', () => {

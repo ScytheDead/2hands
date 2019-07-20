@@ -26,6 +26,7 @@
             <ul id="flexiselDemo3">
                 <li>
                     <div class="row">
+
                         <div class="col-md-3 biseller-column">
                             <a href="single.html">
                                 <img src="template/images/p1.jpg" alt="" />
@@ -46,72 +47,9 @@
                                 <span>3 hour ago</span>
                             </div>
                         </div>
-                        <div class="col-md-3 biseller-column">
-                            <a href="single.html">
-                                <img src="template/images/p3.jpg" alt="" />
-                                <span class="price">199.000</span>
-                            </a>
-                            <div class="w3-ad-info">
-                                <h5>It is a long established fact that a reader</h5>
-                                <span>8 hour ago</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3 biseller-column">
-                            <a href="single.html">
-                                <img src="template/images/p4.jpg" alt="" />
-                                <span class="price">159.000</span>
-                            </a>
-                            <div class="w3-ad-info">
-                                <h5>passage of Lorem Ipsum you need to be</h5>
-                                <span>19 hour ago</span>
-                            </div>
-                        </div>
-                    </div>
+
                 </li>
-                <li>
-                    <div class="row">
-                        <div class="col-md-3 biseller-column">
-                            <a href="single.html">
-                                <img src="template/images/p5.jpg" alt="" />
-                                <span class="price">1.599.000</span>
-                            </a>
-                            <div class="w3-ad-info">
-                                <h5>There are many variations of passages</h5>
-                                <span>1 hour ago</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3 biseller-column">
-                            <a href="single.html">
-                                <img src="template/images/p6.jpg" alt="" />
-                                <span class="price">1.099.000</span>
-                            </a>
-                            <div class="w3-ad-info">
-                                <h5>passage of Lorem Ipsum you need to be</h5>
-                                <span>1 day ago</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3 biseller-column">
-                            <a href="single.html">
-                                <img src="template/images/p7.jpg" alt="" />
-                                <span class="price">109.000</span>
-                            </a>
-                            <div class="w3-ad-info">
-                                <h5>It is a long established fact that a reader</h5>
-                                <span>9 hour ago</span>
-                            </div>
-                        </div>
-                        <div class="col-md-3 biseller-column">
-                            <a href="single.html">
-                                <img src="template/images/p8.jpg" alt="" />
-                                <span class="price">189.000</span>
-                            </a>
-                            <div class="w3-ad-info">
-                                <h5>Lorem Ipsum is simply dummy</h5>
-                                <span>3 hour ago</span>
-                            </div>
-                        </div>
-                    </div>
-                </li>
+
             </ul>
         </div>
     </div>
@@ -143,6 +81,8 @@
 <!-- //mobile app -->
 
 <script>
+    showPostsAcceptByPriority();
+
     getAllCategoriesAPI()
         .then(listCategories => {
             let chuoi_HTML = ``;
@@ -166,5 +106,40 @@
             console.log(err);
         });
 
-    
+    async function showPostsAcceptByPriority() {
+        try {
+            const listPostPriority = await getPostsAcceptByPriorityAPI();
+
+            flexiselDemo3.innerHTML = '';
+            if (listPostPriority.count > 0) {
+                let chuoi_HTML_1_Row = '<div class="row">';
+                let conditionFor = listPostPriority.count > 16 ? 16 : listPostPriority.count;
+                for (let i = 0; i < conditionFor; i++) {
+                    chuoi_HTML_1_Row += ` <div class="col-md-3 biseller-column">
+                                                <a href="single.html">
+                                                    <img src="${Dia_chi_Dich_vu}/${listPostPriority.posts[i].images[0]}" width="232" height="232" alt="" />
+                                                    <span class="price">${Tao_Chuoi_The_hien_So_nguyen_duong(listPostPriority.posts[i].price)}</span>
+                                                </a>
+                                                <div class="w3-ad-info">
+                                                    <h5>${listPostPriority.posts[i].title}</h5>
+                                                    <span>${listPostPriority.posts[i].moment}</span>
+                                                </div>
+                                            </div>`;
+                    if ((i + 1) % 4 == 0 || (i + 1) == listPostPriority.count) {
+                        let li = document.createElement('li');
+                        chuoi_HTML_1_Row += `</div>`;
+                        li.innerHTML = chuoi_HTML_1_Row;
+                        flexiselDemo3.appendChild(li);
+
+                        chuoi_HTML_1_Row = '<div class="row">';
+                    }
+                }
+            }
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+
 </script>

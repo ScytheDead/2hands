@@ -1,10 +1,3 @@
-<link rel="stylesheet" href="../css/style.css">
-<script src="../js/connectAPI.js"></script>
-<script src="../js/handle.js"></script>
-<script src="../js/handleAdmin.js"></script>
-<script id="importSocket" src="/socket.io/socket.io.js"></script>
-
-
 <script>
     if (sessionStorage.getItem('token') != null) {
         var user = decodedJWT(sessionStorage.getItem('token'));
@@ -69,7 +62,9 @@
     </div>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
+
     btnPostAccept.classList.add('active');
 
     var listAllPosts = [];
@@ -193,17 +188,17 @@
                     showTablePostsAccept(listPostsByCategory);
                     let btn = document.getElementsByClassName(postId);
                     console.log(btn);
-                    if(result.message == 'Non priority post success'){
+                    if (result.message == 'Non priority post success') {
                         btn[0].childNodes[0].data = 'Ưu tiên';
-                        btn[0].classList.remove('btn-outline-secondary');
-                        btn[0].classList.add('btn-outline-primary');
-                    } else if(result.message == 'Priority post success'){
+                        btn[0].className = 'btn btn-outline-primary mt-2 ' + postId;
+                        //btn[0].classList.remove('btn-outline-secondary');
+                        //btn[0].classList.add('btn-outline-primary');
+                    } else if (result.message == 'Priority post success') {
                         btn[0].childNodes[0].data = 'Hủy ưu tiên';
-                        btn[0].classList.remove('btn-outline-primary');
-                        btn[0].classList.add('btn-outline-secondary');
+                        btn[0].className = 'btn btn-outline-secondary mt-2 ' + postId;
+                        //btn[0].classList.remove('btn-outline-primary');
+                        //btn[0].classList.add('btn-outline-secondary');
                     }
-
-                    listCountId.innerHTML = `Danh sách tin đã duyệt - ${nameCategory}: ${listPostsByCategory.length}`;
                 }
             })
             .catch(err => {
