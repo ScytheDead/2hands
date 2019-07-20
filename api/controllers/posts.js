@@ -782,6 +782,37 @@ exports.posts_get_post_accept_by_producer = (req, res) => {
         });
 }
 
+exports.posts_get_post_accept_by_priority = (req, res) => {
+    Post.find({
+            status: 1,
+            priority: 1
+        })
+        .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
+        .sort({
+            updated_at: 1
+        })
+        .populate('user', 'phoneNumber name address avatar')
+        .populate('producer', 'title')
+        .populate('classify', 'title')
+        .populate('category', 'title')
+        .populate('city', 'name location type')
+        .exec()
+        .then(posts => {
+            const response = {
+                count: posts.length,
+                posts: posts.map(doc => {
+                    return returnValueGet(doc);
+                })
+            };
+            res.status(200).json(response);
+        })
+        .catch(err => {
+            res.status(500).json({
+                error: err
+            });
+        });
+}
+
 exports.accept_post = async (req, res) => {
     if (!await checkPermission(req.headers.authorization.split(" ")[1])) {
         return res.status(401).json({
@@ -930,26 +961,6 @@ exports.priority_post = async (req, res) => {
                 error: err
             });
         });
-
-    // Post.updateOne({
-    //         _id: id
-    //     }, {
-    //         $set: {
-    //             priority: 1
-    //         }
-    //     })
-    //     .exec()
-    //     .then(result => {
-    //         res.status(200).json({
-    //             message: 'Priority post success',
-    //         });
-    //     })
-    //     .catch(err => {
-    //         res.status(500).json({
-    //             message: 'No valid entry found for provided ID',
-    //             error: err
-    //         });
-    //     });
 }
 
 exports.posts_get_post_accept = async (req, res) => {

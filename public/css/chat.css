@@ -159,6 +159,7 @@ html {
 
 .user_info p {
     font-size: 10px;
+    margin-bottom: 0 !important;
     color: rgba(255, 255, 255, 0.6);
 }
 

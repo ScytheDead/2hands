@@ -30,8 +30,6 @@
 	<div id="toast"></div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
-<script src="../js/handle.js"></script>
-<script src="../js/connectAPI.js"></script>
 <script>
 	const socket = io(Dia_chi_Dich_vu);
 
@@ -39,18 +37,18 @@
 		var user = decodedJWT(sessionStorage.getItem('token'));
 		getUser();
 
-		socket.on('server-send-message-push-notification', messageChatAndNameUser => {
+		socket.on('server-send-message', messageChatAndNameUser => {
 			//console.log(messageChatAndNameUser);
 			getUser();
 		});
 	}
 
 	function showMessagesNotification(user) {
-		joinRoomChat(user.user);
+		//joinRoomChat(user.user);
 
 		var count = 0;
-		user.user.messages.forEach(message => {
-			if (user.user._id.toString() === message.userSell.toString()) {
+		user.messages.forEach(message => {
+			if (user._id.toString() === message.userSell.toString()) {
 				message.contentChatUserBuy.forEach(contentMessage => {
 					if (contentMessage.seen == false) {
 						count++;
@@ -68,18 +66,6 @@
 		dropdownHeaderMessageId.innerHTML = chuoi_HTMLConDropDown;
 	}
 
-	function joinRoomChat(user) {
-		//console.log(user)
-		user.messages.forEach(message => {
-			let data = {
-				messageId: message._id,
-				userId: user._id,
-				flag: 0
-			}
-			socket.emit('client-join-room-chat', data);
-		});
-	}
-
 	async function getUser() {
 		getUserAPI(sessionStorage.getItem('token'), user.id)
 			.then(user => {
@@ -90,11 +76,14 @@
 				if (url == '/user' || url == '/posts') {
 					btnName.childNodes[1].className = ``;
 					btnName.classList.add('btn-lg');
-				} else if (url.indexOf('/message/') != -1 ) {
+				} else if (url.indexOf('/message/') != -1) {
 					btnName.childNodes[1].className = ``;
 				}
 
-				showMessagesNotification(user);
+				sendEventClientConnectToServer(user.user)
+				showMessagesNotification(user.user);
+				//joinRoomChat(user.user);
+
 			})
 			.catch(err => {
 				console.log(err);
@@ -103,6 +92,14 @@
 					window.location = Dia_chi_Dich_vu;
 				}
 			});
+	}
 
+	function sendEventClientConnectToServer(user) {
+		let listMessageId = user.messages.map(message => message._id);
+		console.log(listMessageId);
+		let data = {
+			listMessagesId: listMessageId
+		}
+		socket.emit('client-currently-logged', data);
 	}
 </script>

@@ -62,5 +62,7 @@ router.get('/accept/classify/:classifyId', PostController.posts_get_post_accept_
 
 router.get('/accept/producer/:producerId', PostController.posts_get_post_accept_by_producer);
 
+router.get('/accept/priority', PostController.posts_get_post_accept_by_priority);
+
 
 module.exports = router;

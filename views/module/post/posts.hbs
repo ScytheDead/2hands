@@ -1,60 +1,3 @@
-<head>
-	<title>Resale_v2 a Classified ads Category Flat Bootstrap Responsive Website Template | Fashion :: w3layouts</title>
-	<link rel="stylesheet" href="css/bootstrap.min.css"><!-- bootstrap-CSS -->
-	<link rel="stylesheet" href="css/bootstrap-select.css"><!-- bootstrap-select-CSS -->
-	<link href="css/style.css" rel="stylesheet" type="text/css" media="all" /><!-- style.css -->
-	<link rel="stylesheet" type="text/css" href="css/jquery-ui1.css">
-	<link rel="stylesheet" href="css/font-awesome.min.css" /><!-- fontawesome-CSS -->
-	<link rel="stylesheet" href="css/menu_sideslide.css" type="text/css" media="all"><!-- Navigation-CSS -->
-	<!-- meta tags -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="keywords" content="Resale Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, 
-Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony Ericsson, Motorola web design" />
-	<!-- //meta tags -->
-	<!--fonts-->
-	<link href='//fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
-	<link
-		href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
-		rel='stylesheet' type='text/css'>
-	<!--//fonts-->
-	<!-- js -->
-	<script type="text/javascript" src="js/jquery.min.js"></script>
-	<!-- js -->
-
-
-	<!-- //language-select -->
-	<!-- switcher-grid and list alignment -->
-	<script src="template/js/tabs.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function () {
-			var elem = $('#container ul');
-			$('#viewcontrols a').on('click', function (e) {
-				if ($(this).hasClass('gridview')) {
-					elem.fadeOut(300, function () {
-						$('#container ul').removeClass('list').addClass('grid');
-						$('#viewcontrols').removeClass('view-controls-list').addClass('view-controls-grid');
-						$('#viewcontrols .gridview').addClass('active');
-						$('#viewcontrols .listview').removeClass('active');
-						elem.fadeIn(300);
-					});
-				}
-				else if ($(this).hasClass('listview')) {
-					elem.fadeOut(300, function () {
-						$('#container ul').removeClass('grid').addClass('list');
-						$('#viewcontrols').removeClass('view-controls-grid').addClass('view-controls-list');
-						$('#viewcontrols .gridview').removeClass('active');
-						$('#viewcontrols .listview').addClass('active');
-						elem.fadeIn(300);
-					});
-				}
-			});
-		});
-	</script>
-	<!-- //switcher-grid and list alignment -->
-</head>
-
-
 <body>
 
 	<!-- breadcrumbs -->
@@ -111,8 +54,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</div>
 			<div class="ads-grid">
 				<div class="side-bar col-md-3">
-					<div class="w3ls-featured-ads">
-						<h2 class="sear-head fer">Tin ưu tiên</h2>
+					<div class="w3ls-featured-ads" id="listPostPriorityId">
+
 						<div class="w3l-featured-ad">
 							<a href="single.html">
 								<div class="w3-featured-ad-left">
@@ -137,19 +80,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<div class="clearfix"></div>
 							</a>
 						</div>
-						<div class="w3l-featured-ad">
-							<a href="single.html">
-								<div class="w3-featured-ad-left">
-									<img src="template/images/f3.jpg" title="ad image" alt="" />
-								</div>
-								<div class="w3-featured-ad-right">
-									<h4>Lorem Ipsum is simply dummy text of the printing industry</h4>
-									<p>$ 560</p>
-								</div>
-								<div class="clearfix"></div>
-							</a>
-						</div>
+
 					</div>
+
 				</div>
 				<div class="agileinfo-ads-display col-md-9">
 					<div class="wrapper">
@@ -254,6 +187,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	getPostsAcceptByCategory();
 	getClassifiesByCategory(categoryId);
 
+	showPostsPriority();
+
 
 
 	showBreadCrumbs(categoryId);
@@ -335,11 +270,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	}
 
 	function showPosts(listPosts) {
-		console.log(listPosts);
 		let chuoi_HTML = ``;
 		listPosts.forEach(post => {
 			let result = listSubscribes.findIndex(postSubscribe => postSubscribe.id == post.id);
-			console.log(result);
+
 			chuoi_HTML += `
 				<li>
 					<img style="cursor: pointer" src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" onclick="goDetail('${post.id}')"/>
@@ -451,7 +385,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	function showAllCity() {
 		getAllCityAPI()
 			.then(listCities => {
-				console.log(listCities);
 				listCityId.innerHTML = '<option value="">Toàn quốc</option>';
 				listCities.cities.forEach(city => {
 					listCityId.innerHTML += `<option value="${city._id}">${city.name}</option>`
@@ -461,6 +394,45 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			.catch(err => {
 				console.log(err);
 			});
+	}
+
+	async function showPostsPriority() {
+		try {
+			const listPostPriority = await getPostsAcceptByPriorityAPI();
+			if (listPostPriority.count > 0) {
+				let listPostPriorityByCategory = [];
+				listPostPriority.posts.forEach(post => {
+					if (post.category._id == categoryId) {
+						listPostPriorityByCategory.push(post);
+					}
+				});
+
+				console.log(listPostPriorityByCategory);
+				listPostPriorityId.innerHTML = '<h2 class="sear-head fer">Tin ưu tiên</h2>';
+				if (listPostPriorityByCategory.length > 0) {
+
+					let conditionFor = listPostPriorityByCategory.length > 8 ? 8 : listPostPriorityByCategory.length;
+					for (let i = 0; i < conditionFor; i++) {
+						console.log(listPostPriorityByCategory[i])
+						listPostPriorityId.innerHTML += `<div class="w3l-featured-ad">
+														<a href="/post-detail/${listPostPriorityByCategory[i].id}">
+															<div class="w3-featured-ad-left">
+																<img src="${listPostPriorityByCategory[i].images[0]}" title="ad image" alt="" />
+															</div>
+															<div class="w3-featured-ad-right">
+																<h4>${listPostPriorityByCategory[i].title}</h4>
+																<p>${Tao_Chuoi_The_hien_So_nguyen_duong(listPostPriorityByCategory[i].price)} ₫</p>
+															</div>
+															<div class="clearfix"></div>
+														</a>
+													</div>`;
+					}
+				}
+			}
+		}
+		catch (err) {
+			console.log(err);
+		}
 	}
 
 </script>

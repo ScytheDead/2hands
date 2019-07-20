@@ -5,56 +5,17 @@
 </script>
 
 <head>
-	<title>Resale_v2 a Classified ads Category Flat Bootstrap Responsive Website Template | Single :: w3layouts</title>
-	<link rel="stylesheet" href="../template/css/bootstrap.min.css"><!-- bootstrap-CSS -->
-	<link rel="stylesheet" href="../template/css/bootstrap-select.css"><!-- bootstrap-select-CSS -->
-	<link href="../template/css/style.css" rel="stylesheet" type="text/css" media="all" /><!-- style.css -->
-	<link rel="stylesheet" href="../template/css/font-awesome.min.css" /><!-- fontawesome-CSS -->
-	<link rel="stylesheet" href="../template/css/menu_sideslide.css" type="text/css" media="all"><!-- Navigation-CSS -->
-	<!-- meta tags -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-	<!-- //meta tags -->
-	<!--fonts-->
-	<link href='//fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
-	<link
-		href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
-		rel='stylesheet' type='text/css'>
-	<!--//fonts-->
 
 	{{!-- IMPORT MESSAGE CSS --}}
-	<link rel="stylesheet" href="../message/css/style.css">
+	<link rel="stylesheet" href="/message/css/style.css">
 	{{!-- // IMPORT MESSAGE CSS --}}
 
-	{{!-- IMPORT MY LIBRARY --}}
-	<!--css-->
-	<link rel="stylesheet" href="../css/style.css">
-	<!-- js -->
-	<script src="../js/connectAPI.js"></script>
-	<script src="../js/handle.js"></script>
-	{{!-- // IMPORT MY LIBRARY --}}
 
-	<script type="text/javascript" src="../template/js/jquery.min.js"></script>
-	<!-- js -->
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="../template/js/bootstrap.js"></script>
-	<script src="../template/js/bootstrap-select.js"></script>
+	<link rel="stylesheet" href="/css/chat.css">
 
-
-	<!-- //language-select -->
-	<link rel="stylesheet" href="../template/css/flexslider.css" media="screen" /><!-- flexslider css -->
-
-	{{!-- template chat --}}
-	<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-
-	<link rel="stylesheet" href="../css/chat.css">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
 		integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	{{!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> --}}
 	<link rel="stylesheet" type="text/css"
 		href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 	<script type="text/javascript"
@@ -85,8 +46,7 @@
 							<li class="active">
 								<div class="d-flex bd-highlight">
 									<div class="img_cont">
-										<img src="https://devilsworkshop.org/files/2013/01/enlarged-facebook-profile-picture.jpg"
-											class="rounded-circle user_img">
+										<img src="/images/user_icon.png" class="rounded-circle user_img">
 										<span class="online_icon"></span>
 									</div>
 									<div class="user_info">
@@ -105,18 +65,15 @@
 
 				<div class="card">
 					<div class="card-body msg_card_body">
-						<img src="../images/user_icon.png" alt="">
+						<img src="/images/user_icon.png" alt="">
 					</div>
 				</div>
 
 			</div>
 		</div>
 </body>
-<!-- Navigation-JavaScript -->
-<script src="../template/js/classie.js"></script>
-<script src="../template/js/main.js"></script>
 
-<script src="../js/moment.js"></script>
+<script src="/js/moment.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
@@ -258,7 +215,7 @@
 
 		contactRightId.innerHTML = chuoiHTML;
 
-		socket.emit('client-join-room-chat', { messageId: messageId, userId: user.id, flag: 1 });
+		socket.emit('client-join-room-chat', { messageId: messageId, userId: user.id });
 
 	}
 
@@ -327,7 +284,7 @@
 	}
 
 	function drawBorderDetailChat(messageDetail) {
-				const chuoiHTML = `
+		const chuoiHTML = `
 				<div class="card">
 					<div class="card-header msg_head">
 						<div class="d-flex bd-highlight">
@@ -356,10 +313,13 @@
 					<div class="card-body msg_card_body" id="contentDetailMessageId">
 
 					</div>
+					<div id="typingId">
+						
+					</div>
 
 					<div class="card-footer">
 						<div class="input-group">
-							<textarea id="contentMessageId" onkeyup="keyCode(event)" class="form-control type_msg"
+							<textarea id="contentMessageId" onkeyup="keyCode(event)" onkeydown="userTyping(event)" class="form-control type_msg"
 								placeholder="Type your message..."></textarea>
 							<div class="input-group-append">
 								<span class="input-group-text send_btn" onclick="sendMessage()" ><i class="fa fa-paper-plane-o"></i></span>
@@ -367,6 +327,40 @@
 						</div>
 					</div>
 				</div>`;
-				return chuoiHTML;
+		return chuoiHTML;
+	}
+
+	socket.on('someone-typing', data => {
+		if (user.id != data.userIdTyping) {
+			typingId.innerHTML = `<img src="${Dia_chi_Dich_vu}/${data.avatarUserTyping}" height="40" width="40"><img src="/images/typing.gif">`
+			typingId.style.padding = '1.25rem'
+			loadDownMessage();
+		}
+	});
+
+	socket.on('someone-pause-typing', userIdPauseTyping => {
+		if (user.id != userIdPauseTyping) {
+			typingId.innerHTML = '';
+			typingId.style.padding = '0'
+			loadDownMessage();
+		}
+	});
+
+	var timeOutTyping;
+	function userTyping(event) {
+		if (event.keyCode != 13) {
+			let data = {
+				avatar: user.avatar,
+				name: user.name,
+				userId: user.id,
+				messageId: messageId
 			}
+			socket.emit("user-typing", data);
+
+			clearTimeout(timeOutTyping);
+			timeOutTyping = setTimeout(() => {
+				socket.emit("user-pause-typing", data);
+			}, 1500);
+		}
+	}
 </script>
