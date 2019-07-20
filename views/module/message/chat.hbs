@@ -331,15 +331,15 @@
 	}
 
 	socket.on('someone-typing', data => {
-		if (user.id != data.userIdTyping) {
+		if (user.id != data.userIdTyping && messageId == data.messageIdTyping) {
 			typingId.innerHTML = `<img src="${Dia_chi_Dich_vu}/${data.avatarUserTyping}" height="40" width="40"><img src="/images/typing.gif">`
 			typingId.style.padding = '1.25rem'
 			loadDownMessage();
 		}
 	});
 
-	socket.on('someone-pause-typing', userIdPauseTyping => {
-		if (user.id != userIdPauseTyping) {
+	socket.on('someone-pause-typing', data => {
+		if (user.id != data.userIdPauseTyping && messageId == data.messageIdPauseTyping) {
 			typingId.innerHTML = '';
 			typingId.style.padding = '0'
 			loadDownMessage();

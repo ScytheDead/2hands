@@ -155,6 +155,7 @@ io.on('connection', socket => {
         console.log(data);
         let messageId = data.messageId;
         let response = {
+            messageIdTyping: messageId,
             nameUserTyping: data.name,
             userIdTyping: data.userId,
             avatarUserTyping: data.avatar
@@ -166,8 +167,12 @@ io.on('connection', socket => {
         console.log(data);
         let userIdPauseTyping = data.userId;
         let messageId = data.messageId;
+        let response = {
+            userIdPauseTyping: userIdPauseTyping,
+            messageIdPauseTyping: messageId
+        }
 
-        io.sockets.in(messageId).emit("someone-pause-typing", userIdPauseTyping);
+        io.sockets.in(messageId).emit("someone-pause-typing", response);
     });
 
     socket.on('disconnect', () => {
