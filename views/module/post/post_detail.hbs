@@ -1,81 +1,7 @@
 <head>
 	<title>Resale_v2 a Classified ads Category Flat Bootstrap Responsive Website Template | Single :: w3layouts</title>
-	<link rel="stylesheet" href="../template/css/bootstrap.min.css"><!-- bootstrap-CSS -->
-	<link rel="stylesheet" href="../template/css/bootstrap-select.css"><!-- bootstrap-select-CSS -->
-	<link href="../template/css/style.css" rel="stylesheet" type="text/css" media="all" /><!-- style.css -->
-	<link rel="stylesheet" href="../template/css/font-awesome.min.css" /><!-- fontawesome-CSS -->
-	<link rel="stylesheet" href="../template/css/menu_sideslide.css" type="text/css" media="all"><!-- Navigation-CSS -->
-	<!-- meta tags -->
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<script
-		type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-	<!-- //meta tags -->
-	<!--fonts-->
-	<link href='//fonts.googleapis.com/css?family=Ubuntu+Condensed' rel='stylesheet' type='text/css'>
-	<link
-		href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
-		rel='stylesheet' type='text/css'>
-	<!--//fonts-->
-
-
-	{{!-- IMPORT MY LIBRARY --}}
-	<!--css-->
-	<link rel="stylesheet" href="../css/style.css">
-	<!-- js -->
-	<script src="../js/connectAPI.js"></script>
-	<script src="../js/handle.js"></script>
-	{{!-- // IMPORT MY LIBRARY --}}
-
-
-	<script type="text/javascript" src="../template/js/jquery.min.js"></script>
-	<!-- js -->
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="../template/js/bootstrap.js"></script>
-	<script src="../template/js/bootstrap-select.js"></script>
-	<script>
-		$(document).ready(function () {
-			var mySelect = $('#first-disabled2');
-
-			$('#special').on('click', function () {
-				mySelect.find('option:selected').prop('disabled', true);
-				mySelect.selectpicker('refresh');
-			});
-
-			$('#special2').on('click', function () {
-				mySelect.find('option:disabled').prop('disabled', false);
-				mySelect.selectpicker('refresh');
-			});
-
-			$('#basic2').selectpicker({
-				liveSearch: true,
-				maxOptions: 1
-			});
-		});
-	</script>
-	<!-- language-select -->
-	<script type="text/javascript" src="js/jquery.leanModal.min.js"></script>
-
-	<!-- Source -->
-	<script src="../template/js/jquery.uls.data.js"></script>
-	<script src="../template/js/jquery.uls.data.utils.js"></script>
-	<script src="../template/js/jquery.uls.lcd.js"></script>
-	<script src="../template/js/jquery.uls.languagefilter.js"></script>
-	<script src="../template/js/jquery.uls.regionfilter.js"></script>
-	<script src="../template/js/jquery.uls.core.js"></script>
-	<script>
-		$(document).ready(function () {
-			$('.uls-trigger').uls({
-				onSelect: function (language) {
-					var languageName = $.uls.data.getAutonym(language);
-					$('.uls-trigger').text(languageName);
-				},
-				quickList: ['en', 'hi', 'he', 'ml', 'ta', 'fr'] //FIXME
-			});
-		});
-	</script>
-	<!-- //language-select -->
-	<link rel="stylesheet" href="../template/css/flexslider.css" media="screen" /><!-- flexslider css -->
+	
+	
 </head>
 
 <body>
@@ -107,7 +33,7 @@
 						</ul>
 					</div>
 					<!-- FlexSlider -->
-					<script defer src="../template/js/jquery.flexslider.js"></script>
+					{{!-- <script defer src="../template/js/jquery.flexslider.js"></script> --}}
 
 					<script>
 						// Can also be used with $(document).ready()
@@ -120,20 +46,8 @@
 					</script>
 					<!-- //FlexSlider -->
 
-
-					{{!-- bootstrap 4 --}}
-					{{!-- <link rel="stylesheet"
-						href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-						integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-						crossorigin="anonymous">
-					<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-						integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-						crossorigin="anonymous"></script> --}}
-					{{!-- // bootstrap 4 --}}
-
-
 					<div class="product-details">
-						<h4><img style="border-radius: 50px; border: 1px solid #909090;" id="avatarId" src="../images/user_icon.png" height="70" width="70" alt=""> <strong
+						<h4><img style="border-radius: 50px; border: 1px solid #909090;" id="avatarId" src="/images/user_icon.png" height="70" width="70" alt=""> <strong
 								id="nameId" style="margin-left: 2rem"> Huy</strong> <button onclick="subscribePost()"
 								class="btn btn-danger pull-right ">Lưu tin <i id="subscribeId"
 									class="fa fa-heart-o"></i>
@@ -219,41 +133,7 @@
 	<!--//single-page-->
 
 </body>
-<!-- Navigation-JavaScript -->
-<script src="../template/js/classie.js"></script>
-<script src="../template/js/main.js"></script>
 
-
-<!-- //Navigation-JavaScript -->
-<!-- here stars scrolling icon -->
-<script type="text/javascript">
-	$(document).ready(function () {
-		/*
-			var defaults = {
-			containerID: 'toTop', // fading element id
-			containerHoverID: 'toTopHover', // fading element hover id
-			scrollSpeed: 1200,
-			easingType: 'linear' 
-			};
-		*/
-
-		$().UItoTop({ easingType: 'easeOutQuart' });
-
-	});
-</script>
-<!-- start-smoth-scrolling -->
-<script type="text/javascript" src="../template/js/move-top.js"></script>
-<script type="text/javascript" src="../template/js/easing.js"></script>
-<script type="text/javascript">
-	jQuery(document).ready(function ($) {
-		$(".scroll").click(function (event) {
-			event.preventDefault();
-			$('html,body').animate({ scrollTop: $(this.hash).offset().top }, 1000);
-		});
-	});
-</script>
-<!-- start-smoth-scrolling -->
-<!-- //here ends scrolling icon -->
 
 <script>
 	var postId = `{{postId}}`;
@@ -280,7 +160,7 @@
 				cityId.innerHTML = post.post.city.name;
 				momentId.innerHTML = post.post.moment;
 
-				avatarId.src = post.post.user.avatar == undefined ? '../images/user_icon.png' : Dia_chi_Dich_vu + '/' + post.post.user.avatar;
+				avatarId.src = post.post.user.avatar == undefined ? '/images/user_icon.png' : Dia_chi_Dich_vu + '/' + post.post.user.avatar;
 				nameId.innerHTML = post.post.user.name == undefined ? post.post.user.phoneNumber : post.post.user.name;
 				sellerId.innerHTML = post.post.seller == 1 ? 'Cần bán' : 'Cần mua';
 				phoneNumberId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(post.post.user.phoneNumber);
