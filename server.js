@@ -102,9 +102,11 @@ io.on('connection', socket => {
                                     if (result1 === undefined) {
                                         userSell.messages.push(messageId);
                                         userSell.save();
+                                        socket.broadcast.emit('server-send-new-message', userSell._id);
                                     } else if (result2 === undefined) {
                                         userBuy.messages.push(messageId);
                                         userBuy.save();
+                                        socket.broadcast.emit('server-send-new-message', userBuy._id);
                                     }
 
                                     if (message.userSell.toString() === userId.toString()) {

@@ -36,12 +36,22 @@
 	if (sessionStorage.getItem('token') != null) {
 		var user = decodedJWT(sessionStorage.getItem('token'));
 		getUser();
-
-		socket.on('server-send-message', messageChatAndNameUser => {
-			//console.log(messageChatAndNameUser);
-			getUser();
-		});
 	}
+
+	socket.on('server-send-message', messageChatAndNameUser => {
+		//console.log(messageChatAndNameUser);
+		if (sessionStorage.getItem('token') != null) {
+			getUser();
+		}
+	});
+
+	socket.on('server-send-new-message', userId => {
+		if (sessionStorage.getItem('token') != null) {
+			if (user.id == userId) {
+				getUser();
+			}
+		}
+	});
 
 	function showMessagesNotification(user) {
 		//joinRoomChat(user.user);
