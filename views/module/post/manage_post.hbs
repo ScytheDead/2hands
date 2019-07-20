@@ -216,7 +216,7 @@
             if (status == 1) {
                 chuoi_HTML += `<td>
                                 <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
-                                <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button>
+                                {{!-- <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button> --}}
                                 <button class="btn btn-outline-secondary btn-lg mt-2" onclick="hidePost('${post.id}')">Ẩn tin</button>
                                 <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
                             </td>`
@@ -227,13 +227,13 @@
             } else if (status == -1) {
                 chuoi_HTML += `<td>
                                 <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
-                                <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button>
+                                {{!-- <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button> --}}
                                 <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
                             </td>`
             } else if (status == -2) {
                 chuoi_HTML += `<td>
                                 <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
-                                <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button>
+                                {{!-- <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button> --}}
                                 <button class="btn btn-outline-info btn-lg mt-2" onclick="showPost('${post.id}')">Hiện tin</button>
                                 <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
                             </td>`

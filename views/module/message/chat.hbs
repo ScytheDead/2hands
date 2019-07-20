@@ -148,12 +148,14 @@
 
 	function sendMessage() {
 		let contentMessage = contentMessageId.value.replace('\n', '');
-		let userAndContentMessage = {
+		if(contentMessage != ''){
+			let userAndContentMessage = {
 			messageId: messageId,
 			messageChat: contentMessage,
 			user: user.id
 		}
 		socket.emit('client-send-message', userAndContentMessage);
+		}
 		contentMessageId.value = ``;
 	}
 
@@ -332,7 +334,7 @@
 
 	socket.on('someone-typing', data => {
 		if (user.id != data.userIdTyping && messageId == data.messageIdTyping) {
-			typingId.innerHTML = `<img src="${Dia_chi_Dich_vu}/${data.avatarUserTyping}" height="40" width="40"><img src="/images/typing.gif">`
+			typingId.innerHTML = `<img src="${Dia_chi_Dich_vu}/${data.avatarUserTyping == undefined ? '/images/user_icon.png' : data.avatarUserTyping}" height="40" width="40"><img src="/images/typing.gif">`
 			typingId.style.padding = '1.25rem'
 			loadDownMessage();
 		}
