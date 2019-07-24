@@ -108,6 +108,7 @@
 		let listMessageId = user.messages.map(message => message._id);
 		console.log(listMessageId);
 		let data = {
+			userId: user._id,
 			listMessagesId: listMessageId
 		}
 		socket.emit('client-currently-logged', data);

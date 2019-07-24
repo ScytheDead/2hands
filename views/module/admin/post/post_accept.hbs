@@ -62,6 +62,39 @@
     </div>
 </div>
 
+<button type="button" id="modalRejectId" class="btn btn-primary d-none" data-toggle="modal" data-target="#myModal">
+    Open modal
+</button>
+
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Nhập lý cho từ chối</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="reasonRejectId">Lý do: </label>
+                    <input type="text" class="form-control" name="" id="reasonRejectId" aria-describedby="helpId"
+                        placeholder="Nơi nhập lý do...">
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnRejectId" data-dismiss="modal">Từ chối</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
 
@@ -93,29 +126,6 @@
         }
     }
 
-    function rejectPost(id) {
-        rejectPostAPI(sessionStorage.getItem('token'), id)
-            .then(result => {
-                messageSuccess(result);
-                if (filterCategoryId.value === 'all') {
-                    showAllTablePost();
-                } else {
-                    let nameCategory = filterCategoryId.options[filterCategoryId.selectedIndex].text;
-
-                    let indexPost = listPostsByCategory.findIndex(post => post.id === id)
-                    listPostsByCategory.splice(indexPost, 1);
-
-                    showTablePostsAccept(listPostsByCategory);
-
-                    listCountId.innerHTML = `Danh sách tin đã duyệt - ${nameCategory}: ${listPostsByCategory.length}`;
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                messageError(err);
-            })
-    }
-
     function showAllTablePost() {
         getPostsAcceptAPI(sessionStorage.getItem('token'))
             .then(listPostsAccept => {
@@ -144,7 +154,7 @@
                 <td>${getDateFormat(post.updatedAt)}</td>
                 <td>${post.moment}</td>
                 <td><button class="btn btn-outline-warning mt-2" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/a_${post.id}'">Chi tiết</button>
-                    <button class="btn btn-outline-${post.priority == 0 ? 'primary' : 'secondary'} mt-2 ${post.id}" onclick="priorityOrNonPriorityPost('${post.id}')">${post.priority == 0 ? 'Ưu tiên' : 'Hủy ưu tiên'}</button>
+                    <button class="btn btn-outline-${post.priority.enable == 0 ? 'primary' : 'secondary'} mt-2 ${post.id}" onclick="priorityOrNonPriorityPost('${post.id}')">${post.priority.enable == 0 ? 'Ưu tiên' : 'Hủy ưu tiên'}</button>
                     <button class="btn btn-outline-danger mt-2" onclick="rejectPost('${post.id}')">Từ chối</button>
                 </td>
             </tr>`;
@@ -183,21 +193,14 @@
                 if (filterCategoryId.value === 'all') {
                     showAllTablePost();
                 } else {
-                    let nameCategory = filterCategoryId.options[filterCategoryId.selectedIndex].text;
-
-                    showTablePostsAccept(listPostsByCategory);
                     let btn = document.getElementsByClassName(postId);
                     console.log(btn);
                     if (result.message == 'Non priority post success') {
                         btn[0].childNodes[0].data = 'Ưu tiên';
                         btn[0].className = 'btn btn-outline-primary mt-2 ' + postId;
-                        //btn[0].classList.remove('btn-outline-secondary');
-                        //btn[0].classList.add('btn-outline-primary');
                     } else if (result.message == 'Priority post success') {
                         btn[0].childNodes[0].data = 'Hủy ưu tiên';
                         btn[0].className = 'btn btn-outline-secondary mt-2 ' + postId;
-                        //btn[0].classList.remove('btn-outline-primary');
-                        //btn[0].classList.add('btn-outline-secondary');
                     }
                 }
             })
@@ -208,5 +211,39 @@
     }
 
     //getPostPriorityByUserAPI
+
+
+    function rejectPost(id) {
+        modalRejectId.click();
+        btnRejectId.onclick = () => {
+            let reasonReject = reasonRejectId.value;
+            if (reasonReject.trim() == '') {
+                showToast('Xin nhập lý do để từ chối tin này !');
+            } else {
+                let reason = { reason: reasonReject };
+                rejectPostAPI(sessionStorage.getItem('token'), id, reason)
+                    .then(result => {
+                        messageSuccess(result);
+                        if (filterCategoryId.value === 'all') {
+                            showAllTablePost();
+                        } else {
+                            let nameCategory = filterCategoryId.options[filterCategoryId.selectedIndex].text;
+                            let indexPost = listPostsByCategory.findIndex(post => post.id === id)
+                            listPostsByCategory.splice(indexPost, 1);
+
+                            showTablePostsAccept(listPostsByCategory);
+
+                            listCountId.innerHTML = `Danh sách tin đã duyệt - ${nameCategory}: ${listPostsByCategory.length}`;
+                            
+                            reasonRejectId.value = '';
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        messageError(err);
+                    });
+            }
+        }
+    }
 
 </script>

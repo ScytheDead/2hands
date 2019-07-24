@@ -13,11 +13,13 @@
                     aria-label="Search"> --}}
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="btn btn-secondary my-2 my-sm-0" href="/"><i class="fa fa-search" aria-hidden="true"></i> Tìm rao vặt</a>
+                        <a class="btn btn-secondary my-2 my-sm-0" href="/"><i class="fa fa-search"
+                                aria-hidden="true"></i> Tìm rao vặt</a>
                     </li>
 
                     <li class="nav-item ml-2">
-                        <a class="btn btn-secondary" href="#"><i class="fa fa-bell-o" aria-hidden="true"></i> Thông báo</a>
+                        <a class="btn btn-secondary" href="#"><i class="fa fa-bell-o" aria-hidden="true"></i> Thông
+                            báo</a>
                     </li>
                 </ul>
             </form>
@@ -29,14 +31,15 @@
                 <li id="TH_dropdown_all" class="nav-item dropdown d-none">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img id="TH_avatar"
-                            src="images/login_icon2.png" height="30" width="30" alt="avatar"></a>
+                            src="/images/login_icon2.png" height="30" width="30" alt="avatar"></a>
                     <div id="TH_dropdown" class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                     </div>
                 </li>
                 {{!-- end dropdown --}}
                 <li class="nav-item">
-                    <button id="btnCreatePost" onclick="window.location='/dang-tin'" class="nav-link btn text-light btn-info ml-3">Đăng tin</button>
+                    <button id="btnCreatePost" onclick="window.location='/dang-tin'"
+                        class="nav-link btn text-light btn-info ml-3">Đăng tin</button>
                 </li>
             </ul>
 
@@ -77,20 +80,20 @@
             </div>
             <div class="modal-body">
                 <div id="TH_errorMessage"></div>
-            <form action="">
-                <div class="form-group">
-                    <label for="phoneNumber"></label>
-                    <input type="text" class="form-control" autocomplete="username" maxlength="11" required="required" 
-                    id="TH_phoneNumber" aria-describedby="helpId"
-                        placeholder="Nhập số điện thoại">
-                </div>
+                <form action="">
+                    <div class="form-group">
+                        <label for="phoneNumber"></label>
+                        <input type="text" class="form-control" autocomplete="username" maxlength="11"
+                            required="required" id="TH_phoneNumber" aria-describedby="helpId"
+                            placeholder="Nhập số điện thoại">
+                    </div>
 
-                <div class="form-group">
-                    <label for="password"></label>
-                    <input type="password" class="form-control" autocomplete="current-password" id="TH_password" aria-describedby="helpId"
-                        placeholder="Nhập mật khẩu">
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label for="password"></label>
+                        <input type="password" class="form-control" autocomplete="current-password" id="TH_password"
+                            aria-describedby="helpId" placeholder="Nhập mật khẩu">
+                    </div>
+                </form>
 
                 <button class="btn btn-success" id="showModalRegister" style="cursor:pointer"></button>
 
@@ -105,20 +108,24 @@
 </div>
 
 <!-- Modal Thông báo -->
-    <button type="button" id="modal_ThongBao" class="btn btn-primary btn-lg d-none" data-toggle="modal" data-target="#modelThongbao">
-        Launch
-    </button>
+<button type="button" id="modal_ThongBao" class="btn btn-primary btn-lg d-none" data-toggle="modal"
+    data-target="#modelThongbao">
+    Launch
+</button>
 
-    <!-- Modal Thông báo -->
-    <div class="modal fade" id="modelThongbao" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title text-success text-center" id="modelTitleThongBao"></h4>
-                </div>
-                <div class="modal-footer d-none">
-                    <button type="button" id="Tat_Thong_bao" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+<!-- Modal Thông báo -->
+<div class="modal fade" id="modelThongbao" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-success text-center" id="modelTitleThongBao"></h4>
+            </div>
+            <div class="modal-footer d-none">
+                <button type="button" id="Tat_Thong_bao" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
+
+<div id="toast"></div>

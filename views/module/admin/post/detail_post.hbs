@@ -98,6 +98,39 @@
     </div>
 </div>
 
+<button type="button" id="modalRejectId" class="btn btn-primary d-none" data-toggle="modal" data-target="#myModal">
+    Open modal
+</button>
+
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Nhập lý cho từ chối</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="reasonRejectId">Lý do: </label>
+                    <input type="text" class="form-control" name="" id="reasonRejectId" aria-describedby="helpId"
+                        placeholder="Nơi nhập lý do...">
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnRejectId" data-dismiss="modal">Từ chối</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
     var idPost = `{{postId}}`
     var kindPost = `{{kindPost}}`
@@ -140,40 +173,40 @@
         showImageSelectedId.innerHTML += chuoi_HTML;
     }
 
-    function accept() {
-        acceptPost(idPost);
-        setTimeout(() => {
-            goBack();
-        }, 1500);
-    }
-
-    function reject() {
-        rejectPost(idPost);
-        setTimeout(() => {
-            goBack();
-        }, 1500);
-    }
-
-
-    function acceptPost(id) {
-        acceptPostAPI(sessionStorage.getItem('token'), id)
+    function acceptPost() {
+        acceptPostAPI(sessionStorage.getItem('token'), idPost)
             .then(result => {
                 messageSuccess(result);
+                setTimeout(() => {
+                    goBack();
+                }, 1500);
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
-    function rejectPost(id) {
-        rejectPostAPI(sessionStorage.getItem('token'), id)
-            .then(result => {
-                messageSuccess(result);
-            })
-            .catch(err => {
-                console.log(err);
-                messageError(err);
-            })
+    function rejectPost() {
+        modalRejectId.click();
+        btnRejectId.onclick = () => {
+            let reasonReject = reasonRejectId.value;
+            if (reasonReject.trim() == '') {
+                showToast('Xin nhập lý do để từ chối tin này !');
+            } else {
+                let reason = { reason: reasonReject };
+                rejectPostAPI(sessionStorage.getItem('token'), idPost, reason)
+                    .then(result => {
+                        messageSuccess(result);
+                        setTimeout(() => {
+                            goBack();
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        messageError(err);
+                    });
+            }
+        }
     }
 
     function goBack() {
@@ -183,7 +216,7 @@
             window.location = Dia_chi_Dich_vu + '/admin/post-accept'
         } else if (kindPost === 'r') {
             window.location = Dia_chi_Dich_vu + '/admin/post-reject'
-        } else if(kindPost === 'u'){
+        } else if (kindPost === 'u') {
             window.location = Dia_chi_Dich_vu + '/posts'
         }
     }
@@ -191,16 +224,17 @@
     function hienThiThaoTac() {
         let chuoi_HTML = ``;
         if (kindPost === 'w') {
-            chuoi_HTML +=`
-            <button class="btn btn-success" onclick="accept()">Duyệt</button>
-            <button class="btn btn-outline-danger ml-2" onclick="reject()" id="rejectId">Từ chối</button>`
+            chuoi_HTML += `
+            <button class="btn btn-success" onclick="acceptPost()">Duyệt</button>
+            <button class="btn btn-outline-danger ml-2" onclick="rejectPost()" id="rejectId">Từ chối</button>`
         } else if (kindPost === 'a') {
-            chuoi_HTML += `<button class="btn btn-outline-danger ml-2" onclick="reject()">Từ chối</button>`
+            chuoi_HTML += `<button class="btn btn-outline-danger ml-2" onclick="rejectPost()">Từ chối</button>`
         } else if (kindPost === 'r') {
-            chuoi_HTML += `<button class="btn btn-success" onclick="accept()">Duyệt</button>`
+            chuoi_HTML += `<button class="btn btn-success" onclick="acceptPost()">Duyệt</button>`
         }
-        chuoi_HTML+=`<button class="btn btn-outline-warning ml-2" onclick="goBack()">Hủy</button>`
+        chuoi_HTML += `<button class="btn btn-outline-warning ml-2" onclick="goBack()">Hủy</button>`
 
         thaotacId.innerHTML = chuoi_HTML;
     }
+
 </script>
