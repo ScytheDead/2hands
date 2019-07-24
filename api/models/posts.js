@@ -15,8 +15,12 @@ const postSchema = mongoose.Schema({
     city: { type: mongoose.Schema.Types.ObjectId, ref: 'City', required: true },
     images: [{ type: String, required: true }],
     seller: { type: Boolean, required: true},   //1: seller, 0: buyer
-    priority: { type: Boolean, default: false },    //1: tin được ưu tiên, 0: không được ưu tiên
+    priority: { 
+        enable: { type: Boolean, default: false }, //1: tin được ưu tiên, 0: không được ưu tiên
+        expired: { type: Date }
+    },    
     status: { type: Number, default: 0, min: -2, max: 1 },  //0: pending, 1: show, -1: reject, -2: hidden
+    reason: { type: String },
     note: { type: String },
 },{ timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 

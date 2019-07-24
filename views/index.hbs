@@ -116,9 +116,9 @@
                 let conditionFor = listPostPriority.count > 16 ? 16 : listPostPriority.count;
                 for (let i = 0; i < conditionFor; i++) {
                     chuoi_HTML_1_Row += ` <div class="col-md-3 biseller-column">
-                                                <a href="single.html">
+                                                <a href="/post-detail/${listPostPriority.posts[i].id}">
                                                     <img src="${Dia_chi_Dich_vu}/${listPostPriority.posts[i].images[0]}" width="232" height="232" alt="" />
-                                                    <span class="price">${Tao_Chuoi_The_hien_So_nguyen_duong(listPostPriority.posts[i].price)}</span>
+                                                    <span class="price">${Tao_Chuoi_The_hien_So_nguyen_duong(listPostPriority.posts[i].price)} ₫</span>
                                                 </a>
                                                 <div class="w3-ad-info">
                                                     <h5>${listPostPriority.posts[i].title}</h5>

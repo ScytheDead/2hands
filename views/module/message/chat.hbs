@@ -148,13 +148,13 @@
 
 	function sendMessage() {
 		let contentMessage = contentMessageId.value.replace('\n', '');
-		if(contentMessage != ''){
+		if (contentMessage != '') {
 			let userAndContentMessage = {
-			messageId: messageId,
-			messageChat: contentMessage,
-			user: user.id
-		}
-		socket.emit('client-send-message', userAndContentMessage);
+				messageId: messageId,
+				messageChat: contentMessage,
+				user: user.id
+			}
+			socket.emit('client-send-message', userAndContentMessage);
 		}
 		contentMessageId.value = ``;
 	}
@@ -231,6 +231,7 @@
 		});
 
 		listContentMessages.map(message => {
+			console.log(message);
 			let div = document.createElement('div');
 			let index = data.messageLeft.findIndex(messageLeft => messageLeft._id === message._id);
 			if (index == -1) {
@@ -240,7 +241,7 @@
 				div.innerHTML = `
 				<div class="msg_cotainer_send">
 					${message.content}
-					<span class="msg_time_send">${moment(message.time).calendar()}</span>
+					<span class="msg_time_send" ${message.seen == 1 ? 'style="bottom: -30px;"' : ''}>${moment(message.time).calendar()} <br>${message.seen == 1 ? 'Đã xem' : ''}</span>
 				</div>
 				<div class="img_cont_msg">
 					<img src="${Dia_chi_Dich_vu}/${data.avatarRight === undefined ? 'images/user_icon.png' : data.avatarRight}"
@@ -258,7 +259,7 @@
 				</div>
 				<div class="msg_cotainer">
 					${message.content}
-					<span class="msg_time">${moment(message.time).calendar()}</span>
+					<span class="msg_time">${moment(message.time).calendar()} </span>
 				</div>
 				`
 			}

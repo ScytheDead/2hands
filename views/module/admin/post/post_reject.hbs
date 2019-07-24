@@ -52,8 +52,7 @@
                         <th>Tiêu đề</th>
                         <th>Giá</th>
                         <th>Loại tin</th>
-                        <th>Ngày tạo</th>
-                        <th>Lần cập nhật gần nhất</th>
+                        <th>Lý do từ chối</th>
                         <th>Cách đây</th>
                         <th>Thao tác</th>
                     </tr>
@@ -145,8 +144,7 @@
                 <td>${post.title}</td>
                 <td>${post.price}</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
-                <td>${getDateFormat(post.createdAt)}</td>
-                <td>${getDateFormat(post.updatedAt)}</td>
+                <td><p class="text-danger">${post.reason == undefined ? '' : post.reason}</p></td>
                 <td>${post.moment}</td>
                 <td><button class="btn btn-outline-warning mt-2" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/r_${post.id}'">Chi tiết</button>
                     <button class="btn btn-outline-success mt-2" onclick="acceptPost('${post.id}')">Duyệt</button>

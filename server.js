@@ -30,9 +30,11 @@ io.on('connection', socket => {
     socket.on('client-currently-logged', data => {
         let listMessagesId = data.listMessagesId;
         socket.room = listMessagesId;
+        socket.userId = data.userId;
 
         listMessagesId.forEach(messageId => {
             socket.join(messageId);
+            io.sockets.in(messageId).emit('online', data.userId);
         });
     });
 
@@ -50,6 +52,7 @@ io.on('connection', socket => {
                 .populate('userBuy', 'phoneNumber name avatar address city')
                 .exec()
                 .then(message => {
+                    //console.log(message)
                     if (data.userId.toString() === message.userBuy._id.toString()) {
                         socket.emit('server-response-client-join-room-chat', {
                             nameLeft: message.userSell.name === undefined ? message.userSell.phoneNumber : message.userSell.name,
@@ -60,6 +63,9 @@ io.on('connection', socket => {
                             messageRight: message.contentChatUserBuy,
                             avatarRight: message.userBuy.avatar
                         });
+
+                        message.contentChatUserSell.forEach(contentChat => contentChat.seen = 1);
+                        message.save();
                     } else {
                         socket.emit('server-response-client-join-room-chat', {
                             nameLeft: message.userBuy.name === undefined ? message.userBuy.phoneNumber : message.userBuy.name,
@@ -70,6 +76,9 @@ io.on('connection', socket => {
                             messageRight: message.contentChatUserSell,
                             avatarRight: message.userSell.avatar,
                         });
+
+                        message.contentChatUserBuy.forEach(contentChat => contentChat.seen = 1);
+                        message.save();
                     }
                 })
                 .catch(err => {
@@ -110,6 +119,9 @@ io.on('connection', socket => {
                                     }
 
                                     if (message.userSell.toString() === userId.toString()) {
+                                        message.contentChatUserBuy.forEach(contentChat => contentChat.seen = 1);
+                                        message.save();
+
                                         message.contentChatUserSell.push({
                                             content: messageChat
                                         });
@@ -122,6 +134,9 @@ io.on('connection', socket => {
                                             messageChat: messageChat
                                         }
                                     } else {
+                                        message.contentChatUserSell.forEach(contentChat => contentChat.seen = 1);
+                                        message.save();
+
                                         message.contentChatUserBuy.push({
                                             content: messageChat
                                         });
