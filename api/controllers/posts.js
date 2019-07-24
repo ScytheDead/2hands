@@ -12,7 +12,27 @@ const config = require('../../config');
 const moment = require('moment');
 moment.locale('vi');
 
+// middleware
+exports.change_priority_expired = (req, res, next) => {
+    console.log('this is middleware !!!!');
+    Post.updateMany({
+            'priority.enable': 1,
+            'priority.expired': {
+                $lt: Date.now()
+            }
+        }, {
+            $set:{
+                priority:{
+                    enable: 0,
+                    expired: undefined
+                }
+            }
+        })
+        .exec()
+    next();
+}
 
+// router
 exports.posts_get_all = (req, res) => {
     Post.find()
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
@@ -589,7 +609,7 @@ exports.posts_get_post_by_user_reject = (req, res) => {
             user: userId,
             status: -1
         })
-        .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content city price address images seller priority status reason note created_at updated_at')
         .sort({
             updated_at: -1
         })
@@ -653,7 +673,7 @@ exports.posts_get_post_by_user_priority = (req, res) => {
     const userId = req.params.userId;
     Post.find({
             user: userId,
-            priority: 1,
+            'priority.enable': 1,
             status: 1
         })
         .select('_id user producer classify category title content city price address images seller priority status note created_at updated_at')
@@ -785,11 +805,11 @@ exports.posts_get_post_accept_by_producer = (req, res) => {
 exports.posts_get_post_accept_by_priority = (req, res) => {
     Post.find({
             status: 1,
-            priority: 1
+            'priority.enable': 1
         })
         .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
         .sort({
-            updated_at: 1
+            updated_at: -1
         })
         .populate('user', 'phoneNumber name address avatar')
         .populate('producer', 'title')
@@ -825,7 +845,8 @@ exports.accept_post = async (req, res) => {
             _id: id
         }, {
             $set: {
-                status: 1
+                status: 1,
+                reason: undefined
             }
         })
         .exec()
@@ -851,11 +872,17 @@ exports.reject_post = async (req, res) => {
     }
 
     const id = req.params.postId;
+    const reason = req.body.reason;
     Post.updateOne({
             _id: id
         }, {
             $set: {
-                status: -1
+                status: -1,
+                reason: reason,
+                priority: {
+                    enable: 0,
+                    expired: undefined
+                }
             }
         })
         .exec()
@@ -932,17 +959,26 @@ exports.priority_post = async (req, res) => {
     Post.findById(id)
         .select('priority status')
         .then(post => {
-            console.log(post);
+            let date = new Date();
+            let dayPriority = 1;
+            let timePriority = date.setDate(date.getDate() + dayPriority);
+
             if (post.status == 1) {
-                if (post.priority == false) {
-                    post.priority = 1;
+                if (post.priority.enable == false) {
+                    post.priority = {
+                        enable: true,
+                        expired: timePriority
+                    };
                     post.save(() => {
                         res.status(200).json({
                             message: 'Priority post success'
                         });
                     });
                 } else {
-                    post.priority = 0;
+                    post.priority = {
+                        enable: false,
+                        expired: undefined
+                    };
                     post.save(() => {
                         res.status(200).json({
                             message: 'Non priority post success'
@@ -1008,7 +1044,7 @@ exports.posts_get_post_reject = async (req, res) => {
     Post.find({
             status: -1
         })
-        .select('_id user producer classify category title content price address city images seller priority status note created_at updated_at')
+        .select('_id user producer classify category title content price address city images seller priority status reason note created_at updated_at')
         .sort({
             updated_at: -1
         })
@@ -1093,7 +1129,6 @@ exports.search_post = (req, res) => {
         .populate('city', 'name location type')
         .exec()
         .then(posts => {
-            console.log(posts);
             const response = {
                 count: posts.length,
                 posts: posts.map(doc => {
@@ -1218,6 +1253,7 @@ function returnValueGet(doc) {
         seller: doc.seller,
         priority: doc.priority,
         status: doc.status,
+        reason: doc.reason,
         note: doc.note,
         createdAt: doc.created_at,
         updatedAt: doc.updated_at,

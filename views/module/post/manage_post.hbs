@@ -75,10 +75,7 @@
                                 <h3>Loại tin</h3>
                             </th>
                             <th>
-                                <h3>Ngày tạo</h3>
-                            </th>
-                            <th>
-                                <h3>Lần cập nhật gần nhất</h3>
+                                <h3 id="reasonRejectColumnId">Lý do từ chối</h3>
                             </th>
                             <th>
                                 <h3>Cách đây</h3>
@@ -109,6 +106,8 @@
     btnPostingId.onclick = () => {
         getPostPostingByUserAPI(sessionStorage.getItem('token'), user.id)
             .then(posts => {
+                reasonRejectColumnId.className = 'd-none';
+
                 btnPostingId.classList.add('active');
                 btnWaitingId.classList.remove('active');
                 btnRejectId.classList.remove('active');
@@ -133,6 +132,8 @@
     btnWaitingId.onclick = () => {
         getPostWaitingByUserAPI(sessionStorage.getItem('token'), user.id)
             .then(posts => {
+                reasonRejectColumnId.className = 'd-none';
+
                 btnPostingId.classList.remove('active');
                 btnWaitingId.classList.add('active');
                 btnRejectId.classList.remove('active');
@@ -155,6 +156,8 @@
     btnRejectId.onclick = () => {
         getPostRejectByUserAPI(sessionStorage.getItem('token'), user.id)
             .then(posts => {
+                reasonRejectColumnId.className = '';
+
                 btnPostingId.classList.remove('active');
                 btnWaitingId.classList.remove('active');
                 btnRejectId.classList.add('active');
@@ -178,6 +181,8 @@
     btnHideId.onclick = () => {
         getPostHiddentByUserAPI(sessionStorage.getItem('token'), user.id)
             .then(posts => {
+                reasonRejectColumnId.className = 'd-none';
+
                 btnPostingId.classList.remove('active');
                 btnWaitingId.classList.remove('active');
                 btnRejectId.classList.remove('active');
@@ -203,16 +208,15 @@
         let chuoi_HTML = ``;
         listPosts.forEach(post => {
             chuoi_HTML += `<tr>
-                <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="70" height="50"></td>
-                <td><h5>${post.category.title}</h5></td>
-                <td><h5>${post.classify == undefined ? '' : post.classify.title}</h5></td>
-                <td><h5>${post.producer == undefined ? '' : post.producer.title}</h5></td>
-                <td><h5>${post.title}</h5></td>
-                <td><h5 class="text-danger">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)}₫</h5></td>
-                <td><h5>${post.seller == true ? "Cần bán" : "Cần mua"}</h5></td>
-                <td><h5>${getDateFormat(post.createdAt)}</h5></td>
-                <td><h5>${getDateFormat(post.updatedAt)}</h5></td>
-                <td><h5>${post.moment}</h5></td>`
+                <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="70" height="70"></td>
+                <td><h4>${post.category.title}</h4></td>
+                <td><h4>${post.classify == undefined ? '' : post.classify.title}</h4></td>
+                <td><h4>${post.producer == undefined ? '' : post.producer.title}</h4></td>
+                <td><h4>${post.title}</h4></td>
+                <td><h4 class="text-danger">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)}₫</h4></td>
+                <td><h4>${post.seller == true ? "Cần bán" : "Cần mua"}</h4></td>
+                <td><h3 class="text-danger">${post.reason == undefined ? '' : post.reason}</h3></td>
+                <td><h4>${post.moment}</h4></td>`
             if (status == 1) {
                 chuoi_HTML += `<td>
                                 <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>

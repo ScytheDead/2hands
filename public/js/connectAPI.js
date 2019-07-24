@@ -784,7 +784,7 @@ function acceptPostAPI(token, id) {
     });
 }
 
-function rejectPostAPI(token, id) {
+function rejectPostAPI(token, id, reason) {
     return new Promise((resolve, reject) => {
         var Xu_ly_HTTP = new XMLHttpRequest();
         var Tham_so = `/api/posts/reject`;
@@ -802,7 +802,7 @@ function rejectPostAPI(token, id) {
         Xu_ly_HTTP.onerror = () => {
             reject(Xu_ly_HTTP.statusText);
         }
-        Xu_ly_HTTP.send(``);
+        Xu_ly_HTTP.send(JSON.stringify(reason));
     });
 }
 

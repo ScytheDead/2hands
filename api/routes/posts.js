@@ -3,6 +3,10 @@ const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 const PostController = require('../controllers/posts');
 
+// middleware
+
+router.use(PostController.change_priority_expired);
+
 
 // get post by status
 router.get('/accept', checkAuth, PostController.posts_get_post_accept);
