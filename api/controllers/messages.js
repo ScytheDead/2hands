@@ -15,10 +15,8 @@ exports.create_Message = async (req, res) => {
 
     User.findById(userSellId)
         .then(userSell => {
-            console.log(userSell);
             User.findById(userBuyId)
                 .then(userBuy => {
-                    console.log(userBuy);
                     Post.findById(postId)
                         .then(post => {
                             if (post.user.toString() === userSellId.toString()) {
@@ -111,7 +109,6 @@ exports.create_Message = async (req, res) => {
                             }
                         })
                         .catch(err => {
-                            console.log(err);
                             res.status(500).json({
                                 message: 'No valid entry found for provided post ID',
                                 error: err
@@ -133,14 +130,6 @@ exports.create_Message = async (req, res) => {
         });
 }
 
-// exports.get_all_messages_by_user = (req, res) => {
-//     const token = req.headers.authorization.split(" ")[1];
-//     const user = jwt.verify(token, config.JWT_KEY);
-//     console.log(user);
-//     User.findById(user.id)
-//     .select('_id ')
-// }
-
 exports.get_message_by_id = (req, res) => {
     const id = req.params.messageId;
     Message.findById(id)
@@ -155,7 +144,6 @@ exports.get_message_by_id = (req, res) => {
             });
         })
         .catch(err => {
-            console.log(err);
             res.status(404).json({
                 message: 'No valid entry found for provided ID',
                 error: err
@@ -169,7 +157,6 @@ exports.get_all_messages_by_user = (req, res) => {
         .select('messages')
         .exec()
         .then(user => {
-            console.log(user);
             Message.find({
                     '_id': {
                         $in: user.messages
@@ -199,7 +186,6 @@ exports.get_all_messages_by_user = (req, res) => {
                     res.status(200).json(response);
                 })
                 .catch(err => {
-                    console.log(err);
                     res.status(500).json({
                         error: err
                     });

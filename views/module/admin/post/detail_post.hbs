@@ -135,15 +135,12 @@
     var idPost = `{{postId}}`
     var kindPost = `{{kindPost}}`
 
-    console.log(kindPost);
-
     showDetailPost();
     hienThiThaoTac();
 
     function showDetailPost() {
         getDetailPostAPI(idPost)
             .then(result => {
-                console.log(result);
                 titleId.innerHTML = result.post.title;
                 CategoryId.innerHTML = result.post.category.title;
                 ClassifyId.innerHTML = result.post.classify == undefined ? '' : result.post.classify.title;

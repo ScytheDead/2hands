@@ -282,7 +282,6 @@
 
     btnSuaTin.onclick = () => {
         hiddenMessageError();
-        console.log(listProducersId.value == ``);
         // xử lý sự kiện click
         getListBase64(listImageSelected)
             .then(listBase64 => {
@@ -300,14 +299,11 @@
                     infoPostUpdate.push({ 'propName': 'images', 'value': listBase64 });
                 }
 
-                console.log(infoPostUpdate);
-
                 updatePostAPI(sessionStorage.getItem('token'), postId, infoPostUpdate)
                     .then(async result => {
                         if (result.message == `Post updated`) {
                             showMessageSuccess(`Sửa tin thành công.<br>Tin của bạn đang được kiểm duyệt`);
                             let post = await getDetailPostAPI(postId);
-                            console.log(result);
                             socket.emit('client-create-post', post.post);
                         }
                     })

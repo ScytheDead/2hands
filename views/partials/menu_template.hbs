@@ -32,7 +32,6 @@
         }
         searchPostAPI(valueSearch)
             .then(listPosts => {
-                console.log(listPosts)
                 if (listPosts.count > 0) {
                     sessionStorage.setItem('search', JSON.stringify(listPosts.posts));
                     if (event.keyCode == 13) {

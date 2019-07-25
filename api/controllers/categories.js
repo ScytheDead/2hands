@@ -102,7 +102,6 @@ exports.categories_create_category = async (req, res) => {
 
 exports.categories_get_category = async (req, res) => {
     const id = req.params.categoryId;
-    // console.log(id)
     Category.findById(id)
         .select('_id title image note created_at updated_at')
         .exec()
@@ -142,7 +141,6 @@ exports.categories_delete_category = async (req, res) => {
             category: req.params.categoryId
         })
         .then(classifies => {
-            console.log('classifies', classifies.length)
             if (classifies.length > 0) {
                 res.status(500).json({
                     message: 'This category have still contains classify'
@@ -152,7 +150,6 @@ exports.categories_delete_category = async (req, res) => {
                         category: req.params.categoryId
                     })
                     .then(producers => {
-                        console.log('producers', producers.length);
                         if (producers.length > 0) {
                             res.status(500).json({
                                 message: 'This category have still contains producer'

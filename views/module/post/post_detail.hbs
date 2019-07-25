@@ -150,7 +150,6 @@
 		await getDetailPostAPI(postId)
 			.then(post => {
 				postAll = post;
-				console.log(post)
 
 				breadcrumbs_categoryId.innerHTML = post.post.category.title;
 				breadcrumbs_titleId.innerHTML = post.post.title;
@@ -181,7 +180,6 @@
 				if (sessionStorage.getItem('token') != null) {
 					getSubscribestUserAPI(token, user.id)
 						.then(listSubscribes => {
-							console.log(listSubscribes);
 							if (listSubscribes.count > 0) {
 								let result = listSubscribes.subscribes.findIndex(post => post.id == postId);
 								if (result != -1) {
@@ -227,7 +225,6 @@
 			let post = { postId: postId }
 			subscribePostAPI(token, user.id, post)
 				.then(result => {
-					console.log(result);
 					if (result.message == `Subscribe success`) {
 						subscribeId.classList.remove('fa-heart-o');
 						subscribeId.classList.add('fa-heart');

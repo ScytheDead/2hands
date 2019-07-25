@@ -214,7 +214,6 @@
 	async function showDetailMessage(listMessages) {
 		contactRightId.innerHTML = ``;
 		const messageDetail = listMessages.messages.find(message => message._id == messageId);
-		console.log(messageDetail);
 
 		const chuoiHTML = drawBorderDetailChat(messageDetail);
 
@@ -234,7 +233,6 @@
 		});
 
 		listContentMessages.map(message => {
-			console.log(message);
 			let div = document.createElement('div');
 			let index = data.messageLeft.findIndex(messageLeft => messageLeft._id === message._id);
 			if (index == -1) {
@@ -388,7 +386,6 @@
 
 			if (user.id != userId) {
 				let span = document.getElementsByClassName(messageId);
-				console.log(span)
 				span[0].classList.add('online_icon');
 			}
 		}, 100)
