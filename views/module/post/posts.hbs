@@ -1,0 +1,438 @@
+<body>
+
+	<!-- breadcrumbs -->
+	<div class="w3layouts-breadcrumbs text-center">
+		<div class="container">
+			<span class="agile-breadcrumbs" id="agileBreadcrumbsId">
+				<a href="/"><i class="fa fa-home home_1"></i></a> /
+				<a href=""></a> /
+				<span></span>
+			</span>
+		</div>
+	</div>
+	<!-- //breadcrumbs -->
+	<!-- Electronic appliances -->
+	<div class="total-ads main-grid-border">
+		<div class="container">
+			<div class="select-box">
+				<div style="float: left">
+					<select class="selectpicker show-tick" id="listCityId">
+						<option selected style="color:#eee;">TP Hồ Chí Minh</option>
+						<option>Birmingham</option>
+						<option>Anchorage</option>
+						<option>Phoenix</option>
+						<option>Little Rock</option>
+
+						<optgroup label="Alabama">
+							<option>Birmingham</option>
+							<option>Montgomery</option>
+							<option>Mobile</option>
+							<option>Huntsville</option>
+							<option>Tuscaloosa</option>
+						</optgroup>
+						<optgroup label="Alaska">
+							<option>Anchorage</option>
+							<option>Fairbanks</option>
+							<option>Juneau</option>
+							<option>Sitka</option>
+							<option>Ketchikan</option>
+						</optgroup>
+					</select>
+				</div>
+
+				<div class="browse-category">
+					<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+					<select class="selectpicker show-tick" data-live-search="true" id="listClassifyId">
+
+					</select>
+				</div>
+				{{!-- Hiển thị nút chọn producer --}}
+				<div style="margin-top:10px" id="groupBTNProducers">
+
+				</div>
+
+			</div>
+			<div class="ads-grid">
+				<div class="side-bar col-md-3">
+					<div class="w3ls-featured-ads" id="listPostPriorityId">
+
+						<div class="w3l-featured-ad">
+							<a href="single.html">
+								<div class="w3-featured-ad-left">
+									<img src="template/images/f1.jpg" title="ad image" alt="" />
+								</div>
+								<div class="w3-featured-ad-right">
+									<h4>Lorem Ipsum is simply dummy text of the printing industry</h4>
+									<p>$ 450</p>
+								</div>
+								<div class="clearfix"></div>
+							</a>
+						</div>
+						<div class="w3l-featured-ad">
+							<a href="single.html">
+								<div class="w3-featured-ad-left">
+									<img src="template/images/f2.jpg" title="ad image" alt="" />
+								</div>
+								<div class="w3-featured-ad-right">
+									<h4>Lorem Ipsum is simply dummy text of the printing industry</h4>
+									<p>$ 380</p>
+								</div>
+								<div class="clearfix"></div>
+							</a>
+						</div>
+
+					</div>
+
+				</div>
+				<div class="agileinfo-ads-display col-md-9">
+					<div class="wrapper">
+						<div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
+							<ul id="myTab" class="nav nav-tabs nav-tabs-responsive" role="tablist">
+								<li role="presentation" class="active">
+									<a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home"
+										aria-expanded="true">
+										<span id="postCategoryId" class="text">Tất cả tin</span>
+									</a>
+								</li>
+								{{!-- <li role="presentation" class="next">
+									<a href="#profile" role="tab" id="profile-tab" data-toggle="tab"
+										aria-controls="profile">
+										<span class="text">Ads with Photos</span>
+									</a>
+								</li> --}}
+							</ul>
+							<div id="myTabContent" class="tab-content">
+								<div role="tabpanel" class="tab-pane fade in active" id="home"
+									aria-labelledby="home-tab">
+									<div>
+										<div id="container">
+											<div class="view-controls-list" id="viewcontrols">
+												<label>Hiển thị :</label>
+												<a class="gridview"><i class="fa fa-th"></i></a>
+												<a class="listview active"><i class="fa fa-th-list"></i></a>
+											</div>
+											<div class="sort">
+												<div class="sort-by">
+													<label>Sắp xếp theo : </label>
+													<select>
+														<option value="">Tin mới nhất</option>
+														<option value="">Giá: Thấp đến cao</option>
+														<option value="">Giá: Cao đến thấp</option>
+													</select>
+												</div>
+											</div>
+											<div class="clearfix"></div>
+											<ul class="list" id="listPostsId">
+												{{!-- Post hiển thị ở đây --}}
+												<a href="single.html">
+													<li>
+														<img src="template/images/fa1.jpg" title="" alt="" />
+														<section class="list-left">
+															<h5 class="title">There are many variations of passages of
+																Lorem Ipsum</h5>
+															<span class="adprice">$29000000000</span>
+															<p class="catpath">Accessories » Men</p>
+														</section>
+														<section class="list-right">
+															<span class="date">Today, 17:55</span>
+															<span class="cityname">City name</span>
+														</section>
+														<div class="clearfix"></div>
+													</li>
+												</a>
+												{{!--  --}}
+
+											</ul>
+										</div>
+									</div>
+								</div>
+
+
+								<ul class="pagination pagination-sm">
+									<li><a href="#">Prev</a></li>
+									<li><a href="#">1</a></li>
+									<li><a href="#">2</a></li>
+									<li><a href="#">3</a></li>
+									<li><a href="#">4</a></li>
+									<li><a href="#">5</a></li>
+									<li><a href="#">6</a></li>
+									<li><a href="#">7</a></li>
+									<li><a href="#">8</a></li>
+									<li><a href="#">Next</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+	<!-- // Electronic appliances -->
+</body>
+
+<script>
+	var categoryId = `{{categoryId}}`
+	var cityId = `{{cityId}}`
+	if (sessionStorage.getItem('token') != null) {
+		var token = sessionStorage.getItem('token');
+		var user = decodedJWT(token);
+	}
+
+	var listSubscribes = [];
+
+	var listPostFilter = [];
+
+	showAllCity();
+	getPostsAcceptByCategory();
+	getClassifiesByCategory(categoryId);
+
+	showPostsPriority();
+
+
+
+	showBreadCrumbs(categoryId);
+	async function showBreadCrumbs(categoryId) {
+		let category = await getCategoryAPI(categoryId);
+		agileBreadcrumbsId.childNodes[3].innerHTML = category.category.title;
+		postCategoryId.innerHTML = category.category.title;
+	}
+
+
+	function getClassifiesByCategory(categoryId) {
+		getClassifiesByCategoryAPI(categoryId)
+			.then(listClassifies => {
+				let chuoi_HTML = `<option value="">Tất cả</option>`;
+				listClassifies.classifies.forEach(classify => {
+					chuoi_HTML += `<option value="${classify.id}">${classify.title}</option>`
+				});
+				listClassifyId.innerHTML = chuoi_HTML;
+			})
+			.catch(err => {
+				console.log(err);
+			});
+
+	}
+
+	function getProducersByClassify(classifyId) {
+		getProducersByClassifyAPI(classifyId)
+			.then(listProducers => {
+				console.log(listProducers)
+				let chuoi_HTML = ``;
+				listProducers.producers.forEach(producer => {
+					chuoi_HTML += `<button class="btn btn-danger" onclick="showListPostFilterByProducer('${producer.id}')" style="margin-left: 10px">
+						<img src="${Dia_chi_Dich_vu}/${producer.image}" width="30" height="30" alt="">
+						<br>
+						${producer.title}
+					</button>`
+				});
+				chuoi_HTML += `<br><button style="margin: 1rem" onclick="showListPostFilterByProducer('')" class="btn btn-success">Bỏ lọc theo nhà sản xuất</button>`;
+				groupBTNProducers.innerHTML = chuoi_HTML;
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+
+
+	function getPostsAcceptByCategory() {
+		getPostsAcceptByCategoryAPI(categoryId)
+			.then(async listPosts => {
+				listCityId.onchange = () => {
+					showListPostFilter(listPosts.posts);
+				}
+
+				listClassifyId.onchange = async () => {
+					showListPostFilter(listPosts.posts);
+					groupBTNProducers.innerHTML = '';
+					agileBreadcrumbsId.childNodes[5].innerHTML = '';
+					if (listClassifyId.value != '') {
+						getProducersByClassify(listClassifyId.value);
+						// show agile breadcrumbs
+						let classify = await getClassifyAPI(listClassifyId.value);
+						agileBreadcrumbsId.childNodes[5].innerHTML = classify.classify.title;
+					}
+				}
+
+				if (sessionStorage.getItem('token') != null) {
+					let subscribes = await getSubscribestUserAPI(token, user.id);
+					if (subscribes.count > 0) {
+						listSubscribes = subscribes.subscribes;
+					}
+				}
+				if (listPosts.count > 0) {
+					showPosts(listPosts.posts);
+				}
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+
+	function showPosts(listPosts) {
+		let chuoi_HTML = ``;
+		listPosts.forEach(post => {
+			let result = listSubscribes.findIndex(postSubscribe => postSubscribe.id == post.id);
+
+			chuoi_HTML += `
+				<li>
+					<img style="cursor: pointer" src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" onclick="goDetail('${post.id}')"/>
+					<section style="cursor: pointer" class="list-left" onclick="goDetail('${post.id}')">
+						<h5 class="title">${post.title}</h5>
+						<span class="adprice">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)} ₫</span>
+						<p class="catpath">${post.classify == undefined ? '' : post.classify.title}</p>
+						
+					</section>
+					<section style="cursor: pointer" class="list-right" onclick="goDetail('${post.id}')">
+						<span class="date">${post.moment}</span>
+						<span class="cityname">${post.city.name}</span>
+					</section>
+					<button onclick="subscribePost('${post.id}')" style="margin-top: 3rem" class="btn btn-danger pull-right ${post.id}">Lưu tin <i id="subscribeId" class="fa ${result != -1 ? 'fa-heart' : 'fa-heart-o'}"></i> </button>
+					<div class="clearfix"></div>
+				</li>`
+		})
+
+		listPostsId.innerHTML = chuoi_HTML;
+	}
+
+	function showListPostFilter(listPostAll) {
+		console.log(listCityId.value);
+		console.log(listClassifyId.value);
+
+		if (listCityId.value == '' && listClassifyId.value == '') {
+			listPostFilter = listPostAll;
+			showPosts(listPostAll);
+		} else {
+			listPostFilter = [];
+
+			if (listCityId.value != '' && listClassifyId.value != '') {
+				listPostAll.forEach(post => {
+					if (post.city._id == listCityId.value && post.classify._id == listClassifyId.value) {
+						listPostFilter.push(post);
+					}
+				});
+			} else if (listCityId.value != '') {
+				listPostAll.forEach(post => {
+					if (post.city._id == listCityId.value) {
+						listPostFilter.push(post);
+					}
+				});
+			} else if (listClassifyId.value != '') {
+				listPostAll.forEach(post => {
+					if (post.classify._id == listClassifyId.value) {
+						listPostFilter.push(post);
+					}
+				});
+			}
+
+			console.log(listPostFilter);
+			if (listPostFilter.length > 0) {
+				showPosts(listPostFilter);
+			} else {
+				listPostsId.innerHTML = '<h1>Không có tin theo điều kiện lọc này</h1>'
+			}
+		}
+	}
+
+	function showListPostFilterByProducer(producerId) {
+		let listPostFilterByProducer = [];
+		if (producerId == '') {
+			listPostFilterByProducer = listPostFilter;
+		} else {
+			listPostFilter.forEach(post => {
+				if (post.producer._id == producerId) {
+					listPostFilterByProducer.push(post);
+				}
+			});
+		}
+
+		console.log(listPostFilterByProducer);
+		if (listPostFilterByProducer.length > 0) {
+			showPosts(listPostFilterByProducer);
+		} else {
+			listPostsId.innerHTML = '<h1>Không có tin theo điều kiện lọc này</h1>'
+		}
+	}
+
+	function subscribePost(postId) {
+		if (sessionStorage.getItem('token') != null) {
+			let post = { postId: postId }
+			subscribePostAPI(token, user.id, post)
+				.then(result => {
+					console.log(result);
+					let btn = document.getElementsByClassName(postId);
+					console.log(btn);
+					if (result.message == `Subscribe success`) {
+						btn[0].childNodes[1].className = `fa fa-heart`;
+						showToast('Tin đã được lưu vào danh sách theo dõi.');
+					} else if (result.message == `Unsubscribe success`) {
+						btn[0].childNodes[1].className = `fa fa-heart-o`;
+						showToast('Đã hủy theo dõi tin này.');
+					}
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		} else {
+			window.location = Dia_chi_Dich_vu + '/login'
+		}
+	}
+
+	function goDetail(postId) {
+		window.location = Dia_chi_Dich_vu + '/post-detail/' + postId;
+	}
+
+	function showAllCity() {
+		getAllCityAPI()
+			.then(listCities => {
+				listCityId.innerHTML = '<option value="">Toàn quốc</option>';
+				listCities.cities.forEach(city => {
+					listCityId.innerHTML += `<option value="${city._id}">${city.name}</option>`
+				});
+				//listCityId.value = '5d1ca94a17d78e8bad37e106';
+			})
+			.catch(err => {
+				console.log(err);
+			});
+	}
+
+	async function showPostsPriority() {
+		try {
+			const listPostPriority = await getPostsAcceptByPriorityAPI();
+			if (listPostPriority.count > 0) {
+				let listPostPriorityByCategory = [];
+				listPostPriority.posts.forEach(post => {
+					if (post.category._id == categoryId) {
+						listPostPriorityByCategory.push(post);
+					}
+				});
+
+				console.log(listPostPriorityByCategory);
+				listPostPriorityId.innerHTML = '<h2 class="sear-head fer">Tin ưu tiên</h2>';
+				if (listPostPriorityByCategory.length > 0) {
+
+					let conditionFor = listPostPriorityByCategory.length > 8 ? 8 : listPostPriorityByCategory.length;
+					for (let i = 0; i < conditionFor; i++) {
+						console.log(listPostPriorityByCategory[i])
+						listPostPriorityId.innerHTML += `<div class="w3l-featured-ad">
+														<a href="/post-detail/${listPostPriorityByCategory[i].id}">
+															<div class="w3-featured-ad-left">
+																<img src="${listPostPriorityByCategory[i].images[0]}" title="ad image" alt="" />
+															</div>
+															<div class="w3-featured-ad-right">
+																<h4>${listPostPriorityByCategory[i].title}</h4>
+																<p>${Tao_Chuoi_The_hien_So_nguyen_duong(listPostPriorityByCategory[i].price)} ₫</p>
+															</div>
+															<div class="clearfix"></div>
+														</a>
+													</div>`;
+					}
+				}
+			}
+		}
+		catch (err) {
+			console.log(err);
+		}
+	}
+
+</script>

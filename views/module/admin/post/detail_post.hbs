@@ -1,0 +1,206 @@
+<link rel="stylesheet" href="../../css/style.css">
+<script src="../../js/connectAPI.js"></script>
+<script src="../../js/handle.js"></script>
+<script src="../../js/handleAdmin.js"></script>
+
+<script>
+    if (sessionStorage.getItem('token') == null) {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 id="formTitleId" class="text-info"></h1>
+        </div>
+
+        <div id="errorMessageId"></div>
+
+        <div class="col-md-9">
+
+            <div class="form-group">
+                <label style="font-weight: bold">Tiêu đề : </label>
+                <label id="titleId">aaa</label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Chuyên mục : </label>&nbsp
+                <label id="CategoryId">chuyên mục</label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Thể loại: </label>&nbsp
+                <label id="ClassifyId">thể loại</label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Nhà sản xuất: </label>&nbsp
+                <label id="ProducerId">nhà sản xuất</label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Ngày tạo : </label>&nbsp
+                <label id="createdAtId">ngày tạo</label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Ngày cập nhật : </label>&nbsp
+                <label id="updatedAtId">ngày cập nhật</label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Loại tin: </label>&nbsp
+                <label id="SellerId">Cần mua/Cần bán</label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Miêu tả chi tiết : </label>
+                <textarea class="form-control" readonly rows="5" cols="50" id="contentId"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold" for="priceId">Giá : </label>
+                <label id="priceId" class="text-danger font-weight-bold"></label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold" for="addressId">Địa chỉ : </label>
+                <label id="addressId"></label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold" for="cityId">Thành phố : </label>
+                <label id="cityId"></label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold" for="momentId">Cách đây : </label>
+                <label id="momentId"></label>
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold">Hình ảnh : </label>
+                <div class="form-group" id="showImageSelectedId">
+
+                </div>
+
+                <input class="btn btn-outline-primary d-none" type="file" id="uploadImage" accept="image/*" multiple>
+
+            </div>
+
+            <!-- Nút Xác nhận Lưu, Hủy -->
+            <div id="thaotacId">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var idPost = `{{postId}}`
+    var kindPost = `{{kindPost}}`
+
+    console.log(kindPost);
+
+    showDetailPost();
+    hienThiThaoTac();
+
+    function showDetailPost() {
+        getDetailPostAPI(idPost)
+            .then(result => {
+                console.log(result);
+                titleId.innerHTML = result.post.title;
+                CategoryId.innerHTML = result.post.category.title;
+                ClassifyId.innerHTML = result.post.classify == undefined ? '' : result.post.classify.title;
+                ProducerId.innerHTML = result.post.producer == undefined ? '' : result.post.producer.title;
+                createdAtId.innerHTML = getDateFormat(result.post.createdAt);
+                updatedAtId.innerHTML = getDateFormat(result.post.updatedAt);
+                SellerId.innerHTML = result.post.seller == true ? "Cần bán" : "Cần mua";
+                contentId.innerHTML = result.post.content;
+                priceId.innerHTML = Tao_Chuoi_The_hien_So_nguyen_duong(result.post.price) + ' ₫';
+                addressId.innerHTML = result.post.address;
+                cityId.innerHTML = result.post.city.name;
+                momentId.innerHTML = result.post.moment;
+                showImageSelect(result.post.images);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    function showImageSelect(listImage) {
+        showImageSelectedId.innerHTML = ``;
+        var chuoi_HTML = `<div>`;
+        for (var i = 0; i < listImage.length; i++) {
+            chuoi_HTML += `<img class="ml-2" style="border: 1px solid gray;" src="${Dia_chi_Dich_vu}/${listImage[i]}" width="100" height="100">`
+        }
+        chuoi_HTML += `</div>`
+        showImageSelectedId.innerHTML += chuoi_HTML;
+    }
+
+    function accept() {
+        acceptPost(idPost);
+        setTimeout(() => {
+            goBack();
+        }, 1500);
+    }
+
+    function reject() {
+        rejectPost(idPost);
+        setTimeout(() => {
+            goBack();
+        }, 1500);
+    }
+
+
+    function acceptPost(id) {
+        acceptPostAPI(sessionStorage.getItem('token'), id)
+            .then(result => {
+                messageSuccess(result);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    function rejectPost(id) {
+        rejectPostAPI(sessionStorage.getItem('token'), id)
+            .then(result => {
+                messageSuccess(result);
+            })
+            .catch(err => {
+                console.log(err);
+                messageError(err);
+            })
+    }
+
+    function goBack() {
+        if (kindPost === 'w') {
+            window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
+        } else if (kindPost === 'a') {
+            window.location = Dia_chi_Dich_vu + '/admin/post-accept'
+        } else if (kindPost === 'r') {
+            window.location = Dia_chi_Dich_vu + '/admin/post-reject'
+        } else if(kindPost === 'u'){
+            window.location = Dia_chi_Dich_vu + '/posts'
+        }
+    }
+
+    function hienThiThaoTac() {
+        let chuoi_HTML = ``;
+        if (kindPost === 'w') {
+            chuoi_HTML +=`
+            <button class="btn btn-success" onclick="accept()">Duyệt</button>
+            <button class="btn btn-outline-danger ml-2" onclick="reject()" id="rejectId">Từ chối</button>`
+        } else if (kindPost === 'a') {
+            chuoi_HTML += `<button class="btn btn-outline-danger ml-2" onclick="reject()">Từ chối</button>`
+        } else if (kindPost === 'r') {
+            chuoi_HTML += `<button class="btn btn-success" onclick="accept()">Duyệt</button>`
+        }
+        chuoi_HTML+=`<button class="btn btn-outline-warning ml-2" onclick="goBack()">Hủy</button>`
+
+        thaotacId.innerHTML = chuoi_HTML;
+    }
+</script>

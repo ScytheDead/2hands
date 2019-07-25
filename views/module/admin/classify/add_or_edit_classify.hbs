@@ -1,0 +1,218 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 id="formTitleId" class="text-info"></h1>
+        </div>
+
+        <div class="col-md-9">
+
+            <div class="form-group">
+                <label>Tiêu đề <i class="fa fa-empire text-danger"></i>: </label>
+                <input class="form-control" required="required" id="titleId" value="">
+            </div>
+
+            <div class="form-group">
+                <label>Chuyên mục: </label>&nbsp
+                <select id="filterCategoryId" class="btn btn-outline-secondary">
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label id="createdAtId"></label>
+            </div>
+
+            <div class="form-group">
+                <label id="updatedAtId"></label>
+            </div>
+
+            <div class="form-group">
+                <label>Ghi chú: </label>
+                <textarea class="form-control" rows="1" cols="50" id="noteId"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Hình ảnh (Dung lượng nhỏ hơn 1.5 MB) <i class="fa fa-empire text-danger"></i>: </label>
+                <img id="imageId" src="" width="100" height="100">
+                <input class="btn btn-outline-primary" type="file" name="file" id="uploadImage">
+                <button class="btn btn-outline-warning" id="showModalUploadId">Cập nhật ảnh</button>
+            </div>
+
+            <!-- Nút Xác nhận Lưu, Hủy -->
+            <button class="btn btn-success font-weight-bold" id="luu">Lưu</button>
+            <button class="btn btn-outline-danger ml-3" id="huy">Hủy</button><br>
+        </div>
+
+        <div class="col-md-12 mt-5">
+            <i class="fa fa-empire text-danger"></i>: Là các nội dung không được để trống
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button id="modalUploadId" type="button" class="btn btn-primary btn-lg d-none" data-toggle="modal"
+    data-target="#modelId">
+    Launch
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cập nhật hình ảnh</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Hình ảnh: </label>
+                <img id="imageModalId" width="100" height="100">
+                <input class="btn btn-outline-warning mt-3" type="file" id="uploadId" name="image">
+
+                <div class="modal-footer mt-3">
+                    <button id="btnCloseModalUpload" class="btn btn-outline-danger" data-dismiss="modal">Đóng</button>
+                    <button class="btn btn-success" id="btnUpload">Cập nhật</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    TH_avatar.src = '../images/login_icon2.png';
+
+    var idClassify = `{{classifyId}}`;
+
+    getAllCategoriesAPI()
+        .then(listCategories => {
+            listCategories.categories.forEach(category => {
+                filterCategoryId.innerHTML += `<option value="${category.id}">${category.title}</option>`
+            });
+        })
+        .catch(err => {
+            messageError(err);
+        });
+
+    if (idClassify == ``) {  // Create
+        showModalUploadId.classList.add('d-none');
+        imageId.classList.add('d-none');
+        updatedAtId.classList.add('d-none');
+
+        formTitleId.innerHTML = `TẠO MỚI THỂ LOẠI`;
+        createdAtId.innerHTML = 'Ngày tạo: ' + getDateFormat(new Date());
+
+
+        luu.onclick = () => {
+            getBase64(uploadImage.files[0])
+                .then(base64Image => {
+                    var infoClassifyCreate = {
+                        title: titleId.value,
+                        image: base64Image,
+                        category: filterCategoryId.value,
+                        note: noteId.value
+                    }
+
+                    createClassifyAPI(sessionStorage.getItem('token'), infoClassifyCreate)
+                        .then(result => {
+                            messageSuccess(result);
+                            setTimeout(() => {
+                                window.location = Dia_chi_Dich_vu + '/admin/classify';
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            console.log(JSON.parse(err));
+                            if (JSON.parse(err).message != undefined) {
+                                if (JSON.parse(err).message == 'Auth failed')
+                                    messageError(JSON.parse(err).message);
+                            } else if (JSON.parse(err).error.message != undefined) {
+                                messageError(JSON.parse(err).error.message);
+                            } else {
+                                messageError(err);
+                            }
+                        });
+                })
+                .catch(err => {
+                    messageError(err);
+                })
+        }
+
+    }  // End Create
+    else {    // Update
+        uploadImage.classList.add('d-none');
+        formTitleId.innerHTML = `CHỈNH SỬA THỂ LOẠI`;
+
+        getClassifyAPI(idClassify)
+            .then(result => {
+                titleId.value = result.classify.title;
+                filterCategoryId.value = result.classify.category._id;
+                createdAtId.innerHTML = 'Ngày tham gia: ' + getDateFormat(result.classify.created_at);
+                updatedAtId.innerHTML = 'Chỉnh sửa gần đây nhất: ' + getDateFormat(result.classify.updated_at);
+                noteId.value = result.classify.note == undefined ? "" : result.classify.note;
+                imageId.src = `${Dia_chi_Dich_vu}/${result.classify.image}`;
+                imageModalId.src = imageId.src;
+            })
+            .catch(err => {
+                messageError(err);
+            });
+
+        luu.onclick = () => {
+            var classifyUpdate = [
+                { "propName": "title", "value": titleId.value },
+                { "propName": "category", "value": filterCategoryId.value },
+                { "propName": "note", "value": noteId.value }
+            ]
+
+            updateClassifyAPI(sessionStorage.getItem('token'), idClassify, classifyUpdate)
+                .then(result => {
+                    messageSuccess(result);
+                    setTimeout(() => {
+                        window.location = Dia_chi_Dich_vu + '/admin/classify';
+                    }, 1500);
+                })
+                .catch(err => {
+                    messageError(err);
+                });
+        }
+
+        showModalUploadId.onclick = () => {
+            modalUploadId.click();
+        }
+
+        btnUpload.onclick = () => {
+            getBase64(uploadId.files[0])
+                .then(base64Image => {
+                    var image = {
+                        image: base64Image
+                    }
+                    updateImageClassifyAPI(sessionStorage.getItem('token'), idClassify, image)
+                        .then(result => {
+                            messageSuccess(result);
+                            imageId.src = base64Image;
+                        })
+                        .catch(err => {
+                            if (JSON.parse(err).error.message !== undefined)
+                                messageError(JSON.parse(err).error.message);
+                            else
+                                messageError(JSON.parse(err).error);
+                        });
+                })
+                .catch(err => {
+                    messageError(err);
+                });
+            btnCloseModalUpload.click();
+        }
+    }   // End update
+
+    huy.onclick = () => {
+        window.location = Dia_chi_Dich_vu + '/admin/classify';
+    }
+
+</script>

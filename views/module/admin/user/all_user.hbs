@@ -1,0 +1,107 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+
+
+<script>
+    if (sessionStorage.getItem('token') != null) {
+        var user = decodedJWT(sessionStorage.getItem('token'));
+        if (user.isAdmin || user.isEmployee) {
+
+        } else {
+            window.location.href = Dia_chi_Dich_vu
+        }
+    } else {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+
+        <div class="col-md-3">
+            {{> admin/content-left}}
+        </div>
+
+        <div id="controlAdmin" class="col-md-9">
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    btnUser.classList.add('active');
+
+    TH_avatar.src = '../images/login_icon2.png';
+    showAllUsers();
+
+    async function showAllUsers() {
+        var token = sessionStorage.getItem('token');
+        await getAllUsersAPI(token)
+            .then(listUser => {
+                var chuoi_HTML = `<h3 class="text-primary mt-2">Danh sách tài khoản (Tổng: ${listUser.count})</h3>
+        <table class="table mt-3" style="">
+            <thead>
+                <tr>
+                    <th>SĐT</th>
+                    <th>Họ tên</th>
+                    <th>Địa chỉ</th>
+                    <th>Hình</th>
+                    <th>Facebook</th>
+                    <th>Email</th>
+                    <th>Giới tính</th>
+                    <th>Loại tài khoản</th>
+                    <th>Ngày tham gia</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody> `
+                listUser.users.forEach(user => {
+                    chuoi_HTML += `<tr>
+                <td scope="row">${user.phoneNumber}</td>
+                <td>${user.name == null ? "" : user.name}</td>
+                <td>${user.address == null ? "" : user.address}</td>
+                <td><img src="${Dia_chi_Dich_vu}/${user.avatar}" width="70" height="70"/></td>
+                <td>${user.facebook == null ? "" : user.facebook}</td>
+                <td>${user.email == null ? "" : user.email}</td>
+                <td>${user.gender == null ? "" : (user.gender == 1 ? "Nam" : "Nữ")}</td>
+                `
+                    if (user.isAdmin) chuoi_HTML += `<td>Admin</td>`
+                    else if (user.isEmployee) chuoi_HTML += `<td>Nhân viên</td>`
+                    else chuoi_HTML += `<td>Người dùng</td>`
+
+                    chuoi_HTML += `<td>${getDateFormat(user.createdAt)}</td>
+                <td>${user.status == true ? "Hoạt động" : "Khóa"}</td>
+                <td>${user.note == null ? "" : user.note}</td>
+                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/user/${user.id}0301${sessionStorage.getItem('token')}'">Sửa</button>
+                    <button class="btn btn-outline-danger" onclick="deleteUser('${sessionStorage.getItem('token')}', '${user.id}')">Xóa</button>
+                </td>
+            </tr>`
+                })
+
+                chuoi_HTML += ` </tbody>
+                        </table>`
+                controlAdmin.innerHTML = ``;
+                controlAdmin.innerHTML = chuoi_HTML;
+            })
+            .catch(err => {
+                messageError(err);
+            });
+    }
+
+    function deleteUser(token, id) {
+        deleteAccountUserAPI(token, id)
+            .then(result => {
+                messageSuccess(result);
+                showAllUsers();
+            })
+            .catch(err => {
+                messageError(err);
+            });
+    }
+</script>

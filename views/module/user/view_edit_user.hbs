@@ -1,0 +1,174 @@
+<script>
+    if (sessionStorage.getItem('token') == null) {
+        window.location.href = Dia_chi_Dich_vu + '/login';
+    }
+</script>
+
+{{!-- bootstrap 4 --}}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+{{!-- // bootstrap 4 --}}
+
+<body>
+    <!-- breadcrumbs -->
+    <div class="w3layouts-breadcrumbs text-center">
+        <div class="container">
+            <span class="agile-breadcrumbs float-left"><a href="/"><i class="fa fa-home home_1"></i></a> / <span> Thông
+                    tin cá
+                    nhân</span></span>
+        </div>
+    </div>
+    <!-- //breadcrumbs -->
+    <!-- Submit Ad -->
+    <div class="submit-ad main-grid-border">
+        <div class="container">
+            <h2 class="w3-head">Thông tin cá nhân</h2>
+
+            {{!-- toast message --}}
+            <div id="errorMessageId"></div>
+
+            <div class="post-ad-form">
+                <label>Số điện thoại: <h1 id="phoneNumberId">0034857843</h1></label>
+                <div class="clearfix"></div>
+
+                <div class="upload-ad-photos">
+                    <div class="photos-upload-view">
+                        <label class="mr-3">Ảnh đại diện: </label>
+                        <img id="imageId" src="/images/user_icon.png" width="100" height="100">
+                        <button id="btnUploadAvatar" class="btn btn-outline-primary btn-lg ml-4">Cập nhật
+                            ảnh đại
+                            diện</button>
+                        <input type="file" id="fileselect" style="display: none" accept="image/*" />
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+
+                <form>
+                    <label>Họ tên: </label>
+                    <input type="text" class="phone" id="nameId">
+                    <div class="clearfix"></div>
+
+                    <label>Địa chỉ: </label>
+                    <input type="text" class="phone" id="addressId">
+                    <div class="clearfix"></div>
+
+                    <label id="txtProducer">Địa chỉ facebook: </label>
+                    <input type="text" class="phone" id="facebookId">
+                    <div class="clearfix"></div>
+
+
+                    <label>Email: </label>
+                    <input type="text" class="phone" id="emailId">
+                    <div class="clearfix"></div>
+
+                    <label>Giới tính: </label>
+                    <select id="genderId" class="btn btn-outline-danger">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+                    <label>Ngày tham gia: </label>
+                    <label id="createdAtId"></label>
+                    <div class="clearfix"></div>
+                </form>
+
+                <div class="personal-details">
+                    <button type="" class="btn btn-primary btn-lg float-right" id="btnLuu">Lưu</button>
+                    <div class="clearfix"></div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <!-- // Submit Ad -->
+
+    <script>
+        var token = sessionStorage.getItem('token');
+        var user = decodedJWT(token);
+
+        showDetailUser();
+
+        btnUploadAvatar.onclick = () => {
+            fileselect.click();
+        }
+
+        fileselect.onchange = async () => {
+            if (fileselect.files.length > 0) {
+                getBase64(fileselect.files[0])
+                    .then(base64Image => {
+                        var avatar = {
+                            avatar: base64Image
+                        }
+                        updateAvatarUserAPI(token, user.id, avatar)
+                            .then(result => {
+                                imageId.src = base64Image;
+                                showToast('Cập nhật ảnh đại diện thành công !');
+                            })
+                            .catch(err => {
+                                showToast(err);
+                                console.log(err);
+                            });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        showToast(err);
+                    });
+            }
+        }
+
+        btnLuu.onclick = () => {
+            let infoUserUpdate = [
+                { "propName": "name", "value": nameId.value == "" ? undefined : nameId.value},
+                { "propName": "address", "value": addressId.value == "" ? undefined : addressId.value},
+                { "propName": "facebook", "value": facebookId.value == "" ? undefined : facebookId.value},
+                { "propName": "email", "value": emailId.value == "" ? undefined : emailId.value},
+                { "propName": "gender", "value": genderId.value == "" ? undefined : genderId.value },
+            ]
+
+            updateAccountUserAPI(token, user.id, infoUserUpdate)
+                .then(result => {
+                    console.log(result);
+                    if (result.message == `User updated`)
+                        showToast('Cập nhật thông tin thành công !');
+                })
+                .catch(err => {
+                    showToast(err);
+                });
+        }
+
+        function showDetailUser() {
+            getUserAPI(token, user.id)
+                .then(user => {
+                    console.log(user.user);
+                    phoneNumberId.innerHTML = user.user.phoneNumber;
+                    imageId.src = user.user.avatar == undefined ? "/images/user_icon.png" : Dia_chi_Dich_vu + '/' + user.user.avatar;
+                    nameId.value = user.user.name  == undefined ? '' : user.user.name;
+                    addressId.value = user.user.address == undefined ? '' : user.user.address;
+                    facebookId.value = user.user.facebook == undefined ? '' : user.user.facebook;
+                    emailId.value = user.user.email == undefined ? '' : user.user.email;
+                    createdAtId.innerHTML = getDateFormat(user.user.created_at);
+
+                    if (user.user.gender == true) {
+                        genderId.innerHTML = `
+                        <option value='1' selected>Nam</option>
+                        <option value='0'>Nữ</option>`;
+                    } else if (user.user.gender == false) {
+                        genderId.innerHTML = `
+                        <option value='1'>Nam</option> 
+                        <option value='0' selected>Nữ</option>`;
+                    } else {
+                        genderId.innerHTML = `
+                    <option value='' selected disabled hidden>Chưa xác định</option> 
+                    <option value='1'>Nam</option> 
+                    <option value='0' >Nữ</option>`;
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+
+    </script>

@@ -1,0 +1,52 @@
+<h4 class="text-secondary">Chuyên mục quản trị</h4>
+<ul>
+    <li><button id="btnHomeAdmin" onclick="goHomeAdmin()" class="btn btn-outline-secondary">Home</a></li>
+    <li><button id="btnPostWaiting" onclick="goPostWaitingAdmin()" class="btn btn-outline-warning mt-1">Tin chờ duyệt</button></li>
+    <li><button id="btnPostAccept" onclick="goPostAcceptAdmin()" class="btn btn-outline-success mt-1">Tin đã duyệt</button></li>
+    <li><button id="btnPostReject" onclick="goPostRejectAdmin()" class="btn btn-outline-danger mt-1">Tin từ chối</button></li>
+    <hr>
+    <li><button id="btnCategory" onclick="goAllCategoryAdmin()" class="btn btn-outline-primary mt-1">Quản lý chuyên mục tin</button></li>
+    <li><button id="btnClassify"  onclick="goAllClassifyAdmin()" class="btn btn-outline-primary mt-1">Quản lý thể loại</button></li>
+    <li><button id="btnProducer" onclick="goAllProducerAdmin()" class="btn btn-outline-primary mt-1">Quản lý nhà sản xuất</button></li>
+    <li><button id="btnUser" onclick="goAllUserAdmin()" class="btn btn-outline-primary mt-1">Quản lý tài khoản</button></li>
+    <hr>
+    <li><button class="btn btn-info" onclick="goIndex()">Trang chủ</button></li>
+</ul>
+
+<script>
+    function goPostWaitingAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
+    }
+
+    function goPostAcceptAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/post-accept'
+    }
+
+    function goPostRejectAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/post-reject'
+    }
+
+    function goAllProducerAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/producer'
+    }
+
+    function goAllClassifyAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/classify'
+    }
+
+    function goAllCategoryAdmin(){
+        window.location = Dia_chi_Dich_vu + '/admin/category'
+    }
+
+    function goAllUserAdmin() {
+        window.location = Dia_chi_Dich_vu + '/admin/user';
+    }
+
+    function goHomeAdmin() {
+        window.location = Dia_chi_Dich_vu + '/admin';
+    }
+
+    function goIndex() {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>

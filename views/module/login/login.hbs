@@ -1,0 +1,90 @@
+<body onkeyup="keyCode(event)">
+	<!-- login form -->
+	<section>
+		<div id="agileits-sign-in-page" class="sign-in-wrapper">
+			<div class="agileinfo_signin">
+				<h3>Đăng nhập</h3>
+				{{!-- Toast message error --}}
+				<div id="TH_errorMessage" style="margin-bottom: 10px"></div>
+				{{!-- <form action="#" method="post"> --}}
+				<input type="tel" placeholder="Nhập số điện thoại" id="TH_phoneNumber" required="">
+				<input type="password" name="Password" id="TH_password" placeholder="mật khẩu" required="">
+				<input type="submit" id="TH_login" value="Đăng nhập">
+				<div class="forgot-grid">
+					<label class="checkbox"><input type="checkbox" name="checkbox">Ghi nhớ</label>
+					<div class="forgot">
+						<a href="#" data-toggle="modal" data-target="#myModal2">Quên mật khẩu?</a>
+					</div>
+					<!-- Modal -->
+					<div class="modal fade" id="myModal2" role="dialog">
+						<div class="modal-dialog">
+							<!-- Modal content-->
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+									<div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal">&times;</button>
+										<h3 class="w3ls-password">Get Password</h3>
+										<p class="get-pw">Enter your email address below and we'll send you an email
+											with instructions.
+										</p>
+										<form action="#" method="post">
+											<input type="text" class="user" name="email" placeholder="Email"
+												required="">
+											<input type="submit" value="Submit">
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix"> </div>
+				</div>
+				{{!-- </form> --}}
+				<h6> Bạn chưa có tài khoản? <a href="/signup">Đăng ký tại đây</a> </h6>
+			</div>
+		</div>
+	</section>
+	<!-- //login form -->
+</body>
+
+
+<script>
+	TH_login.onclick = async () => {
+		var info = {
+			phoneNumber: TH_phoneNumber.value,
+			password: TH_password.value
+		}
+
+		await loginAPI(info)
+			.then(result => {
+				console.log(result);
+				if (result.message == 'Auth successful') { //Auth successful
+					// XL_Login(result);
+					var infoUser = decodedJWT(result.token);
+
+					if (!infoUser.status) {
+						alert('Tài khoản này hiện đang bị khóa. Vui lòng đăng nhập lại sau.');
+					} else {
+						sessionStorage.setItem('token', result.token);
+						window.location = '/';
+					}
+				}
+			})
+			.catch(err => {
+				console.log(err);
+				TH_errorMessage.className = `errorMessage`;
+				if (err == 'Internal Server Error') {
+					TH_errorMessage.innerHTML = `Số điện thoại này không tồn tại.`
+
+				} else if (err == 'Unauthorized') {
+					TH_errorMessage.innerHTML = `Số điện thoại hoặc mật khẩu không đúng, vui lòng đăng nhập lại.`
+				}
+			});
+	}
+
+	function keyCode(event) {
+		if (event.keyCode == 13) {
+			TH_login.click();
+		}
+	}
+</script>

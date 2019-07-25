@@ -1,0 +1,439 @@
+<script>
+    if (sessionStorage.getItem('token') == null) {
+        window.location.href = Dia_chi_Dich_vu + '/login'
+    }
+</script>
+
+<body>
+    <!-- breadcrumbs -->
+    <div class="w3layouts-breadcrumbs text-center">
+        <div class="container">
+            <span class="agile-breadcrumbs"><a href="/"><i class="fa fa-home home_1"></i></a> / <span> Đăng
+                    tin</span></span>
+        </div>
+    </div>
+    <!-- //breadcrumbs -->
+    <!-- Submit Ad -->
+    <div class="submit-ad main-grid-border">
+        <div class="container">
+            <h2 class="w3-head">Đăng tin</h2>
+
+            {{!-- toast message --}}
+            <div id="errorMessageId"></div>
+
+            <div class="post-ad-form">
+                <form>
+                    <label>Chọn chuyên mục <span>*</span></label>
+                    <select class="" id="listCategoriesId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+                    <label>Chọn thể loại <span>*</span></label>
+                    <select class="" id="listClassifiesId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+                    <label id="txtProducer">Chọn nhà sản xuất <span>*</span></label>
+                    <select class="" id="listProducersId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+
+                    <label>Tiêu đề <span>*</span></label>
+                    <input type="text" class="phone" id="titleId" placeholder="">
+                    <div class="clearfix"></div>
+                    <label>Mô tả chi tiết <span>*</span></label>
+                    <textarea class="mess" id="contentId" placeholder="Viết tiếng Việt có dấu
+                         - Tình trạng
+                         - Thời gian sử dụng
+                         - Bảo hành nếu có
+                         - Sửa chữa, nâng cấp, phụ kiện đi kèm
+                         - Địa chỉ giao nhận, đổi trả
+                         - Mô tả tối thiểu 20 ký tự"></textarea>
+                    <div class="clearfix"></div>
+
+                    <label>Loại tin: </label>
+                    <div class="radio">
+                        <label><input type="radio" id="rdoSellerId" value="1" name="optradio" checked>Cần
+                            bán</label>
+                    </div>
+                    <div class="radio">
+                        <label><input type="radio" id="rdoBuyerId" value="0" name="optradio">Cần mua</label>
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <label>Giá <span>*</span></label>
+                    <input type="text" class="phone" id="priceId" placeholder="">
+                    <div class="clearfix"></div>
+
+                    <label>Địa chỉ nơi bán: <span>*</span></label>
+                    <input type="text" class="address" id="addressId" placeholder="">
+                    <div class="clearfix"></div>
+
+                    <label>Thành phố: <span>*</span></label>
+                    <select class="" id="listCitiesId">
+
+                    </select>
+                    <div class="clearfix"></div>
+
+                    <div class="upload-ad-photos">
+                        <label>Hình ảnh:</label>
+                        <div class="photos-upload-view">
+                            <form>
+                                <div>
+                                    <a id="addImageId" class="btn btn-danger btn-lg">
+                                        <i class="fa fa-camera fa-4x"></i>
+                                    </a>
+                                    <div style="position: absolute; right: 875px; top: 1080px;">
+                                        <i class="fa fa-hand-o-left"></i>
+                                        <em>Bạn cần đăng ít nhất 1 hình</em>
+                                    </div>
+                                    <input type="file" id="fileselect" style="display: none" multiple="multiple"
+                                        accept="image/*" />
+                                </div>
+                            </form>
+
+                            <div id="messages">
+                                <p>Tối thiểu 1 hình và tối đa 6 hình</p>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <label id="createdAtId"></label>
+
+                    <div class="personal-details">
+                        <p class="post-terms">Khi nhấn <strong>nút Đăng tin</strong> là bạn đã đồng ý với các <a
+                                href="terms.html" target="_blank">Điều khoản sử dụng </a> và <a href="privacy.html"
+                                target="_blank">Chính sách bảo mật</a></p>
+                        <input type="submit" id="btnDangTin" value="Đăng tin">
+                        <div class="clearfix"></div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <!-- // Submit Ad -->
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    //var socket = io(Dia_chi_Dich_vu);
+
+    createdAtId.innerHTML = 'Ngày tạo: ' + getDateFormat(new Date());
+
+    var listImageSelected = [];
+
+    addImageId.onclick = () => {
+        fileselect.click();
+    }
+
+    fileselect.onchange = async () => {
+        hiddenMessageError();
+        var maxImageShow;
+        if (fileselect.files.length > 0) {
+            listImageSelected = [];
+        }
+
+        if (fileselect.files.length > 6) {
+            showMessageError(`Bạn chỉ được đăng tối đa 6 ảnh`);
+            maxImageShow = 6;
+        } else {
+            maxImageShow = fileselect.files.length;
+        }
+
+        for (var i = 0; i < maxImageShow; i++) {
+            listImageSelected.push(fileselect.files[i]);
+        }
+        showImageSelect(listImageSelected);
+    }
+
+    listCategoriesId.onchange = async () => {
+        txtProducer.style.visibility = 'visible';
+        listProducersId.style.visibility = 'visible';
+
+        let listClassifies = await getClassifiesByCategory(listCategoriesId.value);
+
+        if (listClassifies > 0) {
+            getProducersByClassify(listClassifiesId.value);
+        } else {
+            txtProducer.style.visibility = 'hidden';
+            listProducersId.style.visibility = 'hidden';
+        }
+    }
+
+    listClassifiesId.onchange = async () => {
+        txtProducer.style.visibility = 'visible';
+        listProducersId.style.visibility = 'visible';
+
+        let listProducers = await getProducersByClassify(listClassifiesId.value);
+
+        if (listProducers < 1) {
+            txtProducer.style.visibility = 'hidden';
+            listProducersId.style.visibility = 'hidden';
+        }
+    }
+
+    btnDangTin.onclick = () => {
+        hiddenMessageError();
+        console.log(listProducersId.value == ``);
+        // xử lý sự kiện click
+        getListBase64(listImageSelected)
+            .then(listBase64 => {
+                var token = sessionStorage.getItem('token');
+                let classify = listClassifiesId.value == `` ? undefined : listClassifiesId.value;
+                console.log('classify', classify)
+                let producer = listProducersId.value == `` ? undefined : listProducersId.value;
+                console.log(producer)
+                var infoPostCreate = {
+                    user: decodedJWT(token).id,
+                    category: listCategoriesId.value,
+                    classify: classify,
+                    producer: producer,
+                    title: titleId.value,
+                    content: contentId.value,
+                    price: priceId.value,
+                    address: addressId.value,
+                    city: listCitiesId.value,
+                    images: listBase64,
+                    seller: rdoSellerId.checked
+                }
+                createPostAPI(token, infoPostCreate)
+                    .then(result => {
+                        showMessageSuccess(`Đăng tin mới thành công.<br>Tin của bạn đang được kiểm duyệt`);
+                        console.log(result);
+                        socket.emit('client-create-post', result.createdPost);
+                    })
+                    .catch(err => {
+                        var chuoi_error = ``;
+                        console.log(err);
+                        if (JSON.parse(err).message != undefined) {
+                            if (JSON.parse(err).message == `The title already exists`) {
+                                chuoi_error = `Tiêu đề này đã tồn tại.<br>Xin chọn tiêu đề khác.`
+                            } else if (JSON.parse(err).message == `pictures too much or too little`) {
+                                chuoi_error = `Phải chọn ít nhất 1 ảnh và tối đa 6 ảnh.`
+                            } else if (JSON.parse(err).message == `number of posts cannot exceed 10`) {
+                                chuoi_error = `Tài khoản của bạn chỉ được đăng tối đa 10 tin.`
+                            } else if (JSON.parse(err).message == `Auth failed`) {
+                                sessionStorage.removeItem('token');
+                                setTimeout(() => {
+                                    window.location = Dia_chi_Dich_vu;
+                                }, 1500);
+                            }
+
+                        } else if (JSON.parse(err).error.errors != undefined) {
+                            if (JSON.parse(err).error.errors.title != undefined) {
+                                if (JSON.parse(err).error.errors.title.message == 'title too short') {
+                                    chuoi_error += 'Tiêu đề quá ngắn. (Tiêu đề từ 5 đến 255 ký tự) <br>';
+                                } else if (JSON.parse(err).error.errors.title.message == 'title too long') {
+                                    chuoi_error += 'Tiêu đề quá dài. (Tiêu đề từ 5 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.title.message == 'Path `title` is required.') {
+                                    chuoi_error += 'Tiêu đề không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.content != undefined) {
+                                if (JSON.parse(err).error.errors.content.message == 'content too short') {
+                                    chuoi_error += 'Mô tả chi tiết quá ngắn. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.content.message == 'content too long') {
+                                    chuoi_error += 'Mô tả chi tiết quá dài. (Mô tả chi tiết từ 20 đến 5000 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.content.message == 'Path `content` is required.') {
+                                    chuoi_error += 'Mô tả chi tiết không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.address != undefined) {
+                                if (JSON.parse(err).error.errors.address.message == 'address too short') {
+                                    chuoi_error += 'Địa chỉ quá ngắn. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.address.message == 'address too long') {
+                                    chuoi_error += 'Địa chỉ quá dài. (Địa chỉ từ 20 đến 255 ký tự)<br>';
+                                } else if (JSON.parse(err).error.errors.address.message == 'Path `address` is required.') {
+                                    chuoi_error += 'Địa chỉ không được để trống.<br>';
+                                }
+                            }
+
+                            if (JSON.parse(err).error.errors.price != undefined) {
+                                if (JSON.parse(err).error.errors.price.message == 'Path `price` is required.') {
+                                    chuoi_error += 'Giá không được để trống.<br>';
+                                } else if (JSON.parse(err).error.errors.price.message == `Cast to Number failed for value "${priceId.value}" at path "price"`) {
+                                    chuoi_error += 'Giá phải là một con số.<br>';
+                                }
+                            }
+                        } else {
+                            if (JSON.parse(err).error == 'Wrong file format')
+                                chuoi_error += 'Sai định dạng hình ảnh.<br>';
+                        }
+
+                        showMessageError(chuoi_error);
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                if (JSON.parse(err).error.message != undefined)
+                    messageError(JSON.parse(err).error.message);
+                else if (JSON.parse(err).message != undefined)
+                    messageError(JSON.parse(err).message);
+                else
+                    messageError(err);
+            });
+        // 
+
+
+        $(document).ready(function () {
+            $("html, body").animate({ scrollTop: 20 }, 600);
+            return false;
+        });
+    }
+
+    loadData();
+    async function loadData() {
+        await getAllCategory();     //load all Categories
+        await getClassifiesByCategory(listCategoriesId.value); // load Classifies by category
+        getProducersByClassify(listClassifiesId.value)     //load producers by classify
+            .then(listProducers => {
+                if (listProducers < 0) {
+                    txtProducer.style.visibility = 'hidden';
+                    listProducersId.style.visibility = 'hidden';
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+        showListCity();
+    }
+
+    function getAllCategory() {
+        return new Promise((resolve, reject) => {
+            getAllCategoriesAPI()
+                .then(listCategories => {
+                    if (listCategories.count > 0) {
+                        listCategories.categories.forEach(category => {
+                            listCategoriesId.innerHTML += `<option value="${category.id}">${category.title}</option>`
+                        });
+                        resolve(listCategories.count);
+                    } else {
+                        listCategoriesId.innerHTML += `<option value="">Không có chuyên mục nào</option>`
+                        listCategoriesId.disabled = true;
+                        resolve(0);
+                    }
+                })
+                .catch(err => {
+                    reject(0);
+                    messageError(err);
+                });
+        });
+    }
+
+    function getClassifiesByCategory(CategoryId) {
+        return new Promise((resolve, reject) => {
+            getClassifiesByCategoryAPI(CategoryId)
+                .then(listClassifies => {
+                    listClassifiesId.innerHTML = ``;
+                    listClassifiesId.disabled = false;
+                    if (listClassifies.count > 0) {
+                        listClassifies.classifies.forEach(classify => {
+                            listClassifiesId.innerHTML += `<option value="${classify.id}">${classify.title}</option>`
+                        })
+                        resolve(listClassifies.count);
+                    } else {
+                        listClassifiesId.innerHTML = `<option value="">Không có thể loại nào trong chuyên mục này</option>`
+                        listClassifiesId.disabled = true;
+                        resolve(0);
+                    }
+                }).catch(err => {
+                    reject(0);
+                    console.log(err)
+                    //messageError(err);
+                });
+        });
+    }
+
+    function getProducersByClassify(ClassifyId) {
+        return new Promise((resolve, reject) => {
+            getProducersByClassifyAPI(ClassifyId)
+                .then(listProducers => {
+                    listProducersId.innerHTML = ``;
+                    listProducersId.disabled = false;
+                    if (listProducers.count > 0) {
+                        listProducers.producers.forEach(producer => {
+                            listProducersId.innerHTML += `<option value="${producer.id}">${producer.title}</option>`
+                        })
+                        resolve(listProducers.count);
+                    } else {
+                        // listProducersId.innerHTML = `<option value="">Không có nhà sản xuất nào trong thể loại này</option>`
+                        //listProducersId.disabled = true;
+                        txtProducer.style.visibility = 'hidden';
+                        listProducersId.style.visibility = 'hidden';
+                        resolve(0);
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    if (err == 'Unauthorized') {
+                        sessionStorage.removeItem('token');
+                        window.location = Dia_chi_Dich_vu;
+                    }
+                    reject(0);
+                });
+        });
+    }
+
+    function showListCity() {
+        getAllCityAPI()
+            .then(listCities => {
+                console.log(listCities)
+                listCities.cities.forEach(city => {
+                    listCitiesId.innerHTML += `<option value="${city._id}">${city.name}</option>`
+                });
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
+
+    async function showImageSelect(listImage) {
+        messages.innerHTML = ``;
+        var chuoi_HTML = `<div>`;
+        for (var i = 0; i < listImage.length; i++) {
+            chuoi_HTML += `
+                    <img style="border: 1px solid gray;" id="image${i}" src="${await getBase64(listImage[i])}" width="100" height="100">
+                    <button onclick="deleteImageShow(${i})" style="margin-top: -98px; margin-left: -25px; border: 1px solid; border-radius: 50%;" type="button" class="btn btn-dark btn-sm">
+                        <i class="fa fa-times"></i>
+                    </button>`
+        }
+        chuoi_HTML += `</div>`
+        messages.innerHTML += chuoi_HTML;
+        messages.innerHTML += `<p style="margin-top: 10px">Tối thiểu 1 ảnh và tối đa 6 ảnh</p>`
+    }
+
+    function deleteImageShow(posImage) {
+        listImageSelected.splice(posImage, 1)
+        showImageSelect(listImageSelected)
+    }
+
+    function showMessageError(message) {
+        errorMessageId.innerHTML = message;
+        errorMessageId.classList.add('errorMessage');
+        errorMessageId.classList.remove('successMessage');
+
+        $(document).ready(function () {
+            $("html, body").animate({ scrollTop: 20 }, 600);
+            return false;
+        });
+    }
+
+    function showMessageSuccess(message) {
+        errorMessageId.innerHTML = message;
+        errorMessageId.classList.add('successMessage');
+        errorMessageId.classList.remove('errorMessage');
+    }
+
+    function hiddenMessageError() {
+        errorMessageId.innerHTML = ``;
+        errorMessageId.classList.remove('errorMessage');
+        errorMessageId.classList.remove('successMessage');
+    }
+
+</script>

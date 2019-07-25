@@ -1,0 +1,227 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+
+
+<div class="container mt-3">
+    <input type="hidden" id="getIdUserCreatedUpdated"
+        value="{{body.user._id}}|{{ body.user.created_at }}|{{ body.user.updated_at }}|{{body.user.avatar}}">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="text-info">CHỈNH SỬA TÀI KHOẢN</h1>
+        </div>
+
+        <div class="col-md-10">
+            <div class="form-group">
+                <label>Số điện thoại: </label>
+                <h3>{{body.user.phoneNumber}}</h3>
+                <label>Ảnh đại diện: </label>
+                <img id="imageId" src="" width="100" height="100">
+                <button id="btnShowModalUploadAvatar" class="btn btn-outline-primary ml-4">Cập nhật ảnh đại
+                    diện</button>
+
+            </div>
+
+            <div class="form-group">
+                <label>Họ tên: </label>
+                <input class="form-control" id="fullname" value="{{body.user.name}}">
+            </div>
+
+            <div class="form-group">
+                <label>Địa chỉ: </label>
+                <textarea class="form-control" rows="1" cols="50" id="address">{{body.user.address}}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Địa chỉ facebook: </label>
+                <input class="form-control" id="facebook" value="{{body.user.facebook}}">
+            </div>
+
+            <div class="form-group">
+                <label>Email: </label>
+                <input class="form-control" id="email" value="{{body.user.email}}">
+            </div>
+
+            <div class="form-group">
+                <label>Giới tính: </label>&nbsp
+                <select id="genderId" class="btn btn-danger ml-2">
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label id="createdat"></label>
+            </div>
+
+            <div class="form-group">
+                <label id="updatedat"></label>
+            </div>
+
+            <div class="form-group">
+                <label>Trạng thái: </label>
+                <select id="statusUser" class="btn btn-outline-primary ml-2">
+                    <option value="1" {{#if body.user.status}} selected {{/if}}>Hoạt động</option>
+                    <option value="0" {{#unless body.user.status}} selected {{/unless}}>Khóa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Ghi chú: </label>
+                <textarea class="form-control" rows="1" cols="50" id="note">{{body.user.note}}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Loại tài khoản: </label>
+                <select id="permission" class="btn btn-outline-warning ml-3">
+                    <option value="isUser" {{#if body.user.isUser}} selected {{/if}}>Người dùng</option>
+                    <option value="isEmployee" {{#if body.user.isEmployee}} selected {{/if}}>Nhân viên</option>
+                    <option value="isAdmin" {{#if body.user.isAdmin}} selected {{/if}}>Admin</option>
+                </select>
+            </div>
+
+            <!-- Nút Xác nhận Lưu, Hủy -->
+            <button type="submit" class="btn btn-success font-weight-bold" id="luu">Lưu</button>
+            <button class="btn btn-outline-danger ml-3" id="huy">Hủy</button>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" id="modalUploadAvatarId" class="btn btn-primary btn-lg d-none" data-toggle="modal"
+    data-target="#modelId">
+    Launch
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Ảnh đại diện hiện tại: </label>
+                <img id="imageModalId" width="100" height="100">
+                <input class="btn btn-outline-warning mt-3" type="file" id="avatarId" name="avatar">
+                <label class="mt-3">Dung lượng ảnh nhỏ hơn 1.5 MB</label>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnCloseModalUploadAvatar" class="btn btn-outline-danger"
+                    data-dismiss="modal">Đóng</button>
+                <button type="button" id="btnUpdateAvatar" class="btn btn-primary">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var gender = `{{body.user.gender}}`;
+    if (gender == 'true')
+        genderId.innerHTML = `<option value='1' selected >Nam</option> 
+        <option value='0' >Nữ</option>`;
+    else if (gender == 'false')
+        genderId.innerHTML = `<option value='1'>Nam</option> 
+        <option value='0' selected >Nữ</option>`;
+    else if (gender == ``)
+        genderId.innerHTML = `<option value='' selected disabled hidden>Chưa xác định</option> 
+        <option value='1'>Nam</option> 
+        <option value='0' >Nữ</option>`;
+</script>
+
+
+
+<script>
+    TH_avatar.src = '../images/login_icon2.png';
+
+    btnShowModalUploadAvatar.onclick = () => {
+        imageModalId.src = imageId.src;
+        modalUploadAvatarId.click();
+    }
+
+    btnUpdateAvatar.onclick = () => {
+        getBase64(avatarId.files[0])
+            .then(base64Image => {
+                var avatar = {
+                    avatar: base64Image
+                }
+                updateAvatarUserAPI(sessionStorage.getItem('token'), idUser, avatar)
+                    .then(result => {
+                        messageSuccess(result);
+                        imageId.src = base64Image;
+                    })
+                    .catch(err => {
+                        if (JSON.parse(err).error.message !== undefined)
+                            messageError(JSON.parse(err).error.message);
+                        else
+                            messageError(JSON.parse(err).error);
+                            
+                        setTimeout(() => {
+                            window.location = `${Dia_chi_Dich_vu}/user/${idUser}0301${sessionStorage.getItem('token')}`;
+                        }, 1500);
+                    });
+            })
+            .catch(err => {
+                messageError(err);
+            });
+        btnCloseModalUploadAvatar.click();
+    }
+
+    var arrayGet = getIdUserCreatedUpdated.value.split('|');
+    var idUser = arrayGet[0];
+    var createdAt = arrayGet[1];
+    var updatedAt = arrayGet[2];
+    var linkAvatar = arrayGet[3];
+
+    imageId.src = `${Dia_chi_Dich_vu}/${linkAvatar}`;
+
+    createdat.innerHTML = 'Ngày tham gia: ' + getDateFormat(createdAt);
+    updatedat.innerHTML = 'Chỉnh sửa gần đây nhất: ' + getDateFormat(updatedAt);
+
+    huy.onclick = () => {
+        window.location = Dia_chi_Dich_vu + '/admin/user';
+    }
+
+    luu.onclick = () => {
+        var infoUserUpdate = [
+            { "propName": "name", "value": fullname.value },
+            { "propName": "address", "value": address.value },
+            { "propName": "facebook", "value": facebook.value },
+            { "propName": "email", "value": email.value },
+            { "propName": "gender", "value": genderId.value == "" ? null : genderId.value },
+            { "propName": "status", "value": statusUser.value },
+            { "propName": "note", "value": note.value },
+        ]
+        if (permission.value == 'isAdmin') {
+            infoUserUpdate.push({ "propName": "isAdmin", "value": true })
+            infoUserUpdate.push({ "propName": "isEmployee", "value": false })
+            infoUserUpdate.push({ "propName": "isUser", "value": false })
+        }
+        else if (permission.value == 'isEmployee') {
+            infoUserUpdate.push({ "propName": "isAdmin", "value": false })
+            infoUserUpdate.push({ "propName": "isEmployee", "value": true })
+            infoUserUpdate.push({ "propName": "isUser", "value": false })
+        }
+        else if (permission.value == 'isUser') {
+            infoUserUpdate.push({ "propName": "isAdmin", "value": false })
+            infoUserUpdate.push({ "propName": "isEmployee", "value": false })
+            infoUserUpdate.push({ "propName": "isUser", "value": true })
+        }
+
+        updateAccountUserAPI(sessionStorage.getItem('token'), idUser, infoUserUpdate)
+            .then(result => {
+                messageSuccess(result);
+                setTimeout(() => {
+                    window.location = Dia_chi_Dich_vu + '/admin/user';
+                }, 1500);
+            })
+            .catch(err => {
+                messageError(err);
+            });
+    }
+</script>

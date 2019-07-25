@@ -1,0 +1,316 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 id="formTitleId" class="text-info"></h1>
+        </div>
+
+        <div class="col-md-9">
+
+            <div class="form-group">
+                <label>Tiêu đề <i class="fa fa-empire text-danger"></i>: </label>
+                <input class="form-control" required="required" id="titleId" value="">
+            </div>
+
+            <div class="form-group">
+                <label>Chuyên mục: </label>&nbsp
+                <select id="filterCategoryId" class="btn btn-outline-secondary">
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Thể loại: </label>&nbsp
+                <select id="filterClassifyId" class="btn btn-outline-primary">
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label id="createdAtId"></label>
+            </div>
+
+            <div class="form-group">
+                <label id="updatedAtId"></label>
+            </div>
+
+            <div class="form-group">
+                <label>Ghi chú: </label>
+                <textarea class="form-control" rows="1" cols="50" id="noteId"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Hình ảnh (Dung lượng nhỏ hơn 1.5 MB) <i class="fa fa-empire text-danger"></i>: </label>
+                <img id="imageId" src="" width="100" height="100">
+                <input class="btn btn-outline-primary" type="file" name="file" id="uploadImage">
+                <button class="btn btn-outline-warning" id="showModalUploadId">Cập nhật ảnh</button>
+            </div>
+
+            <!-- Nút Xác nhận Lưu, Hủy -->
+            <button class="btn btn-success font-weight-bold" id="luu">Lưu</button>
+            <button class="btn btn-outline-danger ml-3" id="huy">Hủy</button><br>
+        </div>
+
+        <div class="col-md-12 mt-5">
+            <i class="fa fa-empire text-danger"></i>: Là các nội dung không được để trống
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<button id="modalUploadId" type="button" class="btn btn-primary btn-lg d-none" data-toggle="modal"
+    data-target="#modelId">
+    Launch
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cập nhật hình ảnh</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label>Hình ảnh: </label>
+                <img id="imageModalId" width="100" height="100">
+                <input class="btn btn-outline-warning mt-3" type="file" id="uploadId" name="image">
+
+                <div class="modal-footer mt-3">
+                    <button id="btnCloseModalUpload" class="btn btn-outline-danger" data-dismiss="modal">Đóng</button>
+                    <button class="btn btn-success" id="btnUpload">Cập nhật</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    TH_avatar.src = '../images/login_icon2.png';
+
+    var idProducer = `{{producerId}}`;
+
+    filterCategoryId.onchange = () => {
+        getClassifiesByCategory(filterCategoryId.value);
+    }
+
+    if (idProducer == ``) {  // Create
+        showModalUploadId.classList.add('d-none');
+        imageId.classList.add('d-none');
+        updatedAtId.classList.add('d-none');
+
+        formTitleId.innerHTML = `TẠO MỚI NHÀ SẢN XUẤT`;
+        createdAtId.innerHTML = 'Ngày tạo: ' + getDateFormat(new Date());
+
+        loadAllData();
+        async function loadAllData() {
+            await getAllCategory();
+            getClassifiesByCategory(filterCategoryId.value);
+        }
+
+        luu.onclick = () => {
+            getBase64(uploadImage.files[0])
+                .then(base64Image => {
+                    var infoProducerCreate = {
+                        title: titleId.value,
+                        image: base64Image,
+                        category: filterCategoryId.value,
+                        classify: filterClassifyId.value,
+                        note: noteId.value
+                    }
+
+                    createProducerAPI(sessionStorage.getItem('token'), infoProducerCreate)
+                        .then(result => {
+                            messageSuccess(result);
+                            setTimeout(() => {
+                                window.location = Dia_chi_Dich_vu + '/admin/producer';
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            if (JSON.parse(err).error.message != undefined)
+                                messageError(JSON.parse(err).error.message);
+                            else if (JSON.parse(err).message != undefined)
+                                messageError(JSON.parse(err).message);
+                            else
+                                messageError(err);
+                        });
+                })
+                .catch(err => {
+                    messageError(err);
+                })
+        }
+
+    }  // End Create
+    else {    // Update
+        uploadImage.classList.add('d-none');
+        formTitleId.innerHTML = `CHỈNH SỬA NHÀ SẢN XUẤT`;
+
+        loadAllData();
+        async function loadAllData() {
+            await getAllCategory();
+            var producer = await showProducerUpdate(idProducer)
+            await getClassifiesByCategory(producer.producer.category._id);
+            filterClassifyId.value = producer.producer.classify._id;
+        }
+
+        
+        // idProducer
+        luu.onclick = () => {
+            var producerUpdate = [
+                { "propName": "title", "value": titleId.value },
+                { "propName": "category", "value": filterCategoryId.value },
+                { "propName": "classify", "value": filterClassifyId.value },
+                { "propName": "note", "value": noteId.value }
+            ]
+
+            updateProducerAPI(sessionStorage.getItem('token'), idProducer, producerUpdate)
+                .then(result => {
+                    messageSuccess(result);
+                    setTimeout(() => {
+                        window.location = Dia_chi_Dich_vu + '/admin/producer';
+                    }, 1500);
+                })
+                .catch(err => {
+                    messageError(err);
+                });
+        }
+
+        showModalUploadId.onclick = () => {
+            modalUploadId.click();
+        }
+
+        btnUpload.onclick = () => {
+            getBase64(uploadId.files[0])
+                .then(base64Image => {
+                    var image = {
+                        image: base64Image
+                    }
+                    updateImageProducerAPI(sessionStorage.getItem('token'), idProducer, image)
+                        .then(result => {
+                            messageSuccess(result);
+                            imageId.src = base64Image;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            if (JSON.parse(err).error.message !== undefined)
+                                messageError(JSON.parse(err).error.message);
+                            else
+                                messageError(JSON.parse(err).error);
+                        });
+                })
+                .catch(err => {
+                    messageError(err);
+                });
+            btnCloseModalUpload.click();
+        }
+    }   // End update
+
+    huy.onclick = () => {
+        window.location = Dia_chi_Dich_vu + '/admin/producer';
+    }
+
+    function getProducersByClassify(ClassifyId) {
+        getClassifyAPI(sessionStorage.getItem('token'), ClassifyId)
+            .then(classify => {
+
+                getProducerByClassifyAPI(ClassifyId)
+                    .then(listProducers => {
+                        if (listProducers.count > 0) {
+                            toastMessageId.innerHTML = ``;
+                            tableProducersId.classList.remove('d-none');
+                            listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
+                            showTableProducers(listProducers.producers);
+                        } else {
+                            listCountId.innerHTML = `Danh sách nhà sản xuất thuộc ${classify.category.title} - ${classify.classify.title} (Tổng: ${listProducers.count})`;
+                            toastMessageId.innerHTML = `Thể loại này không có nhà sản xuất nào`;
+                            tableProducersId.classList.add('d-none');
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        messageError(err);
+                    });
+            })
+            .catch(err => {
+                console.log(err);
+                messageError(err);
+            })
+    }
+
+    function showProducerUpdate(idProducer) {
+        return new Promise((resolve, reject) => {
+            getProducerAPI(sessionStorage.getItem('token'), idProducer)
+            .then(result => {
+                titleId.value = result.producer.title;
+                filterCategoryId.value = result.producer.category._id;
+                //filterClassifyId.value = result.producer.classify._id;
+                createdAtId.innerHTML = 'Ngày tham gia: ' + getDateFormat(result.producer.created_at);
+                updatedAtId.innerHTML = 'Chỉnh sửa gần đây nhất: ' + getDateFormat(result.producer.updated_at);
+                noteId.value = result.producer.note == undefined ? "" : result.producer.note;
+                imageId.src = `${Dia_chi_Dich_vu}/${result.producer.image}`;
+                imageModalId.src = imageId.src;
+                resolve(result);
+            })
+            .catch(err => {
+                reject(0);
+                messageError(err);
+            });
+        });
+        
+    }
+
+    function getAllCategory() {
+        return new Promise((resolve, reject) => {
+            getAllCategoriesAPI()
+                .then(listCategories => {
+                    if (listCategories.count > 0) {
+                        listCategories.categories.forEach(category => {
+                            filterCategoryId.innerHTML += `<option value="${category.id}">${category.title}</option>`
+                        });
+                        resolve(3);
+                    } else {
+                        filterCategoryId.innerHTML += `<option value="">Không có chuyên mục nào</option>`
+                        filterCategoryId.disabled = true;
+                    }
+                    
+                })
+                .catch(err => {
+                    reject(0);
+                    messageError(err);
+                });
+        });
+    }
+
+    function getClassifiesByCategory(CategoryId) {
+        return new Promise((resolve, reject) => {
+            getClassifiesByCategoryAPI(CategoryId)
+                .then(listClassifies => {
+                    filterClassifyId.innerHTML = ``;
+                    filterClassifyId.disabled = false;
+                    if (listClassifies.count > 0) {
+                        listClassifies.classifies.forEach(classify => {
+                            filterClassifyId.innerHTML += `<option value="${classify.id}">${classify.title}</option>`
+                        })
+                        resolve(1);
+                    } else {
+                        filterClassifyId.innerHTML = `<option value="">Không có thể loại nào trong chuyên mục này</option>`
+                        filterClassifyId.disabled = true;
+                        resolve(1);
+                    }
+                }).catch(err => {
+                    reject(0);
+                    console.log(err)
+                    //messageError(err);
+                });
+        });
+    }
+</script>

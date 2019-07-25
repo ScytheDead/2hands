@@ -1,0 +1,135 @@
+<head>
+   
+</head>
+
+
+<body>
+
+    <!-- breadcrumbs -->
+    <div class="w3layouts-breadcrumbs text-center">
+        <div class="container">
+            <span class="agile-breadcrumbs" id="agileBreadcrumbsId">
+                <a href="/"><i class="fa fa-home home_1"></i></a> / Các tin đã lưu
+                <span></span>
+            </span>
+        </div>
+    </div>
+    <!-- //breadcrumbs -->
+    <!-- Electronic appliances -->
+    <div class="total-ads main-grid-border">
+        <div class="container">
+
+            <div class="ads-grid">
+                <div class="agileinfo-ads-display col-md-11">
+                    <div class="wrapper">
+                        <div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
+                            <ul id="myTab" class="nav nav-tabs nav-tabs-responsive" role="tablist">
+                                <li role="presentation" class="active">
+                                    <a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home"
+                                        aria-expanded="true">
+                                        <span id="postCategoryId" class="text">Tin đã lưu</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div id="myTabContent" class="tab-content">
+                                <div role="tabpanel" class="tab-pane fade in active" id="home"
+                                    aria-labelledby="home-tab">
+                                    <div>
+                                        <div id="container">
+                                            <div class="view-controls-list" id="viewcontrols">
+                                                <label>Hiển thị :</label>
+                                                <a class="gridview"><i class="fa fa-th"></i></a>
+                                                <a class="listview active"><i class="fa fa-th-list"></i></a>
+                                            </div>
+                                            <div class="sort">
+                                                <div class="sort-by">
+                                                    <label>Sắp xếp theo : </label>
+                                                    <select>
+                                                        <option value="">Tin mới nhất</option>
+                                                        <option value="">Giá: Thấp đến cao</option>
+                                                        <option value="">Giá: Cao đến thấp</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <ul class="list" id="listPostsId">
+                                                {{!-- Post hiển thị ở đây --}}
+                                               
+                                                {{!--  --}}
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                <ul class="pagination pagination-sm">
+                                    <li><a href="#">Prev</a></li>
+                                    <li><a href="#">1</a></li>
+                                    <li><a href="#">2</a></li>
+                                    <li><a href="#">3</a></li>
+                                    <li><a href="#">4</a></li>
+                                    <li><a href="#">5</a></li>
+                                    <li><a href="#">6</a></li>
+                                    <li><a href="#">7</a></li>
+                                    <li><a href="#">8</a></li>
+                                    <li><a href="#">Next</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <!-- // Electronic appliances -->
+</body>
+
+<script>
+    var token = sessionStorage.getItem('token');
+    var user = decodedJWT(token);
+
+    getPostSubscribes();
+
+    function getPostSubscribes() {
+        getSubscribestUserAPI(token, user.id)
+            .then(listSubscribes => {
+                console.log(listSubscribes);
+                if(listSubscribes.count > 0){
+                   showPostSubscribes(listSubscribes.subscribes);
+                } else {
+                    home.innerHTML = `<h1 class="text-center">Bạn chưa lưu tin nào</h1>`
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    function showPostSubscribes(listPost) {
+        console.log(listPost);
+        let chuoi_HTML = ``;
+        listPost.forEach(post => {
+            chuoi_HTML += `
+			<a href="/post-detail/${post.id}">
+				<li>
+					<img src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" />
+					<section class="list-left">
+						<h5 class="title">${post.title}</h5>
+						<span class="adprice">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)} ₫</span>
+						<p class="catpath">${post.classify == undefined ? post.category.title : post.classify.title}</p>
+					</section>
+					<section class="list-right">
+						<span class="date">${post.moment}</span>
+						<span class="cityname">${post.city.name}</span>
+					</section>
+					<div class="clearfix"></div>
+				</li>
+			</a>`
+        })
+
+        listPostsId.innerHTML = chuoi_HTML;
+    }
+
+</script>

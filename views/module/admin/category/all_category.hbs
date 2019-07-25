@@ -1,0 +1,96 @@
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/connectAPI.js"></script>
+<script src="../js/handle.js"></script>
+<script src="../js/handleAdmin.js"></script>
+
+
+<script>
+    if (sessionStorage.getItem('token') != null) {
+        var user = decodedJWT(sessionStorage.getItem('token'));
+        if (user.isAdmin || user.isEmployee) {
+
+        } else {
+            window.location.href = Dia_chi_Dich_vu
+        }
+    } else {
+        window.location.href = Dia_chi_Dich_vu
+    }
+</script>
+
+<div class="container-fluid mt-2">
+    <div class="row">
+
+        <div class="col-md-3">
+            {{> admin/content-left}}
+        </div>
+
+        <div id="controlAdmin" class="col-md-9">
+
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    btnCategory.classList.add('active');
+
+    TH_avatar.src = '../images/login_icon2.png';
+    showAllCategories();
+
+    function showAllCategories() {
+        var token = sessionStorage.getItem('token');
+        getAllCategoriesAPI()
+            .then(listCategories => {
+                var chuoi_HTML = `<h3 class="text-primary mt-2">Danh sách chuyên mục tin (Tổng: ${listCategories.count})</h3>
+            <button class="btn btn-primary" onclick="goCreateCategory()">Thêm chuyên mục tin</button>
+        <table class="table mt-3" style="">
+            <thead>
+                <tr>
+                    <th>Hình</th>
+                    <th>Tiêu đề</th>
+                    <th>Ngày tạo</th>
+                    <th>Lần cập nhật gần nhất</th>
+                    <th>Ghi chú</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody> `
+                listCategories.categories.forEach(category => {
+                    chuoi_HTML += `<tr>
+                <td scope="row"><img src="${Dia_chi_Dich_vu}/${category.image}" width="70" height="70"></td>
+                <td>${category.title}</td>
+                <td>${getDateFormat(category.createdAt)}</td>
+                <td>${getDateFormat(category.updatedAt)}</td>
+                <td>${category.note == null ? "" : category.note}</td>
+                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/category/${category.id}'">Sửa</button>
+                    <button class="btn btn-outline-danger" onclick="deleteCategory('${sessionStorage.getItem('token')}', '${category.id}')">Xóa</button>
+                </td>
+            </tr>`
+                })
+
+                chuoi_HTML += ` </tbody>
+                        </table>`
+                controlAdmin.innerHTML = ``;
+                controlAdmin.innerHTML = chuoi_HTML;
+            })
+            .catch(err => {
+                messageError(err);
+            });
+    }
+
+    function deleteCategory(token, id) {
+        deleteCategoryAPI(token, id)
+            .then(result => {
+                messageSuccess(result);
+                showAllCategories();
+            })
+            .catch(err => {
+                messageError(JSON.parse(err).message);
+            });
+    }
+
+    function goCreateCategory(){
+        window.location = Dia_chi_Dich_vu + '/category';
+    }
+</script>
