@@ -148,7 +148,7 @@
                 <td>${post.classify == undefined ? '' : post.classify.title}</td>
                 <td>${post.producer == undefined ? '' : post.producer.title}</td>
                 <td>${post.title}</td>
-                <td>${post.price}</td>
+                <td class="text-danger font-weight-bold">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)}₫</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
                 <td>${getDateFormat(post.createdAt)}</td>
                 <td>${getDateFormat(post.updatedAt)}</td>
