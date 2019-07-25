@@ -1,5 +1,4 @@
 <body>
-
 	<!-- breadcrumbs -->
 	<div class="w3layouts-breadcrumbs text-center">
 		<div class="container">
@@ -56,7 +55,7 @@
 				<div class="side-bar col-md-3">
 					<div class="w3ls-featured-ads" id="listPostPriorityId">
 
-						<div class="w3l-featured-ad">
+						{{!-- <div class="w3l-featured-ad">
 							<a href="single.html">
 								<div class="w3-featured-ad-left">
 									<img src="template/images/f1.jpg" title="ad image" alt="" />
@@ -79,7 +78,7 @@
 								</div>
 								<div class="clearfix"></div>
 							</a>
-						</div>
+						</div> --}}
 
 					</div>
 
@@ -148,7 +147,7 @@
 								</div>
 
 
-								<ul class="pagination pagination-sm">
+								<ul class="pagination pagination-sm" id="paginationId">
 									<li><a href="#">Prev</a></li>
 									<li><a href="#">1</a></li>
 									<li><a href="#">2</a></li>
@@ -171,13 +170,41 @@
 	<!-- // Electronic appliances -->
 </body>
 
+<script type="text/javascript">
+	$(document).ready(function () {
+		var elem = $('#container ul');
+		$('#viewcontrols a').on('click', function (e) {
+			if ($(this).hasClass('gridview')) {
+				elem.fadeOut(400, function () {
+					$('#container ul').removeClass('list').addClass('grid');
+					$('#viewcontrols').removeClass('view-controls-list').addClass('view-controls-grid');
+					$('#viewcontrols .gridview').addClass('active');
+					$('#viewcontrols .listview').removeClass('active');
+					elem.fadeIn(400);
+				});
+			}
+			else if ($(this).hasClass('listview')) {
+				elem.fadeOut(1000, function () {
+					$('#container ul').removeClass('grid').addClass('list');
+					$('#viewcontrols').removeClass('view-controls-grid').addClass('view-controls-list');
+					$('#viewcontrols .gridview').removeClass('active');
+					$('#viewcontrols .listview').addClass('active');
+					elem.fadeIn(400);
+				});
+			}
+		});
+	});
+</script>
+
 <script>
+	var numberPost1Page = 8;
 	var categoryId = `{{categoryId}}`
 	var cityId = `{{cityId}}`
 	if (sessionStorage.getItem('token') != null) {
 		var token = sessionStorage.getItem('token');
 		var user = decodedJWT(token);
 	}
+	var listPostAllByCategory;
 
 	var listSubscribes = [];
 
@@ -261,7 +288,9 @@
 					}
 				}
 				if (listPosts.count > 0) {
-					showPosts(listPosts.posts);
+					listPostAllByCategory = listPosts.posts;
+					showPostsPagination(listPosts.posts, 0, numberPost1Page);
+					paginationId.innerHTML = pagination(listPosts.count, numberPost1Page);
 				}
 			})
 			.catch(err => {
@@ -269,12 +298,13 @@
 			});
 	}
 
-	function showPosts(listPosts) {
+	function showPostsPagination(listPosts, position, limit = 8) {
 		let chuoi_HTML = ``;
-		listPosts.forEach(post => {
-			let result = listSubscribes.findIndex(postSubscribe => postSubscribe.id == post.id);
-
-			chuoi_HTML += `
+		let count = 0;
+		listPosts.forEach((post, index) => {
+			if (index >= position && count < limit) {
+				let result = listSubscribes.findIndex(postSubscribe => postSubscribe.id == post.id);
+				chuoi_HTML += `
 				<li>
 					<img style="cursor: pointer" src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" onclick="goDetail('${post.id}')"/>
 					<section style="cursor: pointer" class="list-left" onclick="goDetail('${post.id}')">
@@ -289,10 +319,26 @@
 					</section>
 					<button onclick="subscribePost('${post.id}')" style="margin-top: 3rem" class="btn btn-danger pull-right ${post.id}">Lưu tin <i id="subscribeId" class="fa ${result != -1 ? 'fa-heart' : 'fa-heart-o'}"></i> </button>
 					<div class="clearfix"></div>
-				</li>`
-		})
-
+				</li>`;
+				count++;
+			}
+		});
 		listPostsId.innerHTML = chuoi_HTML;
+		window.scrollTo(0, 100);
+	}
+
+	function pagination(listPostsLength, limit = 8) {
+		let numberPage = listPostsLength % limit == 0 ? listPostsLength / limit : parseInt(listPostsLength / limit) + 1;
+
+		let chuoiHTML = '';
+		if (numberPage > 1) {
+			for (let i = 1; i <= numberPage; i++) {
+				let position = (i - 1) * limit;
+				chuoiHTML += `<li><a href="javaScript:void(0)" onclick="showPostsPagination(listPostAllByCategory, ${position}, ${limit})">${i}</a></li>`
+			}
+		}
+
+		return chuoiHTML;
 	}
 
 	function showListPostFilter(listPostAll) {
@@ -301,7 +347,8 @@
 
 		if (listCityId.value == '' && listClassifyId.value == '') {
 			listPostFilter = listPostAll;
-			showPosts(listPostAll);
+			showPostsPagination(listPostAll, 0, numberPost1Page);
+			paginationId.innerHTML = pagination(listPostAll.length, numberPost1Page);
 		} else {
 			listPostFilter = [];
 
@@ -327,7 +374,8 @@
 
 			console.log(listPostFilter);
 			if (listPostFilter.length > 0) {
-				showPosts(listPostFilter);
+				showPostsPagination(listPostFilter, 0, numberPost1Page);
+				paginationId.innerHTML = pagination(listPostFilter.length, numberPost1Page);
 			} else {
 				listPostsId.innerHTML = '<h1>Không có tin theo điều kiện lọc này</h1>'
 			}
@@ -348,7 +396,8 @@
 
 		console.log(listPostFilterByProducer);
 		if (listPostFilterByProducer.length > 0) {
-			showPosts(listPostFilterByProducer);
+			showPostsPagination(listPostFilterByProducer, 0, numberPost1Page);
+			paginationId.innerHTML = pagination(listPostFilterByProducer.length, numberPost1Page);
 		} else {
 			listPostsId.innerHTML = '<h1>Không có tin theo điều kiện lọc này</h1>'
 		}
@@ -428,6 +477,8 @@
 													</div>`;
 					}
 				}
+			} else {
+				listPostPriorityId.innerHTML += '<h4>Chưa có sản phẩm ưu tiên nào trong chuyên mục này</h4>'
 			}
 		}
 		catch (err) {

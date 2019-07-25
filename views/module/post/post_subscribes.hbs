@@ -1,5 +1,5 @@
 <head>
-   
+
 </head>
 
 
@@ -54,27 +54,14 @@
                                             <div class="clearfix"></div>
                                             <ul class="list" id="listPostsId">
                                                 {{!-- Post hiển thị ở đây --}}
-                                               
+
                                                 {{!--  --}}
 
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
-                                
 
-                                <ul class="pagination pagination-sm">
-                                    <li><a href="#">Prev</a></li>
-                                    <li><a href="#">1</a></li>
-                                    <li><a href="#">2</a></li>
-                                    <li><a href="#">3</a></li>
-                                    <li><a href="#">4</a></li>
-                                    <li><a href="#">5</a></li>
-                                    <li><a href="#">6</a></li>
-                                    <li><a href="#">7</a></li>
-                                    <li><a href="#">8</a></li>
-                                    <li><a href="#">Next</a></li>
-                                </ul>
                             </div>
                         </div>
                     </div>
@@ -86,6 +73,32 @@
     <!-- // Electronic appliances -->
 </body>
 
+<script type="text/javascript">
+    $(document).ready(function () {
+        var elem = $('#container ul');
+        $('#viewcontrols a').on('click', function (e) {
+            if ($(this).hasClass('gridview')) {
+                elem.fadeOut(400, function () {
+                    $('#container ul').removeClass('list').addClass('grid');
+                    $('#viewcontrols').removeClass('view-controls-list').addClass('view-controls-grid');
+                    $('#viewcontrols .gridview').addClass('active');
+                    $('#viewcontrols .listview').removeClass('active');
+                    elem.fadeIn(400);
+                });
+            }
+            else if ($(this).hasClass('listview')) {
+                elem.fadeOut(1000, function () {
+                    $('#container ul').removeClass('grid').addClass('list');
+                    $('#viewcontrols').removeClass('view-controls-grid').addClass('view-controls-list');
+                    $('#viewcontrols .gridview').removeClass('active');
+                    $('#viewcontrols .listview').addClass('active');
+                    elem.fadeIn(400);
+                });
+            }
+        });
+    });
+</script>
+
 <script>
     var token = sessionStorage.getItem('token');
     var user = decodedJWT(token);
@@ -96,8 +109,8 @@
         getSubscribestUserAPI(token, user.id)
             .then(listSubscribes => {
                 console.log(listSubscribes);
-                if(listSubscribes.count > 0){
-                   showPostSubscribes(listSubscribes.subscribes);
+                if (listSubscribes.count > 0) {
+                    showPostSubscribes(listSubscribes.subscribes);
                 } else {
                     home.innerHTML = `<h1 class="text-center">Bạn chưa lưu tin nào</h1>`
                 }
