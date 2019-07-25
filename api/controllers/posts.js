@@ -14,7 +14,6 @@ moment.locale('vi');
 
 // middleware
 exports.change_priority_expired = (req, res, next) => {
-    console.log('this is middleware !!!!');
     Post.updateMany({
             'priority.enable': 1,
             'priority.expired': {
@@ -73,7 +72,6 @@ exports.posts_create_post = (req, res) => {
                 })
                 .select('_id')
                 .then(listPosts => {
-                    console.log(listPosts.length);
                     if (listPosts.length < maxPost) {
                         Category.findById(req.body.category) //check Category available
                             .then(async category => {
@@ -226,7 +224,6 @@ exports.posts_create_post = (req, res) => {
                                                                             });
                                                                         })
                                                                         .catch(err => {
-                                                                            console.log(err);
                                                                             if (req.body.images !== undefined && req.body.images !== null) {
                                                                                 arrayImage.forEach(pathImage => deleteImage(pathImage));
                                                                             }
@@ -446,7 +443,6 @@ exports.posts_update_post = async (req, res) => {
 
 exports.posts_delete_post = (req, res) => {
     const id = req.params.postId;
-    console.log(id);
     Post.findById(id)
         .select('images')
         .exec()
@@ -459,11 +455,9 @@ exports.posts_delete_post = (req, res) => {
                     subscribes: id
                 })
                 .then(listUser => {
-                    console.log(listUser);
                     if (listUser.length > 0) {
                         listUser.forEach(user => {
                             const resultFindSubscribe = user.subscribes.findIndex(postId => postId == id);
-                            console.log(resultFindSubscribe);
                             if (resultFindSubscribe != -1) {
                                 user.subscribes.pull(id);
                                 user.save();
@@ -1112,7 +1106,6 @@ exports.search_post = (req, res) => {
         $search: valueSearch
     }
 
-    console.log(condition);
     Post.find({
             $text: condition,
             status: 1
@@ -1138,7 +1131,6 @@ exports.search_post = (req, res) => {
             res.status(200).json(response);
         })
         .catch(err => {
-            console.log(err);
             res.status(500).json({
                 error: err
             });

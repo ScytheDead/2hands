@@ -83,8 +83,6 @@
 
     var idCategory = `{{categoryId}}`;
 
-    console.log(idCategory)
-
     if (idCategory == ``) {  // Create
         showModalUploadId.classList.add('d-none');
         imageId.classList.add('d-none');
@@ -131,7 +129,6 @@
 
         getCategoryAPI(idCategory)
             .then(result => {
-                console.log(result.category)
                 titleId.value = result.category.title;
                 createdAtId.innerHTML = 'Ngày tham gia: ' + getDateFormat(result.category.created_at);
                 updatedAtId.innerHTML = 'Chỉnh sửa gần đây nhất: ' + getDateFormat(result.category.updated_at);
@@ -151,7 +148,6 @@
 
             updateCategoryAPI(sessionStorage.getItem('token'), idCategory, categoryUpdate)
                 .then(result => {
-                    console.log(result);
                     messageSuccess(result);
                     setTimeout(() => {
                         window.location = Dia_chi_Dich_vu + '/admin/category';

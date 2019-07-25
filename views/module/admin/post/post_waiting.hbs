@@ -140,7 +140,6 @@
     }
 
     socket.on('server-send-create-post', async post => {
-        console.log(post);
         listAllPosts.push(post);
         chuoi_HTML = `<tr>
                 <td scope="row"><img src="${Dia_chi_Dich_vu}/${post.images == null ? "" : post.images[0]}" width="50" height="50"></td>

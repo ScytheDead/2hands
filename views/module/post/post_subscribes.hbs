@@ -108,7 +108,6 @@
     function getPostSubscribes() {
         getSubscribestUserAPI(token, user.id)
             .then(listSubscribes => {
-                console.log(listSubscribes);
                 if (listSubscribes.count > 0) {
                     showPostSubscribes(listSubscribes.subscribes);
                 } else {
@@ -121,7 +120,6 @@
     }
 
     function showPostSubscribes(listPost) {
-        console.log(listPost);
         let chuoi_HTML = ``;
         listPost.forEach(post => {
             chuoi_HTML += `

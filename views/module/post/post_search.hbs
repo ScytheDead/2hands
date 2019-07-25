@@ -197,7 +197,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 
     var listPostSearch = JSON.parse(sessionStorage.getItem('search'));
-    console.log(listPostSearch);
 
     getPostsSubscribes(showPosts);
 
@@ -217,11 +216,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     }
 
     function showPosts(listPosts, listSubscribes) {
-        console.log(listPosts);
         let chuoi_HTML = ``;
         listPosts.forEach(post => {
             let result = listSubscribes.findIndex(postSubscribe => postSubscribe.id == post.id);
-            console.log(result);
             chuoi_HTML += `
 				<li>
 					<img style="cursor: pointer" src="${Dia_chi_Dich_vu}/${post.images[0]}" title="" alt="" onclick="goDetail('${post.id}')"/>
@@ -248,9 +245,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             let post = { postId: postId }
             subscribePostAPI(token, user.id, post)
                 .then(result => {
-                    console.log(result);
                     let btn = document.getElementsByClassName(postId);
-                    console.log(btn);
+                    
                     if (result.message == `Subscribe success`) {
                         btn[0].childNodes[1].className = `fa fa-heart`;
                         showToast('Tin đã được lưu vào danh sách theo dõi.');
