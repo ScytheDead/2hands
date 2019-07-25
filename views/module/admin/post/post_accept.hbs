@@ -188,13 +188,11 @@
     function priorityOrNonPriorityPost(postId) {
         priorityPostAPI(sessionStorage.getItem('token'), postId)
             .then(result => {
-                console.log(result);
                 messageSuccess(result);
                 if (filterCategoryId.value === 'all') {
                     showAllTablePost();
                 } else {
                     let btn = document.getElementsByClassName(postId);
-                    console.log(btn);
                     if (result.message == 'Non priority post success') {
                         btn[0].childNodes[0].data = 'Ưu tiên';
                         btn[0].className = 'btn btn-outline-primary mt-2 ' + postId;

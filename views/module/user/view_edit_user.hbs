@@ -130,7 +130,6 @@
 
             updateAccountUserAPI(token, user.id, infoUserUpdate)
                 .then(result => {
-                    console.log(result);
                     if (result.message == `User updated`)
                         showToast('Cập nhật thông tin thành công !');
                 })
@@ -142,7 +141,7 @@
         function showDetailUser() {
             getUserAPI(token, user.id)
                 .then(user => {
-                    console.log(user.user);
+                    // console.log(user.user);
                     phoneNumberId.innerHTML = user.user.phoneNumber;
                     imageId.src = user.user.avatar == undefined ? "/images/user_icon.png" : Dia_chi_Dich_vu + '/' + user.user.avatar;
                     nameId.value = user.user.name  == undefined ? '' : user.user.name;

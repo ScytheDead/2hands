@@ -100,8 +100,6 @@
     var token = sessionStorage.getItem('token');
     var user = decodedJWT(token);
     var buttonClick = ``;
-    console.log(user);
-
 
     btnPostingId.onclick = () => {
         getPostPostingByUserAPI(sessionStorage.getItem('token'), user.id)
