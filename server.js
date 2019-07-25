@@ -34,8 +34,14 @@ io.on('connection', socket => {
 
         listMessagesId.forEach(messageId => {
             socket.join(messageId);
-            io.sockets.in(messageId).emit('online', data.userId);
+            io.sockets.in(messageId).emit('online', { userId: data.userId, messageId: messageId });
         });
+    });
+
+    socket.on('response-online', data => {
+        let messageId = data.messageId;
+        let userId = data.userId;
+        io.sockets.in(messageId).emit('client-send-response-online', { userId: userId, messageId: messageId });
     });
 
     socket.on('client-join-room-chat', data => {
@@ -119,9 +125,6 @@ io.on('connection', socket => {
                                     }
 
                                     if (message.userSell.toString() === userId.toString()) {
-                                        message.contentChatUserBuy.forEach(contentChat => contentChat.seen = 1);
-                                        message.save();
-
                                         message.contentChatUserSell.push({
                                             content: messageChat
                                         });
@@ -134,9 +137,6 @@ io.on('connection', socket => {
                                             messageChat: messageChat
                                         }
                                     } else {
-                                        message.contentChatUserSell.forEach(contentChat => contentChat.seen = 1);
-                                        message.save();
-
                                         message.contentChatUserBuy.push({
                                             content: messageChat
                                         });
@@ -192,8 +192,22 @@ io.on('connection', socket => {
         io.sockets.in(messageId).emit("someone-pause-typing", response);
     });
 
+    socket.on('client-offline', data => {
+        console.log(data)
+        let listMessagesId = data.listMessagesId;
+        let userId = data.userId;
+        
+        listMessagesId.forEach(messageId => {
+            io.sockets.in(messageId).emit('offline', {userId: userId, messageId: messageId});
+        });
+    })
+
     socket.on('disconnect', () => {
-        /* … */
+        if(socket.room != undefined && socket.userId != undefined){
+            socket.room.forEach(messageId => {
+                io.sockets.in(messageId).emit('offline', {userId: socket.userId, messageId: messageId});
+            });
+        }
         console.log("Co người ngắt ket noi:" + socket.id);
     });
 });
