@@ -1,7 +1,0 @@
-{
-    "env": {
-        "MONGO_ATLAS_PW": "2hands-huy",
-        "JWT_KEY": "secret",
-        "API_ADDRESS": "http://localhost:3000/api"
-    }
-}
