@@ -206,7 +206,7 @@ exports.get_all_messages_by_user = (req, res) => {
                 });
         })
         .catch(err => {
-
+            console.log(err);
             res.status(404).json({
                 message: 'No valid entry found for provided ID',
                 error: err
@@ -215,6 +215,7 @@ exports.get_all_messages_by_user = (req, res) => {
 }
 
 function returnMessageGet(message) {
+    console.log(message.post);
     var response = {
         _id: message._id,
         post: {

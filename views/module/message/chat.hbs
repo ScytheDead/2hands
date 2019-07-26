@@ -120,7 +120,7 @@
 										<div class="img_cont">
 											<img src="${Dia_chi_Dich_vu}/${avatar}"
 											class="rounded-circle user_img">
-											<span class="online_icon"></span>
+											<span class="{{!-- online_icon --}} ${message._id}"></span>
 										</div>
 										<div class="user_info">
 											<span>${name}</span>
@@ -132,12 +132,15 @@
 							</a>`
 					});
 
-					callback(listMessages);
+					if (messageId != ``) {
+						callback(listMessages);
+					}
 				}
 			})
 			.catch(err => {
 				console.log(err);
 			});
+
 	}
 
 	function keyCode(event) {
@@ -148,13 +151,13 @@
 
 	function sendMessage() {
 		let contentMessage = contentMessageId.value.replace('\n', '');
-		if(contentMessage != ''){
+		if (contentMessage != '') {
 			let userAndContentMessage = {
-			messageId: messageId,
-			messageChat: contentMessage,
-			user: user.id
-		}
-		socket.emit('client-send-message', userAndContentMessage);
+				messageId: messageId,
+				messageChat: contentMessage,
+				user: user.id
+			}
+			socket.emit('client-send-message', userAndContentMessage);
 		}
 		contentMessageId.value = ``;
 	}
@@ -240,7 +243,7 @@
 				div.innerHTML = `
 				<div class="msg_cotainer_send">
 					${message.content}
-					<span class="msg_time_send">${moment(message.time).calendar()}</span>
+					<span class="msg_time_send" ${message.seen == 1 ? 'style="bottom: -30px;"' : ''}>${moment(message.time).calendar()} <br>${message.seen == 1 ? 'Đã xem' : ''}</span>
 				</div>
 				<div class="img_cont_msg">
 					<img src="${Dia_chi_Dich_vu}/${data.avatarRight === undefined ? 'images/user_icon.png' : data.avatarRight}"
@@ -258,7 +261,7 @@
 				</div>
 				<div class="msg_cotainer">
 					${message.content}
-					<span class="msg_time">${moment(message.time).calendar()}</span>
+					<span class="msg_time">${moment(message.time).calendar()} </span>
 				</div>
 				`
 			}
@@ -365,4 +368,38 @@
 			}, 1500);
 		}
 	}
+
+	socket.on('online', data => {
+		let messageId = data.messageId;
+		let userId = data.userId;
+
+		if (user.id != userId) {
+			let span = document.getElementsByClassName(messageId);
+			span[0].classList.add('online_icon');
+			socket.emit('response-online', { userId: user.id, messageId: messageId });
+		}
+	});
+
+	socket.on('client-send-response-online', async data => {
+		setTimeout(() => {
+			let messageId = data.messageId;
+			let userId = data.userId;
+
+			if (user.id != userId) {
+				let span = document.getElementsByClassName(messageId);
+				span[0].classList.add('online_icon');
+			}
+		}, 100);
+	});
+
+	socket.on('offline', data => {
+		let messageId = data.messageId;
+		let userId = data.userId;
+
+		if (user.id != userId) {
+			let span = document.getElementsByClassName(messageId);
+			span[0].classList.remove('online_icon');
+		}
+	});
+
 </script>
