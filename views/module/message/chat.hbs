@@ -388,7 +388,7 @@
 				let span = document.getElementsByClassName(messageId);
 				span[0].classList.add('online_icon');
 			}
-		}, 100)
+		}, 100);
 	});
 
 	socket.on('offline', data => {
@@ -399,6 +399,6 @@
 			let span = document.getElementsByClassName(messageId);
 			span[0].classList.remove('online_icon');
 		}
-	})
+	});
 
 </script>
