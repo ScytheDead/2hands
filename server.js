@@ -208,6 +208,7 @@ io.on('connection', socket => {
                 io.sockets.in(messageId).emit('offline', {userId: socket.userId, messageId: messageId});
             });
         }
-        console.log("Co người ngắt ket noi:" + socket.id);
+
+        console.log("Co người ngắt ket noi:" + socket.id + ". Lúc: " + new Date(Date.now()));
     });
 });

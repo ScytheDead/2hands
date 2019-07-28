@@ -1,6 +1,6 @@
 <script>
     if (sessionStorage.getItem('token') == null) {
-        window.location.href = Dia_chi_Dich_vu + '/login';
+        window.location.href = '/login';
     }
 </script>
 
@@ -217,27 +217,27 @@
                 <td><h4>${post.moment}</h4></td>`
             if (status == 1) {
                 chuoi_HTML += `<td>
-                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
+                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='/post-detail-manage/u_${post.id}'">Chi tiết</button>
                                 {{!-- <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button> --}}
                                 <button class="btn btn-outline-secondary btn-lg mt-2" onclick="hidePost('${post.id}')">Ẩn tin</button>
-                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
+                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='/post-edit/${post.id}'">Sửa tin</button>
                             </td>`
             } else if (status == 0) {
                 chuoi_HTML += `<td>
-                                <button class="btn btn-outline-warning btn-lg" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/u_${post.id}'">Chi tiết</button>
+                                <button class="btn btn-outline-warning btn-lg" onclick="window.location='/admin/post-detail/u_${post.id}'">Chi tiết</button>
                             </td>`
             } else if (status == -1) {
                 chuoi_HTML += `<td>
-                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
+                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='/post-detail-manage/u_${post.id}'">Chi tiết</button>
                                 {{!-- <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button> --}}
-                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
+                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='/post-edit/${post.id}'">Sửa tin</button>
                             </td>`
             } else if (status == -2) {
                 chuoi_HTML += `<td>
-                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-detail-manage/u_${post.id}'">Chi tiết</button>
+                                <button class="btn btn-outline-warning btn-lg mt-2" onclick="window.location='/post-detail-manage/u_${post.id}'">Chi tiết</button>
                                 {{!-- <button class="btn btn-outline-primary btn-lg mt-2" onclick="deletePost('${post.id}')">Xóa tin</button> --}}
                                 <button class="btn btn-outline-info btn-lg mt-2" onclick="showPost('${post.id}')">Hiện tin</button>
-                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='${Dia_chi_Dich_vu}/post-edit/${post.id}'">Sửa tin</button>
+                                <button class="btn btn-outline-success btn-lg mt-2" onclick="window.location='/post-edit/${post.id}'">Sửa tin</button>
                             </td>`
             }
             chuoi_HTML += ` </tr>`;

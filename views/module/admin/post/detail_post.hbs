@@ -5,7 +5,7 @@
 
 <script>
     if (sessionStorage.getItem('token') == null) {
-        window.location.href = Dia_chi_Dich_vu
+        window.location.href = '/'
     }
 </script>
 
@@ -208,13 +208,13 @@
 
     function goBack() {
         if (kindPost === 'w') {
-            window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
+            window.location = '/admin/post-waiting'
         } else if (kindPost === 'a') {
-            window.location = Dia_chi_Dich_vu + '/admin/post-accept'
+            window.location = '/admin/post-accept'
         } else if (kindPost === 'r') {
-            window.location = Dia_chi_Dich_vu + '/admin/post-reject'
+            window.location = '/admin/post-reject'
         } else if (kindPost === 'u') {
-            window.location = Dia_chi_Dich_vu + '/posts'
+            window.location = '/posts'
         }
     }
 

@@ -10,10 +10,10 @@
         if (user.isAdmin || user.isEmployee) {
 
         } else {
-            window.location.href = Dia_chi_Dich_vu
+            window.location.href = '/'
         }
     } else {
-        window.location.href = Dia_chi_Dich_vu
+        window.location.href = '/'
     }
 </script>
 
@@ -63,7 +63,7 @@
                 <td>${getDateFormat(category.createdAt)}</td>
                 <td>${getDateFormat(category.updatedAt)}</td>
                 <td>${category.note == null ? "" : category.note}</td>
-                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/category/${category.id}'">Sửa</button>
+                <td><button class="btn btn-outline-success" onclick="window.location='/category/${category.id}'">Sửa</button>
                     <button class="btn btn-outline-danger" onclick="deleteCategory('${sessionStorage.getItem('token')}', '${category.id}')">Xóa</button>
                 </td>
             </tr>`
@@ -91,6 +91,6 @@
     }
 
     function goCreateCategory(){
-        window.location = Dia_chi_Dich_vu + '/category';
+        window.location = '/category';
     }
 </script>

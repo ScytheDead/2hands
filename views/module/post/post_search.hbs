@@ -69,37 +69,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <!-- //breadcrumbs -->
 
     <div class="ads-grid">
-        <div class="side-bar col-md-3">
-            <div class="w3ls-featured-ads">
-                <h2 class="sear-head fer">Tin ưu tiên</h2>
-                <div class="w3l-featured-ad">
-                    <a href="single.html">
-                        <div class="w3-featured-ad-left">
-                            <img src="template/images/f1.jpg" title="ad image" alt="" />
-                        </div>
-                        <div class="w3-featured-ad-right">
-                            <h4>Lorem Ipsum is simply dummy text of the printing industry</h4>
-                            <p>$ 450</p>
-                        </div>
-                        <div class="clearfix"></div>
-                    </a>
-                </div>
+        
 
-                <div class="w3l-featured-ad">
-                    <a href="single.html">
-                        <div class="w3-featured-ad-left">
-                            <img src="template/images/f3.jpg" title="ad image" alt="" />
-                        </div>
-                        <div class="w3-featured-ad-right">
-                            <h4>Lorem Ipsum is simply dummy text of the printing industry</h4>
-                            <p>$ 560</p>
-                        </div>
-                        <div class="clearfix"></div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="agileinfo-ads-display col-md-9">
+        <div class="agileinfo-ads-display col-md-12">
             <div class="wrapper">
                 <div class="bs-example bs-example-tabs" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="myTab" class="nav nav-tabs nav-tabs-responsive" role="tablist">
@@ -162,7 +134,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                         </div>
 
 
-                        <ul class="pagination pagination-sm">
+                        {{!-- <ul class="pagination pagination-sm">
                             <li><a href="#">Prev</a></li>
                             <li><a href="#">1</a></li>
                             <li><a href="#">2</a></li>
@@ -173,7 +145,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <li><a href="#">7</a></li>
                             <li><a href="#">8</a></li>
                             <li><a href="#">Next</a></li>
-                        </ul>
+                        </ul> --}}
                     </div>
                 </div>
             </div>
@@ -259,12 +231,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     console.log(err);
                 });
         } else {
-            window.location = Dia_chi_Dich_vu + '/login'
+            window.location = '/login'
         }
     }
 
     function goDetail(postId) {
-        window.location = Dia_chi_Dich_vu + '/post-detail/' + postId;
+        window.location = '/post-detail/' + postId;
     }
 
 </script>

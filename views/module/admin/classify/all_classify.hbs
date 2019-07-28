@@ -10,10 +10,10 @@
         if (user.isAdmin || user.isEmployee) {
 
         } else {
-            window.location.href = Dia_chi_Dich_vu
+            window.location.href = '/'
         }
     } else {
-        window.location.href = Dia_chi_Dich_vu
+        window.location.href = '/'
     }
 </script>
 
@@ -113,7 +113,7 @@
                 <td>${getDateFormat(classify.createdAt)}</td>
                 <td>${getDateFormat(classify.updatedAt)}</td>
                 <td>${classify.note == null ? "" : classify.note}</td>
-                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/classify/${classify.id}'">Sửa</button>
+                <td><button class="btn btn-outline-success" onclick="window.location='/classify/${classify.id}'">Sửa</button>
                     <button class="btn btn-outline-danger" onclick="deleteClassify('${sessionStorage.getItem('token')}', '${classify.id}')">Xóa</button>
                 </td>
             </tr>`;
@@ -137,7 +137,7 @@
     }
 
     function goCreateClassify() {
-        window.location = Dia_chi_Dich_vu + '/classify';
+        window.location = '/classify';
     }
 
     function getClassifiesByCategory(CategoryId) {

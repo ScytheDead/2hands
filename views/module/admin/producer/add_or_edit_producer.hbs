@@ -131,7 +131,7 @@
                         .then(result => {
                             messageSuccess(result);
                             setTimeout(() => {
-                                window.location = Dia_chi_Dich_vu + '/admin/producer';
+                                window.location = '/admin/producer';
                             }, 1500);
                         })
                         .catch(err => {
@@ -176,7 +176,7 @@
                 .then(result => {
                     messageSuccess(result);
                     setTimeout(() => {
-                        window.location = Dia_chi_Dich_vu + '/admin/producer';
+                        window.location = '/admin/producer';
                     }, 1500);
                 })
                 .catch(err => {
@@ -215,7 +215,7 @@
     }   // End update
 
     huy.onclick = () => {
-        window.location = Dia_chi_Dich_vu + '/admin/producer';
+        window.location = '/admin/producer';
     }
 
     function getProducersByClassify(ClassifyId) {
