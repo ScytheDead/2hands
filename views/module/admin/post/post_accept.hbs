@@ -4,10 +4,10 @@
         if (user.isAdmin || user.isEmployee) {
 
         } else {
-            window.location.href = Dia_chi_Dich_vu
+            window.location.href = '/'
         }
     } else {
-        window.location.href = Dia_chi_Dich_vu
+        window.location.href = '/'
     }
 </script>
 
@@ -59,6 +59,39 @@
 
         </div>
 
+    </div>
+</div>
+
+<button type="button" id="modalRejectId" class="btn btn-primary d-none" data-toggle="modal" data-target="#myModal">
+    Open modal
+</button>
+
+<!-- The Modal -->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Nhập lý cho từ chối</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="reasonRejectId">Lý do: </label>
+                    <input type="text" class="form-control" name="" id="reasonRejectId" aria-describedby="helpId"
+                        placeholder="Nơi nhập lý do...">
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="btnRejectId" data-dismiss="modal">Từ chối</button>
+            </div>
+
+        </div>
     </div>
 </div>
 
@@ -138,13 +171,13 @@
                 <td>${post.classify == undefined ? '' : post.classify.title}</td>
                 <td>${post.producer == undefined ? '' : post.producer.title}</td>
                 <td>${post.title}</td>
-                <td>${post.price}</td>
+                <td class="text-danger font-weight-bold">${Tao_Chuoi_The_hien_So_nguyen_duong(post.price)}₫</td>
                 <td>${post.seller == true ? "Cần bán" : "Cần mua"}</td>
                 <td>${getDateFormat(post.createdAt)}</td>
                 <td>${getDateFormat(post.updatedAt)}</td>
                 <td>${post.moment}</td>
-                <td><button class="btn btn-outline-warning mt-2" onclick="window.location='${Dia_chi_Dich_vu}/admin/post-detail/a_${post.id}'">Chi tiết</button>
-                    <button class="btn btn-outline-${post.priority == 0 ? 'primary' : 'secondary'} mt-2 ${post.id}" onclick="priorityOrNonPriorityPost('${post.id}')">${post.priority == 0 ? 'Ưu tiên' : 'Hủy ưu tiên'}</button>
+                <td><button class="btn btn-outline-warning mt-2" onclick="window.location='/admin/post-detail/a_${post.id}'">Chi tiết</button>
+                    <button class="btn btn-outline-${post.priority.enable == 0 ? 'primary' : 'secondary'} mt-2 ${post.id}" onclick="priorityOrNonPriorityPost('${post.id}')">${post.priority.enable == 0 ? 'Ưu tiên' : 'Hủy ưu tiên'}</button>
                     <button class="btn btn-outline-danger mt-2" onclick="rejectPost('${post.id}')">Từ chối</button>
                 </td>
             </tr>`;

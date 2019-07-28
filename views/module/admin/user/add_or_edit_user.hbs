@@ -162,7 +162,7 @@
                             messageError(JSON.parse(err).error);
                             
                         setTimeout(() => {
-                            window.location = `${Dia_chi_Dich_vu}/user/${idUser}0301${sessionStorage.getItem('token')}`;
+                            window.location = `/user/${idUser}0301${sessionStorage.getItem('token')}`;
                         }, 1500);
                     });
             })
@@ -184,7 +184,7 @@
     updatedat.innerHTML = 'Chỉnh sửa gần đây nhất: ' + getDateFormat(updatedAt);
 
     huy.onclick = () => {
-        window.location = Dia_chi_Dich_vu + '/admin/user';
+        window.location = '/admin/user';
     }
 
     luu.onclick = () => {
@@ -217,7 +217,7 @@
             .then(result => {
                 messageSuccess(result);
                 setTimeout(() => {
-                    window.location = Dia_chi_Dich_vu + '/admin/user';
+                    window.location = '/admin/user';
                 }, 1500);
             })
             .catch(err => {

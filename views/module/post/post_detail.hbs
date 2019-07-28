@@ -209,7 +209,7 @@
 
 			createMessageAPI(token, infoMessage)
 				.then(message => {
-					window.location = Dia_chi_Dich_vu + '/message/' + message.message._id;
+					window.location = '/message/' + message.message._id;
 				})
 				.catch(err => {
 					console.log(err);
@@ -218,7 +218,7 @@
 					}
 				});
 		} else {
-			window.location = Dia_chi_Dich_vu + '/login';
+			window.location = '/login';
 		}
 	}
 
@@ -242,16 +242,16 @@
 					console.log(err);
 				});
 		} else {
-			window.location = Dia_chi_Dich_vu + '/login';
+			window.location = '/login';
 		}
 	}
 
 	function authFailed() {
 		sessionStorage.removeItem('token');
-		window.location = Dia_chi_Dich_vu;
+		window.location = '/';
 	}
 
 	function goThisCategory() {
-		window.location = Dia_chi_Dich_vu + '/' + postAll.post.category._id;
+		window.location = '/' + postAll.post.category._id;
 	}
 </script>

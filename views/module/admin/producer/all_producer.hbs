@@ -10,10 +10,10 @@
         if (user.isAdmin || user.isEmployee) {
 
         } else {
-            window.location.href = Dia_chi_Dich_vu
+            window.location.href = '/'
         }
     } else {
-        window.location.href = Dia_chi_Dich_vu
+        window.location.href = '/'
     }
 </script>
 
@@ -128,7 +128,7 @@
                 <td>${getDateFormat(producer.createdAt)}</td>
                 <td>${getDateFormat(producer.updatedAt)}</td>
                 <td>${producer.note == null ? "" : producer.note}</td>
-                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/producer/${producer.id}'">Sửa</button>
+                <td><button class="btn btn-outline-success" onclick="window.location='/producer/${producer.id}'">Sửa</button>
                     <button class="btn btn-outline-danger" onclick="deleteProducer('${sessionStorage.getItem('token')}', '${producer.id}')">Xóa</button>
                 </td>
             </tr>`;
@@ -152,7 +152,7 @@
     }
 
     function goCreateProducer() {
-        window.location = Dia_chi_Dich_vu + '/producer';
+        window.location = '/producer';
     }
 
     function showProducersByCategory(CategoryId) {

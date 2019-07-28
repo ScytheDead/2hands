@@ -30,10 +30,18 @@ io.on('connection', socket => {
     socket.on('client-currently-logged', data => {
         let listMessagesId = data.listMessagesId;
         socket.room = listMessagesId;
+        socket.userId = data.userId;
 
         listMessagesId.forEach(messageId => {
             socket.join(messageId);
+            io.sockets.in(messageId).emit('online', { userId: data.userId, messageId: messageId });
         });
+    });
+
+    socket.on('response-online', data => {
+        let messageId = data.messageId;
+        let userId = data.userId;
+        io.sockets.in(messageId).emit('client-send-response-online', { userId: userId, messageId: messageId });
     });
 
     socket.on('client-join-room-chat', data => {
@@ -50,6 +58,7 @@ io.on('connection', socket => {
                 .populate('userBuy', 'phoneNumber name avatar address city')
                 .exec()
                 .then(message => {
+                    //console.log(message)
                     if (data.userId.toString() === message.userBuy._id.toString()) {
                         socket.emit('server-response-client-join-room-chat', {
                             nameLeft: message.userSell.name === undefined ? message.userSell.phoneNumber : message.userSell.name,
@@ -60,6 +69,9 @@ io.on('connection', socket => {
                             messageRight: message.contentChatUserBuy,
                             avatarRight: message.userBuy.avatar
                         });
+
+                        message.contentChatUserSell.forEach(contentChat => contentChat.seen = 1);
+                        message.save();
                     } else {
                         socket.emit('server-response-client-join-room-chat', {
                             nameLeft: message.userBuy.name === undefined ? message.userBuy.phoneNumber : message.userBuy.name,
@@ -70,6 +82,9 @@ io.on('connection', socket => {
                             messageRight: message.contentChatUserSell,
                             avatarRight: message.userSell.avatar,
                         });
+
+                        message.contentChatUserBuy.forEach(contentChat => contentChat.seen = 1);
+                        message.save();
                     }
                 })
                 .catch(err => {
@@ -177,8 +192,23 @@ io.on('connection', socket => {
         io.sockets.in(messageId).emit("someone-pause-typing", response);
     });
 
+    socket.on('client-offline', data => {
+        console.log(data)
+        let listMessagesId = data.listMessagesId;
+        let userId = data.userId;
+        
+        listMessagesId.forEach(messageId => {
+            io.sockets.in(messageId).emit('offline', {userId: userId, messageId: messageId});
+        });
+    })
+
     socket.on('disconnect', () => {
-        /* … */
-        console.log("Co người ngắt ket noi:" + socket.id);
+        if(socket.room != undefined && socket.userId != undefined){
+            socket.room.forEach(messageId => {
+                io.sockets.in(messageId).emit('offline', {userId: socket.userId, messageId: messageId});
+            });
+        }
+
+        console.log("Co người ngắt ket noi:" + socket.id + ". Lúc: " + new Date(Date.now()));
     });
 });

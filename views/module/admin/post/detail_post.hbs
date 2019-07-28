@@ -5,7 +5,7 @@
 
 <script>
     if (sessionStorage.getItem('token') == null) {
-        window.location.href = Dia_chi_Dich_vu
+        window.location.href = '/'
     }
 </script>
 
@@ -140,66 +140,66 @@
         showImageSelectedId.innerHTML += chuoi_HTML;
     }
 
-    function accept() {
-        acceptPost(idPost);
-        setTimeout(() => {
-            goBack();
-        }, 1500);
-    }
-
-    function reject() {
-        rejectPost(idPost);
-        setTimeout(() => {
-            goBack();
-        }, 1500);
-    }
-
-
-    function acceptPost(id) {
-        acceptPostAPI(sessionStorage.getItem('token'), id)
+    function acceptPost() {
+        acceptPostAPI(sessionStorage.getItem('token'), idPost)
             .then(result => {
                 messageSuccess(result);
+                setTimeout(() => {
+                    goBack();
+                }, 1500);
             })
             .catch(err => {
                 console.log(err);
-            })
+            });
     }
 
-    function rejectPost(id) {
-        rejectPostAPI(sessionStorage.getItem('token'), id)
-            .then(result => {
-                messageSuccess(result);
-            })
-            .catch(err => {
-                console.log(err);
-                messageError(err);
-            })
+    function rejectPost() {
+        modalRejectId.click();
+        btnRejectId.onclick = () => {
+            let reasonReject = reasonRejectId.value;
+            if (reasonReject.trim() == '') {
+                showToast('Xin nhập lý do để từ chối tin này !');
+            } else {
+                let reason = { reason: reasonReject };
+                rejectPostAPI(sessionStorage.getItem('token'), idPost, reason)
+                    .then(result => {
+                        messageSuccess(result);
+                        setTimeout(() => {
+                            goBack();
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        messageError(err);
+                    });
+            }
+        }
     }
 
     function goBack() {
         if (kindPost === 'w') {
-            window.location = Dia_chi_Dich_vu + '/admin/post-waiting'
+            window.location = '/admin/post-waiting'
         } else if (kindPost === 'a') {
-            window.location = Dia_chi_Dich_vu + '/admin/post-accept'
+            window.location = '/admin/post-accept'
         } else if (kindPost === 'r') {
-            window.location = Dia_chi_Dich_vu + '/admin/post-reject'
-        } else if(kindPost === 'u'){
-            window.location = Dia_chi_Dich_vu + '/posts'
+            window.location = '/admin/post-reject'
+        } else if (kindPost === 'u') {
+            window.location = '/posts'
         }
     }
 
     function hienThiThaoTac() {
         let chuoi_HTML = ``;
         if (kindPost === 'w') {
-            chuoi_HTML +=`
-            <button class="btn btn-success" onclick="accept()">Duyệt</button>
-            <button class="btn btn-outline-danger ml-2" onclick="reject()" id="rejectId">Từ chối</button>`
+            chuoi_HTML += `
+            <button class="btn btn-success" onclick="acceptPost()">Duyệt</button>
+            <button class="btn btn-outline-danger ml-2" onclick="rejectPost()" id="rejectId">Từ chối</button>`
         } else if (kindPost === 'a') {
-            chuoi_HTML += `<button class="btn btn-outline-danger ml-2" onclick="reject()">Từ chối</button>`
+            chuoi_HTML += `<button class="btn btn-outline-danger ml-2" onclick="rejectPost()">Từ chối</button>`
         } else if (kindPost === 'r') {
-            chuoi_HTML += `<button class="btn btn-success" onclick="accept()">Duyệt</button>`
+            chuoi_HTML += `<button class="btn btn-success" onclick="acceptPost()">Duyệt</button>`
         }
-        chuoi_HTML+=`<button class="btn btn-outline-warning ml-2" onclick="goBack()">Hủy</button>`
+        chuoi_HTML += `<button class="btn btn-outline-warning ml-2" onclick="goBack()">Hủy</button>`
 
         thaotacId.innerHTML = chuoi_HTML;
     }

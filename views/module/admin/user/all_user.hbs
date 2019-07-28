@@ -10,10 +10,10 @@
         if (user.isAdmin || user.isEmployee) {
 
         } else {
-            window.location.href = Dia_chi_Dich_vu
+            window.location.href = '/'
         }
     } else {
-        window.location.href = Dia_chi_Dich_vu
+        window.location.href = '/'
     }
 </script>
 
@@ -78,7 +78,7 @@
                     chuoi_HTML += `<td>${getDateFormat(user.createdAt)}</td>
                 <td>${user.status == true ? "Hoạt động" : "Khóa"}</td>
                 <td>${user.note == null ? "" : user.note}</td>
-                <td><button class="btn btn-outline-success" onclick="window.location='${Dia_chi_Dich_vu}/user/${user.id}0301${sessionStorage.getItem('token')}'">Sửa</button>
+                <td><button class="btn btn-outline-success" onclick="window.location='/user/${user.id}0301${sessionStorage.getItem('token')}'">Sửa</button>
                     <button class="btn btn-outline-danger" onclick="deleteUser('${sessionStorage.getItem('token')}', '${user.id}')">Xóa</button>
                 </td>
             </tr>`

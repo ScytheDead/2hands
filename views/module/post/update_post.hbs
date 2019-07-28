@@ -1,6 +1,6 @@
 <script>
     if (sessionStorage.getItem('token') == null) {
-        window.location.href = Dia_chi_Dich_vu + '/login'
+        window.location.href = '/login'
     }
 </script>
 
@@ -238,7 +238,7 @@
                     console.log(err);
                     if (err == 'Unauthorized') {
                         sessionStorage.removeItem('token');
-                        window.location = Dia_chi_Dich_vu;
+                        window.location = '/';
                     }
                     reject(0);
                 });
@@ -322,7 +322,7 @@
                             } else if (JSON.parse(err).message == `Auth failed`) {
                                 sessionStorage.removeItem('token');
                                 setTimeout(() => {
-                                    window.location = Dia_chi_Dich_vu;
+                                    window.location = '/';
                                 }, 1500);
                             }
 
@@ -439,7 +439,7 @@
         errorMessageId.classList.add('successMessage');
         errorMessageId.classList.remove('errorMessage');
         setTimeout(() => {
-            window.location = Dia_chi_Dich_vu + '/posts';
+            window.location = '/posts';
         }, 1500);
     }
 

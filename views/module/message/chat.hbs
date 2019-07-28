@@ -1,6 +1,6 @@
 <script>
 	if (sessionStorage.getItem('token') == null) {
-		window.location.href = Dia_chi_Dich_vu + '/login';
+		window.location.href = '/login';
 	}
 </script>
 
@@ -273,7 +273,7 @@
 
 	function authFailed() {
 		sessionStorage.removeItem('token');
-		window.location = Dia_chi_Dich_vu;
+		window.location = '/';
 	}
 
 	function showToggle() {
